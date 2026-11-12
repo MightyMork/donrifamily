@@ -568,8 +568,15 @@ let lock = Promise.resolve();
 const exclusive = fn => (lock = lock.then(fn, fn));
 function setSync(s){ syncState = s; const el = $("#sync"); el.className = "sync" + (s==="busy" ? " busy" : s==="off" ? " off" : ""); el.setAttribute("aria-label", s==="busy" ? "Syncing" : s==="off" ? "Not synced" : "Synced"); }
 
+// An invited phone may only be allowed in through the private link from its invite (cfg.s). fileBase() picks the way in.
+let lastSyncErr = null;
+const fileBase = () => cfg.viaShare && cfg.s ? `/shares/${shareId(cfg.s)}/driveItem` : `/drives/${cfg.d}/items/${cfg.i}`;
+async function fileMeta(){
+  try{ return await graphJson(fileBase()); }
+  catch(e){ if((e.status === 403 || e.status === 404) && cfg.s && !cfg.viaShare){ cfg = {...cfg, viaShare:true}; ls.set("donri.cfg", cfg); return await graphJson(fileBase()); } throw e; }
+}
 async function pull(force){
-  const meta = await graphJson(`/drives/${cfg.d}/items/${cfg.i}`);
+  const meta = await fileMeta();
   if(!force && meta.eTag === etag) return false;
   const r = await fetch(meta["@microsoft.graph.downloadUrl"], {cache:"no-store"});
   if(!r.ok) throw new Error("download " + r.status);
@@ -585,7 +592,7 @@ async function pull(force){
 async function push(){
   for(let attempt = 0; attempt < 4 && dirty; attempt++){
     tidy();
-    const r = await graph(`/drives/${cfg.d}/items/${cfg.i}/content`, {method:"PUT", headers:{"Content-Type":"application/json", ...(etag ? {"If-Match":etag} : {})}, body:JSON.stringify(D)});
+    const r = await graph(`${fileBase()}/content`, {method:"PUT", headers:{"Content-Type":"application/json", ...(etag ? {"If-Match":etag} : {})}, body:JSON.stringify(D)});
     if(r.status === 412 || r.status === 409){ await pull(true); continue; }
     if(!r.ok) throw new Error("upload " + r.status);
     const j = await r.json(); etag = j.eTag; dirty = false; persist(); return;
@@ -625,8 +632,8 @@ function sync(force){
     setSync("busy");
     try{ const got = await pull(force); if(dirty) await push();
       let pgot = false; try{ pgot = await syncPrivate(force); }catch(pe){ if(pe.code === "signed_out") throw pe; toast("Couldn't reach your private (Just me) file. It'll try again shortly.", 5000); }
-      setSync("ok"); if(got || pgot) { render(); } if(got) sendOutbox(); ensurePhotoFolder(); if(myName()) checkRenewalReminders(); }
-    catch(e){ setSync("off"); if(e.code === "signed_out"){ render(); } else if(e.status === 404 || e.status === 403){ toast("Can't reach the family file. Check it's still shared with you.", 6000); } }
+      lastSyncErr = null; setSync("ok"); if(got || pgot) { render(); } if(got) sendOutbox(); ensurePhotoFolder(); if(myName()) checkRenewalReminders(); }
+    catch(e){ lastSyncErr = e; setSync("off"); if(e.code === "signed_out"){ render(); } else if(e.status === 404 || e.status === 403){ toast("Can't reach the family file. Check it's still shared with you.", 6000); } }
   });
 }
 let saveT = null;
@@ -750,7 +757,7 @@ function pSetup(){
     <div class="card"><b>Yes, set up our family</b><p class="muted small">Creates a Donrí folder in your OneDrive with the family file in it.</p><button class="btn primary" data-act="create">Create our family space</button></div>
     <div class="card"><b>No, someone invited me</b><p class="muted small">Open the invite link they sent you. It connects this phone to the family file.</p></div>
     <button class="btn sm" data-act="signout">Use a different account</button>`;
-  if(step === 4) body = `<p>Which one are you?</p><div class="row wrap">${members().map(m => `<button class="btn" data-act="iam" data-v="${esc(m.name)}">${esc(m.name)}</button>`).join("") || '<span class="muted">Loading the family…</span>'}</div>`;
+  if(step === 4) body = `<p>Which one are you?</p><div class="row wrap">${members().map(m => `<button class="btn" data-act="iam" data-v="${esc(m.name)}">${esc(m.name)}</button>`).join("") || (lastSyncErr ? `<div class="card" style="width:100%"><b>Can't open the family file yet</b><p class="small" style="margin:6px 0">${lastSyncErr.status === 403 || lastSyncErr.status === 404 ? "This account doesn't have access to it. Check you signed in with the email in the invite" + (me && me.email ? " (you're signed in as " + esc(me.email) + ")" : "") + ", or ask for the invite to be sent again." : "Check your internet connection."}</p><p class="muted small" style="margin:0 0 8px">Details: ${esc(String(lastSyncErr.status || ""))} ${esc(lastSyncErr.code || lastSyncErr.message || "")}</p><div class="row wrap"><button class="btn primary" data-act="syncRetry">Try again</button><button class="btn" data-act="signout">Use a different account</button></div></div>` : '<span class="muted">Loading the family…</span>')}</div>`;
   return `<div class="welcome"><h1>Fáilte to Donrí</h1>${body}</div>`;
 }
 
@@ -2391,7 +2398,7 @@ async function phUrl(file, size){
   const k = file + size, c = phCache[k]; if(c && Date.now() - c.at < 45 * 60000) return c.url;
   if(phBusy[k]) return phBusy[k];
   phBusy[k] = (async () => { try{
-    const j = await graphJson(`/drives/${cfg.d}/items/${file}/thumbnails`); const t = (j.value || [])[0] || {};
+    let j; try{ j = await graphJson(`/drives/${cfg.d}/items/${file}/thumbnails`); }catch(e){ if(!cfg.p) throw e; j = await graphJson(`/shares/${shareId(cfg.p)}/items/${file}/thumbnails`); } const t = (j.value || [])[0] || {};
     let url = (t[size] || t.large || t.medium || {}).url;
     if(!url){ const m = await graphJson(`/drives/${cfg.d}/items/${file}?select=id,@microsoft.graph.downloadUrl`); url = m["@microsoft.graph.downloadUrl"]; }
     if(url) phCache[k] = {url, at:Date.now()}; return url || "";
@@ -3319,6 +3326,7 @@ document.addEventListener("click", async e => {
     case "syncNow": sync(true).then(() => toast(syncState === "ok" ? "Up to date" : "Couldn't sync")); break;
     case "copy": try{ await navigator.clipboard.writeText(v); toast("Copied"); }catch(err){ toast("Long-press the text to copy it"); } break;
     case "reinvite": { const m = members().find(x => x.name === v); if(!m) break; if(m.inviteLink) inviteSheet(m.name, m.email, m.inviteLink, m.inviteLink.length > joinLink().length); else toast("Fill in the invite form again for " + v); break; }
+    case "syncRetry": toast("Trying again…"); sync(true).then(() => render()); break;
     case "shareInvite": try{ if(navigator.share) await navigator.share({title:"Donrí invite", text:v}); else { await navigator.clipboard.writeText(v); toast("Copied. Paste it into a message."); } }catch(err){} break;
     case "testNotify": { const m = meMember(); if(m && m.topic){ await ntfy(m.topic, "Donrí", "Notifications are working 👍", ["tada"]); toast("Test sent. Check your notifications."); } break; }
     case "editBins": binsForm(); break;
@@ -3592,7 +3600,7 @@ document.addEventListener("change", e => {
   // Invite link: #join=...
   const h = location.hash || "";
   if(h.startsWith("#join=")){
-    try{ const j = decJoin(h.slice(6)); if(j.c && j.d && j.i){ if(cfg.d && cfg.d !== j.d){ D = null; etag = null; dirty = false; persist(); } cfg = {...cfg, c:j.c, d:j.d, i:j.i}; ls.set("donri.cfg", cfg); const rl = [j.s, j.p].filter(Boolean); if(rl.length) ls.set("donri.redeem", rl); } }catch(e){ toast("That invite link looks incomplete."); }
+    try{ const j = decJoin(h.slice(6)); if(j.c && j.d && j.i){ if(cfg.d && cfg.d !== j.d){ D = null; etag = null; dirty = false; persist(); } cfg = {...cfg, c:j.c, d:j.d, i:j.i}; ls.set("donri.cfg", cfg); cfg = {...cfg, s:j.s || "", p:j.p || "", viaShare:false}; ls.set("donri.cfg", cfg); const rl = [j.s, j.p].filter(Boolean); if(rl.length) ls.set("donri.redeem", rl); } }catch(e){ toast("That invite link looks incomplete."); }
     history.replaceState(null, "", REDIRECT);
   }
   await handleRedirect();
