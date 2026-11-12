@@ -3173,7 +3173,7 @@ async function grantAccess(itemId, email){
 async function inviteMember(name, email){
   // 1. Add them to the family (a grown-up, so they get their own notifications)
   const ms = (settings().members || []).slice(); const at = ms.findIndex(m => (m.email||"").toLowerCase() === email || m.name === name);
-  const prev = at >= 0 ? ms[at] : {}; const m = {notify:{shop:true, calendar:true, meals:true, chores:true, assigned:true, stars:true, renewals:true, meds:true}, ...prev, name, email, topic:prev.topic || "donri-" + rand(22)};
+  const prev = at >= 0 ? ms[at] : {}; const m = {notify:{shop:true, calendar:true, meals:true, chores:true, assigned:true, stars:true, renewals:true, meds:true}, ...prev, name, email, topic:prev.topic || "donri-" + rand(22), invitedAt:Date.now(), invitedBy:myName()};
   if(at >= 0) ms[at] = m; else ms.push(m); put("settings","family",{...settings(), members:ms});
   // 2. Access to the family file, and the Photos folder
   const extra = {}; let viaLink = false;
@@ -3182,12 +3182,15 @@ async function inviteMember(name, email){
     if(folder){ const b = await grantAccess(folder, email); if(b.link){ extra.p = b.link; viaLink = true; }
       put("settings","photos",{...photoSet(), invited:[...new Set([...(photoSet().invited || []), email])]}); } }catch(e){}
   log(`invited ${name}`);
-  return {link:joinLink(extra), viaLink};
+  const link = joinLink(extra); put("settings","family",{...settings(), members:(settings().members || []).map(x => x.name === name ? {...x, inviteLink:link} : x)});
+  return {link, viaLink};
 }
 function inviteSheet(name, email, link, viaLink){
   const first = name.split(" ")[0];
   const msg = `Hi ${first}! Here's your invite to Donrí, our family app 🏡\n\n1. Open this link in Chrome: ${link}\n2. Tap Sign in with Microsoft and use ${email}\n3. Then add it to your home screen from Chrome's ⋮ menu.`;
-  openSheet("Send " + first + " the invite", () => `<div class="card"><p style="margin-top:0">${esc(first)} can now get into Donrí. Send the invite and they'll be in within a minute.</p>
+  openSheet(first + " is invited", () => `<div class="card"><div style="font-size:19px;font-weight:700;margin-bottom:8px">✅ ${esc(first)} is set up</div>
+    <div class="small" style="line-height:1.8">✓ Added to the family<br>✓ Can open the family file<br>✓ Can see family photos</div>
+    <p style="margin:12px 0 10px"><b>Last step:</b> send ${esc(first)} the invite. When ${esc(first)} joins, you'll get a notification and this page will say <b>Joined</b>.</p>
     <a class="btn primary" style="width:100%;justify-content:center;min-height:52px" href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">Send on WhatsApp</a>
     <div class="row wrap" style="margin-top:10px"><button class="btn" data-act="shareInvite" data-v="${esc(msg)}">Other ways to send</button><button class="btn" data-act="copy" data-v="${esc(msg)}">Copy the message</button></div>
     ${viaLink ? '<p class="muted small" style="margin-bottom:0">This invite works like a key to your family file, so send it only to ' + esc(first) + '.</p>' : ''}</div>`);
@@ -3222,6 +3225,7 @@ function settingsSheet(){
     <h2>School &amp; crèche emails</h2>
     ${schoolForm()}
     <h2>Invite someone</h2>
+    ${(() => { const inv = members().filter(m => m.invitedAt || m.joinedAt); return inv.length ? `<div class="card">${inv.map(m => `<div class="row" style="min-height:40px"><span class="grow"><b>${esc(m.name)}</b><div class="muted small">${esc(m.email||'')}</div></span>${m.joinedAt ? `<span class="pill ok">${I.check || '✓'} Joined ${esc(new Date(m.joinedAt).toLocaleDateString("en-IE",{day:"numeric",month:"short"}))}</span>` : `<span class="pill warn">Invited, not joined yet</span><button class="btn sm" data-act="reinvite" data-v="${esc(m.name)}">Send again</button>`}</div>`).join("")}</div>` : ''; })()}
     <form class="card" data-form="invite"><p class="muted small" style="margin-top:0">Type their name and the email of their Microsoft account. Donrí gives them access, then you send the invite on WhatsApp.</p>
       <label class="f" for="invN">Their name</label><input id="invN" type="text" name="name" placeholder="e.g. Helen" autocomplete="off">
       <label class="f" for="invE">Their Microsoft (Outlook) email</label><input id="invE" type="email" name="email" autocomplete="off">
@@ -3314,6 +3318,7 @@ document.addEventListener("click", async e => {
     case "switchWho": ls.del("donri.who"); closeSheet(); render(); break;
     case "syncNow": sync(true).then(() => toast(syncState === "ok" ? "Up to date" : "Couldn't sync")); break;
     case "copy": try{ await navigator.clipboard.writeText(v); toast("Copied"); }catch(err){ toast("Long-press the text to copy it"); } break;
+    case "reinvite": { const m = members().find(x => x.name === v); if(!m) break; if(m.inviteLink) inviteSheet(m.name, m.email, m.inviteLink, m.inviteLink.length > joinLink().length); else toast("Fill in the invite form again for " + v); break; }
     case "shareInvite": try{ if(navigator.share) await navigator.share({title:"Donrí invite", text:v}); else { await navigator.clipboard.writeText(v); toast("Copied. Paste it into a message."); } }catch(err){} break;
     case "testNotify": { const m = meMember(); if(m && m.topic){ await ntfy(m.topic, "Donrí", "Notifications are working 👍", ["tada"]); toast("Test sent. Check your notifications."); } break; }
     case "editBins": binsForm(); break;
@@ -3598,6 +3603,9 @@ document.addEventListener("change", e => {
     if(rl.length){ const left = []; for(const u of rl){ try{ await graphJson(`/shares/${shareId(u)}/driveItem`, {headers:{Prefer:"redeemSharingLink"}}); }catch(e){ left.push(u); } } if(left.length) ls.set("donri.redeem", left); else ls.del("donri.redeem"); }
     if(cfg.d){ await sync(true);
       if(!myName() && me){ const m = members().find(x => x.email && x.email === me.email); if(m) ls.set("donri.who", m.name); }
+      if(me && myName()){ const ms = settings().members || []; const mine = ms.find(x => x.name === myName()); if(mine && mine.invitedAt && !mine.joinedAt){
+        put("settings","family",{...settings(), members:ms.map(x => x.name === myName() ? {...x, joinedAt:Date.now()} : x)}); log(`joined Donrí`);
+        notify("calendar", "Donrí", `${myName()} has joined Donrí 🎉`, {tags:["tada"], link:"today"}); toast(`Fáilte, ${myName()}! You're in.`, 5000); } }
       render(); }
     else render();
   }
