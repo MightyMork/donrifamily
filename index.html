@@ -296,6 +296,7 @@ body.introon{overflow:hidden}
 .iplus .bi{width:56px;height:56px;stroke-width:3}
 @keyframes ipulse{to{box-shadow:0 0 0 28px rgba(227,178,60,0)}}
 #intro.paused *{animation-play-state:paused!important}
+.linkbtn{background:none;border:0;padding:0;color:var(--blue);font:inherit;text-decoration:underline;cursor:pointer;min-height:auto}
 #intro .imus{font-size:18px;min-width:44px}#intro .imus.off{opacity:.55}
 @media (prefers-reduced-motion: reduce){#intro *{animation-duration:.01s!important;animation-delay:0s!important;animation-iteration-count:1!important}.iseg.on i{animation:none;width:50%}}
 
@@ -3125,7 +3126,40 @@ function setForm(id){
     <div class="row wrap" style="margin-top:12px"><button class="btn primary" type="submit">Save</button>${id?`<button class="btn danger" type="button" data-act="delSet" data-id="${esc(id)}">Delete</button>`:''}</div></form>`);
 }
 const parseLines = t => t.split("\n").map(l => l.trim()).filter(Boolean).map(l => { const m = l.match(/^(\d+(?:\.\d+)?)\s*[x×]?\s+(.+)$/i); return m ? {qty:m[1], name:m[2]} : {qty:"1", name:l}; });
-const joinLink = () => REDIRECT + "#join=" + encJoin({c:cfg.c, d:cfg.d, i:cfg.i});
+const joinLink = extra => REDIRECT + "#join=" + encJoin({c:cfg.c, d:cfg.d, i:cfg.i, ...(extra || {})});
+const shareId = url => "u!" + btoa(unescape(encodeURIComponent(url))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+// Give one person edit access to one OneDrive item. Tries a quiet invite (no email from Microsoft) first;
+// some new personal accounts aren't allowed to invite, so it falls back to a private edit link carried in the Donrí invite.
+async function grantAccess(itemId, email){
+  for(const quiet of [true, false]){
+    try{ await graphJson(`/drives/${cfg.d}/items/${itemId}/invite`, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({recipients:[{email}], roles:["write"], requireSignIn:true, sendInvitation:!quiet})}); return {ok:true}; }
+    catch(e){ if(e.status === 401) throw e; }
+  }
+  const j = await graphJson(`/drives/${cfg.d}/items/${itemId}/createLink`, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({type:"edit", scope:"anonymous"})});
+  return {ok:true, link:j.link && j.link.webUrl};
+}
+async function inviteMember(name, email){
+  // 1. Add them to the family (a grown-up, so they get their own notifications)
+  const ms = (settings().members || []).slice(); const at = ms.findIndex(m => (m.email||"").toLowerCase() === email || m.name === name);
+  const prev = at >= 0 ? ms[at] : {}; const m = {notify:{shop:true, calendar:true, meals:true, chores:true, assigned:true, stars:true, renewals:true, meds:true}, ...prev, name, email, topic:prev.topic || "donri-" + rand(22)};
+  if(at >= 0) ms[at] = m; else ms.push(m); put("settings","family",{...settings(), members:ms});
+  // 2. Access to the family file, and the Photos folder
+  const extra = {}; let viaLink = false;
+  const a = await grantAccess(cfg.i, email); if(a.link){ extra.s = a.link; viaLink = true; }
+  try{ await ensurePhotoFolder(); const folder = photoSet().folder;
+    if(folder){ const b = await grantAccess(folder, email); if(b.link){ extra.p = b.link; viaLink = true; }
+      put("settings","photos",{...photoSet(), invited:[...new Set([...(photoSet().invited || []), email])]}); } }catch(e){}
+  log(`invited ${name}`);
+  return {link:joinLink(extra), viaLink};
+}
+function inviteSheet(name, email, link, viaLink){
+  const first = name.split(" ")[0];
+  const msg = `Hi ${first}! Here's your invite to Donrí, our family app 🏡\n\n1. Open this link in Chrome: ${link}\n2. Tap Sign in with Microsoft and use ${email}\n3. Then add it to your home screen from Chrome's ⋮ menu.`;
+  openSheet("Send " + first + " the invite", () => `<div class="card"><p style="margin-top:0">${esc(first)} can now get into Donrí. Send the invite and they'll be in within a minute.</p>
+    <a class="btn primary" style="width:100%;justify-content:center;min-height:52px" href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">Send on WhatsApp</a>
+    <div class="row wrap" style="margin-top:10px"><button class="btn" data-act="shareInvite" data-v="${esc(msg)}">Other ways to send</button><button class="btn" data-act="copy" data-v="${esc(msg)}">Copy the message</button></div>
+    ${viaLink ? '<p class="muted small" style="margin-bottom:0">This invite works like a key to your family file, so send it only to ' + esc(first) + '.</p>' : ''}</div>`);
+}
 
 function settingsSheet(){
   openSheet("Settings", () => {
@@ -3156,11 +3190,11 @@ function settingsSheet(){
     <h2>School &amp; crèche emails</h2>
     ${schoolForm()}
     <h2>Invite someone</h2>
-    <form class="card" data-form="invite"><p class="muted small" style="margin-top:0">OneDrive emails them access to the family file. Then send them the link below.</p>
-      <label class="f" for="invE">Their Microsoft (Outlook) email</label><input id="invE" type="email" name="email">
-      <div style="margin-top:12px"><button class="btn primary" type="submit">Share the family file</button></div>
-      <label class="f">Invite link (also works for your own other devices)</label><div class="code">${esc(joinLink())}</div>
-      <div class="row wrap" style="margin-top:8px"><button class="btn sm" type="button" data-act="copy" data-v="${esc(joinLink())}">Copy link</button></div></form>
+    <form class="card" data-form="invite"><p class="muted small" style="margin-top:0">Type their name and the email of their Microsoft account. Donrí gives them access, then you send the invite on WhatsApp.</p>
+      <label class="f" for="invN">Their name</label><input id="invN" type="text" name="name" placeholder="e.g. Helen" autocomplete="off">
+      <label class="f" for="invE">Their Microsoft (Outlook) email</label><input id="invE" type="email" name="email" autocomplete="off">
+      <div style="margin-top:12px"><button class="btn primary" type="submit">Invite</button></div>
+      <p class="muted small" style="margin-bottom:0">Adding Donrí to another phone or tablet of your own? <button class="linkbtn" type="button" data-act="copy" data-v="${esc(joinLink())}">Copy your own link</button></p></form>
     <h2>Ideas and requests</h2>
     ${requestsBlock()}
     <h2>This phone</h2>
@@ -3243,6 +3277,7 @@ document.addEventListener("click", async e => {
     case "switchWho": ls.del("donri.who"); closeSheet(); render(); break;
     case "syncNow": sync(true).then(() => toast(syncState === "ok" ? "Up to date" : "Couldn't sync")); break;
     case "copy": try{ await navigator.clipboard.writeText(v); toast("Copied"); }catch(err){ toast("Long-press the text to copy it"); } break;
+    case "shareInvite": try{ if(navigator.share) await navigator.share({title:"Donrí invite", text:v}); else { await navigator.clipboard.writeText(v); toast("Copied. Paste it into a message."); } }catch(err){} break;
     case "testNotify": { const m = meMember(); if(m && m.topic){ await ntfy(m.topic, "Donrí", "Notifications are working 👍", ["tada"]); toast("Test sent. Check your notifications."); } break; }
     case "editBins": binsForm(); break;
     case "goStore": store = v; ls.set("donri.store", v); page = "shop"; ls.set("donri.page", "shop"); history.replaceState(null, "", "#shop"); render(); window.scrollTo(0,0); break;
@@ -3438,11 +3473,12 @@ document.addEventListener("submit", async e => {
     for(let i = 0; i < 12; i++){ const n = (fd["n"+i]||"").trim(); if(!n) continue; const prev = old[i] && old[i].name ? old[i] : (old.find(m => m.name === n) || {});
       ms.push({...prev, name:n, email:(fd["e"+i]||"").trim().toLowerCase(), topic: fd["a"+i] ? (prev.topic || "donri-" + rand(22)) : ""}); }
     put("settings","family",{...settings(), members:ms, familyName:(fd.familyName||"").trim() || settings().familyName || ""}); toast("Family saved"); return; }
-  if(kind === "invite"){ const email = (fd.email||"").trim(); if(!email) return; const btn = f.querySelector("button[type=submit]"); btn.disabled = true;
-    try{ await graphJson(`/drives/${cfg.d}/items/${cfg.i}/invite`, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({recipients:[{email}], roles:["write"], requireSignIn:true, sendInvitation:true, message:"Our Donrí family file. Open the Donrí link I'm sending you and sign in with this email."})});
-      toast("Shared. Now send them the invite link.", 5000); }
-    catch(err){ toast(err.status === 403 ? "Only the person who set up Donrí can share the file." : "Couldn't share (" + (err.code || err.message) + ").", 6000); }
-    btn.disabled = false; return; }
+  if(kind === "invite"){ const email = (fd.email||"").trim().toLowerCase(), name = (fd.name||"").trim();
+    if(!name || !email || !email.includes("@")){ toast("Add their name and email"); return; }
+    const btn = f.querySelector("button[type=submit]"); btn.disabled = true; btn.textContent = "Inviting…";
+    try{ const r = await inviteMember(name, email); inviteSheet(name, email, r.link, r.viaLink); }
+    catch(err){ toast(err.status === 403 ? "Only the person who set up Donrí can invite people." : "Couldn't invite right now. Check your connection and try again.", 6000); }
+    btn.disabled = false; btn.textContent = "Invite"; return; }
   if(kind === "addEvent"){ const title = (fd.title||"").trim(); if(!title || !fd.date) return;
     const btn = f.querySelector("button[type=submit]"); btn.disabled = true;
     const r = await createEvent({title, date:fd.date, start:fd.start||"", end:fd.end||"", who:fd.who||"", outlook:!!fd.outlook});
@@ -3504,13 +3540,15 @@ document.addEventListener("change", e => {
   // Invite link: #join=...
   const h = location.hash || "";
   if(h.startsWith("#join=")){
-    try{ const j = decJoin(h.slice(6)); if(j.c && j.d && j.i){ if(cfg.d && cfg.d !== j.d){ D = null; etag = null; dirty = false; persist(); } cfg = {...cfg, c:j.c, d:j.d, i:j.i}; ls.set("donri.cfg", cfg); } }catch(e){ toast("That invite link looks incomplete."); }
+    try{ const j = decJoin(h.slice(6)); if(j.c && j.d && j.i){ if(cfg.d && cfg.d !== j.d){ D = null; etag = null; dirty = false; persist(); } cfg = {...cfg, c:j.c, d:j.d, i:j.i}; ls.set("donri.cfg", cfg); const rl = [j.s, j.p].filter(Boolean); if(rl.length) ls.set("donri.redeem", rl); } }catch(e){ toast("That invite link looks incomplete."); }
     history.replaceState(null, "", REDIRECT);
   }
   await handleRedirect();
   render();
   if(tok){
     if(!me) await loadMe();
+    const rl = ls.get("donri.redeem", []);
+    if(rl.length){ const left = []; for(const u of rl){ try{ await graphJson(`/shares/${shareId(u)}/driveItem`, {headers:{Prefer:"redeemSharingLink"}}); }catch(e){ left.push(u); } } if(left.length) ls.set("donri.redeem", left); else ls.del("donri.redeem"); }
     if(cfg.d){ await sync(true);
       if(!myName() && me){ const m = members().find(x => x.email && x.email === me.email); if(m) ls.set("donri.who", m.name); }
       render(); }
