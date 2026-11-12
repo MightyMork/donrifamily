@@ -9,7 +9,7 @@
 <link rel="icon" href="icons/favicon-64.png">
 <link rel="apple-touch-icon" href="icons/apple-180.png">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600&family=Andika:wght@400;700&family=Lilita+One&family=Patrick+Hand&display=swap">
 <style>
 :root{
   --bg:#FAF8F2; --card:#FFFFFF; --ink:#121B33; --muted:#575E70; --line:#E4E1D6;
@@ -328,6 +328,138 @@ body.gamefull #main{padding-top:6px!important}
 .lvl span{font-size:12px;min-height:14px}
 .lvl.locked{opacity:.45}
 @media (prefers-reduced-motion: reduce){.petbob,.actor .pet svg,.tbub{animation:none}}
+.st-book{max-width:760px}.st-page{position:relative;border-radius:22px;overflow:hidden;background:#FFF6E3;box-shadow:0 8px 24px rgba(18,27,51,.14);margin-top:10px;cursor:pointer}
+.st-art{display:block;width:100%;height:auto}.st-thumb{flex:none;width:120px;border-radius:14px;overflow:hidden}.st-thumb .st-art{width:120px}
+.st-nav{justify-content:space-between;gap:12px}.st-big{min-height:60px;min-width:72px;font-size:22px}
+/* ---------- STORIES: shelf, cover, Donnacha's reader ---------- */
+.kd-series{font-size:15px;font-weight:700;color:#2F7C78}
+.kd-soon{opacity:.75}.kd-soonpic{display:flex;align-items:center;justify-content:center;height:75px;background:#E9E2D2;color:#6B6B6B}
+.kd-cover{position:relative;border-radius:22px;overflow:hidden;margin-top:10px;box-shadow:0 8px 24px rgba(18,27,51,.18)}
+.kd-cover img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover}
+.kd-ctitle{position:absolute;left:4%;top:4%}
+.kd-cseries{font:clamp(15px,3.2vw,21px) 'Patrick Hand',cursive;color:#F6ECD6;text-shadow:0 1px 6px #0F1628}
+.kd-cname{font-family:'Lilita One',sans-serif;font-size:clamp(42px,12vw,84px);line-height:1;color:#EE7F3B;text-shadow:4px 4px 0 #0F1628;transform:rotate(-3deg);transform-origin:left}
+.kd-csub{display:inline-block;margin-top:8px;background:#1F2A44;color:#F6ECD6;border:2px solid #E3B23C;padding:2px 12px;font:clamp(16px,3.8vw,24px) 'Patrick Hand',cursive;transform:rotate(-1.5deg)}
+.kd-modes{display:grid;gap:12px;margin-top:10px}
+.kd-mode{display:grid;grid-template-columns:56px 1fr;column-gap:12px;text-align:left;align-items:center;padding:14px 16px;border-radius:20px;border:2px solid var(--line,#ddd);background:var(--card,#fff);color:var(--ink);cursor:pointer;min-height:76px;font:inherit}
+.kd-mode .kd-mi{grid-row:span 2;font-size:40px;text-align:center}.kd-mode b{font-size:22px}.kd-mode span:last-child{font-size:16px;color:var(--muted)}
+.kd-mode:disabled{opacity:.55;cursor:default}
+.kd-pic img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:20px;margin-top:10px;box-shadow:0 6px 18px rgba(18,27,51,.15)}
+.kd-hear{margin-top:12px;width:100%}
+.kd-turn{margin-top:14px;background:#FFF8E6;border:3px solid #F2C14E;border-radius:22px;padding:14px 16px 16px;color:#121B33}
+.kd-lbl{font-weight:700;font-size:16px;color:#B5652B}
+.kd-line{font-family:'Andika',sans-serif;font-size:clamp(28px,7.4vw,40px);line-height:1.7;letter-spacing:.04em;word-spacing:.22em;margin:6px 0 10px;color:#121B33}
+.kd-w{background:none;border:0;padding:0 3px;margin:0;font:inherit;color:inherit;letter-spacing:inherit;border-radius:10px;cursor:pointer;min-height:auto}
+.kd-w.on{background:#FFE08A;color:#121B33;box-shadow:0 0 0 3px #FFE08A}
+.kd-name{background:#F2C14E;color:#121B33;border:0;border-radius:12px;padding:2px 10px;font:inherit;cursor:pointer}
+button.kd-name:not(.kd-w){font-family:'Andika',sans-serif;font-size:22px;padding:8px 14px;min-height:48px}
+.kd-meet{display:grid;gap:12px}
+.kd-mcard{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:16px 18px;border-radius:20px;border:3px solid #F2C14E;background:#FFF8E6;cursor:pointer;text-align:left;color:#121B33;font:inherit}
+.kd-mword{font-family:'Andika',sans-serif;font-size:48px;line-height:1.2;letter-spacing:.04em}
+.kd-hl{color:#C8501A;text-decoration:underline;text-decoration-thickness:4px;text-underline-offset:6px}
+.kd-mtip{font-size:17px;color:#4A4A4A}
+.kd-choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:14px}
+.kd-choice{font-family:'Andika',sans-serif;font-size:40px;padding:18px 10px;border-radius:20px;border:3px solid #2F7C78;background:#fff;color:#121B33;cursor:pointer;min-height:90px;transition:transform .2s}
+.kd-choice.kd-yes{background:#C8F0D2;border-color:#1F6B3A;transform:scale(1.06)}
+.kd-wobble{animation:kdWob .45s}@keyframes kdWob{25%{transform:rotate(-3deg)}75%{transform:rotate(3deg)}}
+
+/* ---------- Grown-up reads: the full-screen picture book ---------- */
+body.bookopen{overflow:hidden}
+#book{position:fixed;inset:0;z-index:9000;background:#121826;display:flex;align-items:center;justify-content:center;user-select:none;-webkit-user-select:none}
+.bk-stage{position:relative;width:min(100vw,160vh);aspect-ratio:16/10;max-height:100vh;container-type:inline-size;perspective:2200px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.5)}
+.bk-page{position:absolute;inset:0;background:#F2E7D0;transform-origin:left center;backface-visibility:hidden;overflow:hidden}
+.bk-page img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.bk-leave{z-index:2;animation:bkLeave .6s cubic-bezier(.4,.1,.3,1) forwards;box-shadow:12px 0 40px rgba(0,0,0,.35)}
+@keyframes bkLeave{to{transform:rotateY(-100deg);filter:brightness(.55)}}
+.bk-arrive{z-index:2;animation:bkArrive .6s cubic-bezier(.4,.1,.3,1) both;box-shadow:12px 0 40px rgba(0,0,0,.35)}
+@keyframes bkArrive{from{transform:rotateY(-100deg);filter:brightness(.55)}to{transform:none;filter:none}}
+.bk-txt{position:absolute;font-family:'Patrick Hand',cursive;font-size:2.4cqw;line-height:1.28;letter-spacing:.01em}
+.bk-l{display:block}.bk-h{display:inline-block;white-space:nowrap;margin-right:.25em}
+.ink-dark{color:#1F2A44;text-shadow:0 0 .35em rgba(250,244,230,.95),0 0 .12em rgba(250,244,230,.9)}
+.ink-light{color:#F6ECD6;text-shadow:0 .06em .4em rgba(10,16,34,.95),0 0 .12em rgba(10,16,34,.9)}
+.bk-txt.ink-strip{color:#F6ECD6;background:#1F2A44;border:.14cqw solid #E3B23C;padding:.5em .8em .6em;box-shadow:.4cqw .4cqw 0 rgba(238,127,59,.5);transform:rotate(-.8deg);font-size:2.15cqw}
+.bk-stamp{font-family:'Lilita One',sans-serif;font-size:1.5em;line-height:1;display:inline-block;color:#EE7F3B;transform:rotate(-5deg);text-shadow:.06em .06em 0 #1F2A44;letter-spacing:.02em;padding:0 .05em}
+.bk-num{position:absolute;right:2.2%;bottom:2.4%;font-family:'Patrick Hand',cursive;font-size:1.9cqw}
+.bk-bar{position:absolute;bottom:8px;left:8px;display:flex;align-items:center;gap:8px;pointer-events:none;z-index:5}
+.bk-bar>*{pointer-events:auto}
+.bk-ic{width:44px;height:44px;border-radius:50%;border:none;background:rgba(18,24,38,.55);color:#fff;font-size:20px;cursor:pointer}
+.bk-pg{background:rgba(18,24,38,.55);color:#fff;border-radius:999px;padding:6px 14px;font:17px 'Patrick Hand',cursive}
+.bk-nav{position:absolute;top:50%;transform:translateY(-50%);width:52px;height:52px;border-radius:50%;border:none;background:rgba(18,24,38,.45);color:#fff;font-size:32px;line-height:1;cursor:pointer;z-index:5}
+.bk-nav.prev{left:8px}.bk-nav.next{right:8px}.bk-nav:disabled{opacity:.2}
+.bk-rotate{display:none;position:absolute;bottom:18px;left:0;right:0;text-align:center;color:#F2E7D0;font:20px 'Patrick Hand',cursive}
+@media (orientation:portrait){.bk-rotate{display:block}}
+.bk-endpage{background:#F2E7D0}
+.bk-end{position:absolute;inset:6% 7%;color:#1F2A44;font-family:'Patrick Hand',cursive;font-size:1.9cqw;display:flex;flex-direction:column;gap:2cqw}
+.bk-endt{font-family:'Lilita One',sans-serif;font-size:6cqw;color:#EE7F3B;text-shadow:.35cqw .35cqw 0 #1F2A44;transform:rotate(-3deg);text-align:center}
+.bk-endcols{display:grid;grid-template-columns:1fr 1fr;gap:3cqw}
+.bk-endcols b{font-family:'Lilita One',sans-serif;font-weight:400;font-size:2.4cqw;color:#2F7C78}
+.bk-endcols ul{margin:.5em 0 0;padding-left:1.1em}.bk-endcols li{margin-bottom:.4em}.bk-endcols p{margin:.5em 0 0}
+.bk-endbtns{display:flex;gap:1.5cqw;margin-top:2cqw;flex-wrap:wrap}
+.bk-btn{font:1.9cqw 'Patrick Hand',cursive;padding:.4em 1.1em;border-radius:999px;border:none;background:#1F2A44;color:#F6ECD6;box-shadow:.3cqw .3cqw 0 #EE7F3B;cursor:pointer;min-height:44px}
+.bk-btn.ghost{background:transparent;color:#1F2A44;border:2px solid #1F2A44;box-shadow:none}
+
+/* ---------- the title film ---------- */
+#sfilm{position:fixed;inset:0;z-index:9500;background:#F2E7D0;overflow:hidden}
+#sfilm .sf-skip{position:absolute;top:14px;right:14px;z-index:3;background:rgba(255,255,255,.9);color:#121B33;border-radius:999px;padding:8px 16px;font-weight:700}
+.sf-fit{position:absolute;left:50%;top:50%;width:1600px;height:1000px;transform-origin:center}
+.sfStage{position:absolute;inset:0;overflow:hidden;background:#F2E7D0;font-family:'Patrick Hand',cursive}
+.sf1{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;animation:sfOut .5s 3.5s forwards}
+.sfLogo{position:relative;font-family:'Lilita One',sans-serif;font-size:250px;line-height:1;letter-spacing:4px}
+.sfL{display:inline-block;transform:rotate(var(--r,0deg));animation:sfStamp .35s both}
+.sfFada{position:absolute;right:2px;top:-70px;width:62px;height:124px;transform-origin:20% 95%;animation:sfSwing .6s 1.35s both}
+.sfDot{position:absolute;right:52px;top:-86px;width:38px;height:38px;animation:sfBounce 1.2s 1.55s both cubic-bezier(.3,.1,.5,1)}
+.sfStripe{width:600px;height:48px;animation:sfWipe .7s 2s both}
+.sfPres{font-size:64px;color:#1F2A44;letter-spacing:3px;margin-top:6px;animation:sfIn .6s 2.45s both}
+.sf2{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;animation:sfIn .01s 4s forwards,sfOut .5s 6.2s forwards}
+.sfBadge{--r:-4deg;position:relative;width:470px;height:470px;border-radius:50%;background:#1F2A44;box-shadow:10px 10px 0 rgba(238,127,59,.45);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transform:rotate(-4deg);animation:sfStamp .4s 4s both}
+.sfBadge svg{position:absolute;inset:0;width:470px;height:470px}
+.sfRing{stroke-dasharray:1400;stroke-dashoffset:1400;animation:sfDraw 1.4s 4.3s forwards}
+.sfB1{font-size:40px;letter-spacing:16px;color:#F2E7D0;padding-left:16px;position:relative}
+.sfB2{font-family:'Lilita One',sans-serif;font-size:96px;line-height:1;color:#EE7F3B;text-shadow:5px 5px 0 #0F1628;position:relative}
+.sfB3{font-size:38px;color:#E3B23C;margin-top:6px;position:relative}
+.sf3{position:absolute;inset:0;overflow:hidden;background:#0F1628;animation:sfReveal 1.1s 6.5s both}
+.sfShk{position:absolute;inset:-12px;animation:sfShake .45s 9s both}
+.sfArt{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover;transform-origin:32% 72%;animation:sfZoom 3.6s 6.5s both cubic-bezier(.2,.7,.3,1)}
+.sfDim{position:absolute;inset:0;background:radial-gradient(ellipse at 28% 18%,rgba(10,16,34,.55) 0%,rgba(10,16,34,1) 70%);opacity:.3;animation:sfDimIn .8s 7.3s both,sfDimOut 1.6s 11.6s forwards}
+.sfRaysWrap{position:absolute;left:380px;top:140px;width:0;height:0;animation:sfIn 1.2s 7.8s both}
+.sfRays{position:absolute;left:-620px;top:-620px;width:1240px;height:1240px;border-radius:50%;background:repeating-conic-gradient(from 0deg,rgba(255,214,120,.22) 0deg 7deg,rgba(255,214,120,0) 7deg 20deg);-webkit-mask-image:radial-gradient(circle,#000 0%,rgba(0,0,0,.6) 30%,transparent 62%);mask-image:radial-gradient(circle,#000 0%,rgba(0,0,0,.6) 30%,transparent 62%);animation:sfSpin 40s linear infinite}
+.sfGlow{position:absolute;left:30px;top:-170px;width:700px;height:620px;border-radius:50%;background:radial-gradient(ellipse,rgba(255,220,140,.75) 0%,rgba(238,127,59,.35) 38%,rgba(238,127,59,0) 70%);animation:sfGlowIn 1s 7.7s both,sfPulse 2.4s 8.7s infinite}
+.sfKnot,.sfTrailSvg{position:absolute;left:0;top:0;width:1600px;height:1000px;pointer-events:none}
+.sfK{stroke-dasharray:2600;stroke-dashoffset:2600;animation:sfDraw 1.4s 7.8s forwards}
+.sfEmbers{position:absolute;left:60px;top:260px;width:700px;height:10px;animation:sfIn .8s 8.6s both}
+.sfEm{position:absolute;width:6px;height:6px;border-radius:50%;background:#FFD98A;box-shadow:0 0 8px #FFB347;animation:sfEmber 3.2s linear infinite}
+.sfShock{position:absolute;left:380px;top:130px;width:300px;height:300px;border-radius:50%;border:6px solid #FFE08A;box-shadow:0 0 30px rgba(255,214,120,.8);opacity:0;animation:sfShockA 1s 9s both}
+.sfTrailMask{stroke-dasharray:1400;stroke-dashoffset:1400;animation:sfDraw 1s 9.4s forwards}
+.sfBall{position:absolute;left:0;top:0;width:40px;height:40px;filter:drop-shadow(0 0 10px rgba(255,220,140,.9));offset-path:path("M1080,196 C900,300 500,265 -120,214");animation:sfFly 1s 9.4s both ease-in}
+.sfTtl{position:absolute;left:66px;top:34px;transform-origin:320px 90px;font-family:'Lilita One',sans-serif;font-size:184px;line-height:1;color:#EE7F3B;text-shadow:7px 7px 0 #0F1628,0 0 36px rgba(255,200,110,.65);letter-spacing:3px;white-space:nowrap;animation:sfSlam .4s 9s both}
+.sfT{display:inline-block;transform:rotate(var(--r,0deg));animation:sfRise .7s both}
+.sfSub{position:absolute;left:70px;top:300px;padding:6px 26px 10px;background:#1F2A44;border:3px solid #E3B23C;box-shadow:6px 6px 0 rgba(238,127,59,.55);transform:rotate(-1.5deg);font-size:50px;line-height:1.1;animation:sfUnfurl .7s 10.2s both cubic-bezier(.2,.8,.3,1)}
+.sfShine{background:linear-gradient(100deg,#F6ECD6 0%,#F6ECD6 38%,#FFE08A 46%,#FFFFFF 50%,#FFE08A 54%,#F6ECD6 62%,#F6ECD6 100%);background-size:300% 100%;background-position:0 0;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sfShineA 1.6s 10.9s both}
+.sfFoot{position:absolute;left:0;right:0;bottom:26px;text-align:center;font-size:28px;letter-spacing:3px;color:#F6ECD6;text-shadow:0 2px 8px rgba(15,22,40,.95);animation:sfIn .8s 11.4s both}
+.sfGrain{position:absolute;inset:0;pointer-events:none;mix-blend-mode:multiply;opacity:.18;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E")}
+@keyframes sfStamp{0%{transform:scale(1.9) rotate(var(--r,0deg));opacity:0}55%{transform:scale(.9) rotate(var(--r,0deg));opacity:1}75%{transform:scale(1.05) rotate(var(--r,0deg))}100%{transform:scale(1) rotate(var(--r,0deg));opacity:1}}
+@keyframes sfIn{from{opacity:0}to{opacity:1}}
+@keyframes sfOut{to{opacity:0;transform:translateY(-30px)}}
+@keyframes sfSwing{0%{transform:rotate(-80deg);opacity:0}60%{transform:rotate(12deg);opacity:1}100%{transform:rotate(0);opacity:1}}
+@keyframes sfBounce{0%{transform:translate(-40px,-420px)}45%{transform:translate(0,0)}60%{transform:translate(60px,-110px)}100%{transform:translate(900px,-700px)}}
+@keyframes sfWipe{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes sfReveal{from{clip-path:circle(0% at 40% 62%)}to{clip-path:circle(110% at 40% 62%)}}
+@keyframes sfZoom{from{transform:scale(1.55)}to{transform:scale(1)}}
+@keyframes sfDraw{to{stroke-dashoffset:0}}
+@keyframes sfFly{from{offset-distance:0%}to{offset-distance:100%}}
+@keyframes sfDimIn{from{opacity:0}to{opacity:.62}}
+@keyframes sfDimOut{from{opacity:.62}to{opacity:.3}}
+@keyframes sfGlowIn{from{transform:scale(.1);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes sfPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.08);opacity:.8}}
+@keyframes sfSpin{to{transform:rotate(360deg)}}
+@keyframes sfRise{0%{transform:translateY(90px) scale(.4) rotate(var(--r,0deg));opacity:0;filter:blur(10px) brightness(2.2)}70%{transform:translateY(-12px) scale(1.12) rotate(var(--r,0deg));opacity:1;filter:blur(0) brightness(1.5)}100%{transform:rotate(var(--r,0deg));opacity:1;filter:none}}
+@keyframes sfSlam{0%{transform:scale(1.18)}60%{transform:scale(.97)}100%{transform:scale(1)}}
+@keyframes sfShake{0%,100%{transform:none}20%{transform:translate(-9px,5px)}40%{transform:translate(8px,-6px)}60%{transform:translate(-5px,4px)}80%{transform:translate(4px,-2px)}}
+@keyframes sfShockA{from{transform:translate(-50%,-50%) scale(.2);opacity:1}to{transform:translate(-50%,-50%) scale(3.4);opacity:0}}
+@keyframes sfEmber{0%{transform:translateY(0) scale(1);opacity:0}15%{opacity:1}100%{transform:translateY(-360px) translateX(var(--dx,20px)) scale(.4);opacity:0}}
+@keyframes sfUnfurl{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(-20px -20px -20px -20px)}}
+@keyframes sfShineA{from{background-position:100% 0}to{background-position:0 0}}
+@media (prefers-reduced-motion:reduce){#sfilm *{animation-duration:.01s!important;animation-delay:0s!important}.bk-leave,.bk-arrive{animation:none}}
 </style>
 </head>
 <body>
@@ -1782,12 +1914,358 @@ function snackTap(W, x, y){
 let gameView = "hub", snackLevel = 0, snackLoopId = 0;
 const snackProg = () => doc("settings","snack") || {best:{}};
 function snackUnlockedCount(){ const b = snackProg().best || {}; let n = 1; while(b[n] !== undefined && n < SNACK_LEVELS.length) n++; return n; }
-function gamesView(kid, ctx){ petKid = kid || ""; if(gameView === "pet") return pPet(kid, ctx); if(gameView === "snack") return pSnack(kid); return gamesHub(kid); }
+// =====================================================================
+// STORIES: picture books (kid mode and kitchen display, from the games hub). Rulebook: DONRI_STORIES.md.
+// Reading is free: it never uses up playtime.
+// Three ways to read: Grown-up reads (full-screen landscape book, text set into the art like a real picture book),
+// I'll read it (Donnacha's learning version: words to meet, a short "My turn" line per page, a word game),
+// and Listen (Mark's own recording; coming soon).
+// Art: stories/<id>/pNN.jpg, 1600x1000, made in Meta AI and touched up by Claude. The app lays the text over the art.
+// =====================================================================
+const STORIES = [{
+  id:"setanta", series:"Irish Legends", book:1, title:"Setanta", sub:"The Boy Who Became the Hound", key:10,
+  dir:"stories/setanta/",
+  // lines: the grown-up rhyme. " / " marks where a line may wrap; *word* is a stamp (Text B).
+  // pos: [left %, top %, width %] of the text on the picture; ink: dark (navy on a light sky), light (cream on night), strip (cream on a navy ink strip, for busy pictures)
+  pages:[
+    {lines:["By the edge of the sea, / where the grey gulls cry,","lived a boy called Setanta, / with a spark in his eye.","He had one little hurl / and one sliotar too,","and he'd puck it so high / that it vanished in blue."], pos:[4,5,46], ink:"dark",
+     kid:"Setanta has a hurl. Setanta has a ball."},
+    {lines:["Every night by the fire, / as the turf glowed red,","his mam told him tales / as he snuggled in bed,","of King Conor up north / and his boys, brave and bright,","who could hurl like the wind / from the morning till night."], pos:[61,4,36], ink:"strip",
+     kid:"Mam tells a story. The boys play for the king."},
+    {lines:["“I’ll go too!” said Setanta. / His mam shook her head.","“You’re too small for that road, love. / Too little,” she said.","But Setanta just smiled. / “I’m small, but I’m strong,","and my hurl and my sliotar / will help me along.”"], pos:[3,3,40], ink:"strip",
+     kid:"“I want to go,” said Setanta. “You are too little,” said Mam."},
+    {lines:["So he set off at dawn / with a hop and a run.","He pucked up the sliotar. / It flew to the sun!","Then he flung up his hurl, / and he raced down the track,","and he caught them both (*CLICK!*) / without looking back."], pos:[5,5,62], ink:"dark",
+     kid:"Up went the ball. Up went the hurl. Setanta ran and ran."},
+    {lines:["At Emain, the boys / were all out on the green,","the biggest, the fastest / that ever were seen.","“Who’s this?” they all laughed. / “He’s as small as a mouse!","Go home, little fella. / Go back to your house!”"], pos:[3,4,31], ink:"strip",
+     kid:"“Go home!” said the big boys. “You are too little.”"},
+    {lines:["But Setanta just gripped / his small hurl in his hand.","He dodged and he darted. / He wove through the band.","He went under, then over, / then *WHACK!* In the goal!","And a cheer rose up, louder / than thunder could roll."], pos:[3,3,74], ink:"strip",
+     kid:"Setanta can run. Setanta can hit. In went the ball!"},
+    {lines:["King Conor came out, / and he stroked his long beard.","“Now THERE is a hurler!” / he said, and he cheered.","“Come and feast at Culann’s!” / “I’ll follow,” said Setanta. / “I’ll just finish this game.”","(Now that game, as you’ll see, / would soon give him a name.)"], pos:[4,6,30], ink:"dark",
+     kid:"“Come to the party,” said the king. “I will come,” said Setanta."},
+    {lines:["At the feast, Culann asked, / “Is there anyone more?”","And the king (who’d forgotten) / said, “No. Lock the door!”","So Culann unchained / his great hound in the yard,","the bravest, the biggest, / the best-ever guard."], pos:[3,4,34], ink:"strip",
+     kid:"Culann has a big dog. The big dog looks after the house."},
+    {lines:["Up the hill came Setanta, / still humming a tune,","with his hurl on his shoulder, / lit up by the moon.","Then *GRRRRR!* From the dark / came a shape, huge and grey!","It was charging and barking / and coming his way!"], pos:[4,5,52], ink:"light",
+     kid:"Here comes Setanta. Here comes the dog! Grrr!"},
+    {lines:["Now Setanta was scared, / but he stood his ground,","and he looked in the eyes / of that great grey hound.","“You’re not bad,” he said gently. / “You’re doing what’s right.","So *FETCH!*” And he pucked / the ball into the night."], pos:[3,4,35], ink:"strip",
+     kid:"Setanta did not run away. “Get the ball!” said Setanta."},
+    {lines:["Off went the hound / over ditches and drains,","over bog, over meadow, / through brambles and lanes,","then back with the sliotar / (*drip-drop*, all drool),","and he wagged and he licked / like a pup out of school."], pos:[2,3,30], ink:"strip",
+     kid:"The dog ran and ran. The dog got the ball. Lick, lick, lick!"},
+    {lines:["Out tumbled the king, / and Culann came too.","“My fierce guard’s a puppy! / Oh, what will I do?","Now who’ll mind my house / when the night’s dark and deep?”","“*I will*,” said Setanta, / “a promise I’ll keep.”"], pos:[2,3,46], ink:"strip",
+     kid:"“I will look after your house,” said Setanta."},
+    {lines:["So he guarded that house / every night, every day,","till a new pup was trained / (and the old one could play).","And they called him *Cú Chulainn*, / that’s “Culann’s Hound”,","the bravest, the kindest, / for miles around."], pos:[2,2,62], ink:"strip",
+     kid:"Setanta is the hound of Culann."}
+  ],
+  meet:[{w:"said", hl:"ai", tip:"The “ai” in said sounds like the e in red."},
+        {w:"little", hl:"le", tip:"The “le” at the end says “ul”."},
+        {w:"house", hl:"ou", tip:"The “ou” says “ow”, like when you bump your knee!"}],
+  names:["Setanta","Culann","King Conor","Emain","Cú Chulainn"],
+  game:["said","little","house","ball","dog","run","go","king"],
+  facts:["Hurling is a real game. Children in Ireland have played it for thousands of years.",
+         "Emain Macha is a real place. It’s called Navan Fort, near Armagh, and you can visit it.",
+         "Cú Chulainn means “Culann’s Hound”.",
+         "Setanta is a legend. People have been telling his story for over a thousand years."],
+  ask:"Setanta was scared, but he was kind to the hound. When have you been brave?",
+  cover:() => `<img class="st-art" src="stories/setanta/p10.jpg" alt="Setanta pucks his sliotar and the big shaggy hound looks up after it">`
+}];
+const STORIES_NEXT = [{title:"Fionn", sub:"and the Salmon of Knowledge"}];
+
+const ST_SPEAK = [[/Cú Chulainn/g,"Koo Hullin"],[/Culann/g,"Cullan"],[/Setanta/g,"Seh-tanta"],[/Emain/g,"Evvin"],[/sliotar/g,"slitter"],[/GRRRRR/g,"Grrrrr"],[/[*]/g,""]];
+const stSpeak = s => ST_SPEAK.reduce((a, [re, to]) => a.replace(re, to), s);
+const stImg = (st, n) => st.dir + "p" + String(n).padStart(2, "0") + ".jpg";
+const stRhyme = pg => pg.lines.join(" ").replace(/ \/ /g, " ");
+const stSoundOK = () => soundOn() || !activeBoy();
+
+// ---------- state ----------
+let storyId = "", storyMode = "", storyPage = -1, storyWord = -1, storyTimer = null, storyUtt = 0, storyFinished = false;
+let kdGame = null;
+const storyProg = () => doc("settings","stories") || {done:{}};
+const curStory = () => STORIES.find(s => s.id === storyId);
+function storyStop(){ clearTimeout(storyTimer); storyUtt++; try{ speechSynthesis.cancel(); }catch(e){} }
+
+// ---------- the shelf, the cover and Donnacha's reader (inside the app) ----------
+function pStory(kid){
+  const st = curStory();
+  if(!st){
+    const done = storyProg().done || {};
+    return `<div class="kid st-book"><div class="row"><button class="btn sm" data-act="petBack">‹ Back</button></div>
+      <div class="kidhi" style="margin-top:10px">Story time 📖</div><p>Pick a story. Reading doesn't use up your playtime!</p>
+      ${STORIES.map(s => `<button class="card row gamecard" data-act="storyOpen" data-v="${s.id}"><div class="st-thumb">${s.cover()}</div><div class="grow"><div class="kd-series">${esc(s.series)} · Book ${s.book}</div><b style="font-size:24px">${esc(s.title)}</b><div class="muted" style="font-size:17px">${esc(s.sub)}</div>${done[s.id] ? '<div class="pill ok" style="margin-top:6px">⭐ Read it!</div>' : ''}</div></button>`).join("")}
+      ${STORIES_NEXT.map(s => `<div class="card row gamecard kd-soon"><div class="st-thumb kd-soonpic" aria-hidden="true">${I.lock}</div><div class="grow"><div class="kd-series">Coming soon</div><b style="font-size:22px">${esc(s.title)}</b><div class="muted" style="font-size:17px">${esc(s.sub)}</div></div></div>`).join("")}</div>`;
+  }
+  if(storyMode !== "kid") return storyCover(st);
+  if(storyPage === -1) return kdMeet(st);
+  if(storyPage >= st.pages.length && kdGame && !kdGame.over) return kdGameView(st);
+  if(storyPage >= st.pages.length) return kdEnd(st);
+  const pg = st.pages[storyPage], n = st.pages.length;
+  return `<div class="kid st-book"><div class="row"><button class="btn sm" data-act="storyCoverBack">‹ Story</button><span class="grow"></span><span class="pill info" style="font-size:16px">Page ${storyPage + 1} of ${n}</span></div>
+    <div class="kd-pic"><img src="${stImg(st, storyPage + 1)}" alt="Picture for page ${storyPage + 1}"></div>
+    ${speechOn() ? `<button class="btn st-big kd-hear" data-act="kdHearPage">🔊 Hear the story</button>` : ''}
+    <div class="kd-turn"><div class="kd-lbl">My turn</div><p class="kd-line">${kdTokens(st, pg.kid)}</p>
+      ${speechOn() ? `<button class="btn sm" data-act="kdHearLine" aria-label="Read my line to me">🔊 Read it with me</button>` : ''}</div>
+    <div class="row st-nav"><button class="btn st-big" data-act="kdTurn" data-v="-1" ${storyPage === 0 ? 'disabled' : ''} aria-label="Back a page">‹</button>
+      <button class="btn primary st-big" data-act="kdTurn" data-v="1" aria-label="Next page">${storyPage === n - 1 ? 'Word hunt 🔍' : '›'}</button></div></div>`;
+}
+function storyCover(st){
+  const done = (storyProg().done || {})[st.id];
+  return `<div class="kid st-book"><div class="row"><button class="btn sm" data-act="storyShelf">‹ Stories</button><span class="grow"></span><button class="btn sm" data-act="storyFilm">🎬 Watch the start</button></div>
+    <div class="kd-cover"><img src="${stImg(st, st.key)}" alt="">
+      <div class="kd-ctitle"><div class="kd-cseries">${esc(st.series)} · Book ${st.book}</div><div class="kd-cname">${esc(st.title)}</div><div class="kd-csub">${esc(st.sub)}</div></div></div>
+    ${done ? '<div class="pill ok" style="margin:10px 0 0">⭐ You read this one!</div>' : ''}
+    <div class="kidhi" style="margin-top:14px">How shall we read?</div>
+    <div class="kd-modes">
+      <button class="kd-mode" data-act="bookOpen"><span class="kd-mi" aria-hidden="true">📖</span><b>Grown-up reads</b><span>A big picture book. Turn your phone sideways.</span></button>
+      <button class="kd-mode" data-act="kdStart"><span class="kd-mi" aria-hidden="true">⭐</span><b>I’ll read it</b><span>My turn on every page, then a word hunt.</span></button>
+      <button class="kd-mode" disabled aria-disabled="true"><span class="kd-mi" aria-hidden="true">🎧</span><b>Listen</b><span>Dad’s reading it. Coming soon!</span></button>
+    </div></div>`;
+}
+function kdMeet(st){
+  return `<div class="kid st-book"><div class="row"><button class="btn sm" data-act="storyCoverBack">‹ Story</button></div>
+    <div class="kidhi" style="margin-top:10px">Words to meet 👋</div><p style="font-size:19px">These words are in the story. Tap one to hear it.</p>
+    <div class="kd-meet">${st.meet.map(m => { const i = m.w.indexOf(m.hl); const html = i < 0 ? esc(m.w) : esc(m.w.slice(0,i)) + `<span class="kd-hl">${esc(m.hl)}</span>` + esc(m.w.slice(i + m.hl.length));
+      return `<button class="kd-mcard" data-act="kdSay" data-v="${esc(m.w)}"><span class="kd-mword">${html}</span><span class="kd-mtip">${esc(m.tip)}</span></button>`; }).join("")}</div>
+    <p style="font-size:19px;margin-top:14px">Some names are tricky. Gold names say themselves when you tap them:</p>
+    <div class="row wrap" style="gap:10px">${st.names.map(n => `<button class="kd-name" data-act="kdSay" data-v="${esc(n)}">${esc(n)}</button>`).join("")}</div>
+    <div class="row" style="margin-top:18px"><span class="grow"></span><button class="btn primary st-big" data-act="kdTurn" data-v="1">Start the story ›</button></div></div>`;
+}
+// Donnacha's line: every word is a button that says itself; names are gold tags
+function kdTokens(st, line){
+  const names = st.names.slice().sort((a,b) => b.length - a.length);
+  const out = []; let rest = line, wi = 0;
+  while(rest.length){
+    const sp = rest.match(/^\s+/); if(sp){ out.push(" "); rest = rest.slice(sp[0].length); continue; }
+    const nm = names.find(n => rest.replace(/^[“"(]+/, "").startsWith(n));
+    if(nm){ const lead = rest.match(/^[“"(]*/)[0]; const after = rest.slice(lead.length + nm.length).match(/^[^\s]*/)[0];
+      out.push(`${esc(lead)}<button class="kd-name kd-w ${wi === storyWord ? 'on' : ''}" data-act="kdSay" data-v="${esc(nm)}" data-i="${wi}">${esc(nm)}</button>${esc(after)}`); wi++;
+      rest = rest.slice(lead.length + nm.length + after.length); continue; }
+    const w = rest.match(/^[^\s]+/)[0]; const core = w.replace(/^[“"(]+|[”".,!?)]+$/g, "");
+    const lead = w.slice(0, w.indexOf(core)), tail = w.slice(w.indexOf(core) + core.length);
+    out.push(`${esc(lead)}<button class="kd-w ${wi === storyWord ? 'on' : ''}" data-act="kdSay" data-v="${esc(core)}" data-i="${wi}">${esc(core)}</button>${esc(tail)}`); wi++;
+    rest = rest.slice(w.length);
+  }
+  return out.join("");
+}
+function kdReadLine(){
+  const st = curStory(); if(!st || storyPage < 0) return; const pg = st.pages[storyPage]; if(!pg) return;
+  storyStop(); if(!speechOn()) return; const my = ++storyUtt;
+  const btns = [...document.querySelectorAll(".kd-line .kd-w")];
+  const light = i => { if(my !== storyUtt) return; storyWord = i; btns.forEach((b,k) => b.classList.toggle("on", k === i)); };
+  // read slowly, one word at a time, so he can follow with his finger
+  let i = 0; const step = () => { if(my !== storyUtt) return; if(i >= btns.length){ light(-1); return; } light(i); say(stSpeak(btns[i].dataset.v)); const len = btns[i].dataset.v.length; i++; storyTimer = setTimeout(step, 520 + len * 70); };
+  step();
+}
+function kdTurn(d){
+  const st = curStory(); if(!st) return; storyStop(); storyWord = -1;
+  const n = st.pages.length;
+  storyPage = Math.max(-1, Math.min(n, storyPage + d));
+  if(storyPage === n && !kdGame){ kdGameStart(st); }
+  render(); window.scrollTo(0,0); sfx && sfx("page");
+}
+// ---------- word hunt: hear a word, find it. Never marks him wrong. ----------
+function kdGameStart(st){
+  const pool = st.game.slice().sort(() => Math.random() - .5);
+  kdGame = {round:0, rounds:5, order:pool.slice(0,5), pool:st.game, choices:[], found:0, over:false, nudge:""};
+  kdGameRound();
+}
+function kdGameRound(){
+  const g = kdGame; const t = g.order[g.round];
+  const others = g.pool.filter(w => w !== t).sort(() => Math.random() - .5).slice(0,2);
+  g.choices = [t, ...others].sort(() => Math.random() - .5); g.nudge = "";
+  setTimeout(() => { if(kdGame === g && !g.over) say("Find the word: " + t); }, 500);
+}
+function kdGameView(st){
+  const g = kdGame; const t = g.order[g.round];
+  return `<div class="kid st-book"><div class="row"><button class="btn sm" data-act="storyCoverBack">‹ Story</button><span class="grow"></span><span class="pill info" style="font-size:16px">${"⭐".repeat(g.found)}${"☆".repeat(g.rounds - g.found)}</span></div>
+    <div class="kidhi" style="margin-top:10px">Word hunt 🔍</div><p style="font-size:20px">Listen, then tap the word.</p>
+    ${speechOn() ? `<button class="btn primary st-big kd-hear" data-act="kdSay" data-v="${esc(t)}">🔊 Hear the word</button>` : `<p class="kd-line">${esc(t)}</p>`}
+    <div class="kd-choices">${g.choices.map(c => `<button class="kd-choice ${g.nudge === c ? 'kd-wobble' : ''}" data-act="kdPick" data-v="${esc(c)}">${esc(c)}</button>`).join("")}</div>
+    <p class="muted" style="font-size:17px;min-height:26px">${g.nudge ? "Nearly! Have another listen." : ""}</p></div>`;
+}
+function kdPick(w){
+  const g = kdGame; if(!g || g.over || g.busy) return; const t = g.order[g.round];
+  if(w === t){
+    g.found++; g.busy = true; sfx && sfx("right"); say("Yes! That says " + t + ".");
+    const b = [...document.querySelectorAll(".kd-choice")].find(x => x.dataset.v === w); if(b) b.classList.add("kd-yes");
+    setTimeout(() => { g.busy = false; g.round++; if(g.round >= g.rounds){ g.over = true; storyFinish(curStory()); } else { kdGameRound(); render(); } }, 1400);
+  } else {
+    g.nudge = w; sfx && sfx("pop"); say("Nearly! Listen again. " + t); render();
+  }
+}
+function kdEnd(st){
+  return `<div class="kid st-book"><div class="row"><button class="btn sm" data-act="storyShelf">‹ Stories</button></div>
+    <div class="kidhi" style="margin-top:10px;text-align:center">You read the whole story! ⭐</div>
+    ${kdGame ? `<p style="text-align:center;font-size:20px">You found ${kdGame.found} words in the word hunt.</p>` : ''}
+    ${storyEndBits(st)}
+    <div class="row wrap" style="justify-content:center;gap:12px"><button class="btn primary st-big" data-act="kdStart">Read it again</button><button class="btn st-big" data-act="storyShelf">Pick another story</button></div></div>`;
+}
+function storyEndBits(st){
+  return `<div class="card"><b style="font-size:20px">Real or legend?</b>${st.facts.map(f => `<div class="row" style="gap:8px;margin-top:8px"><span class="grow" style="font-size:18px">${esc(f)}</span>${speechOn() ? `<button class="btn sm" data-act="kdSay" data-v="${esc(f)}" aria-label="Read this to me">🔊</button>` : ''}</div>`).join("")}</div>
+    <div class="card"><b style="font-size:20px">What would you do?</b><p style="font-size:19px;margin:6px 0 0">${esc(st.ask)}</p><p class="muted" style="font-size:16px;margin:6px 0 0">Talk about it with a grown-up.</p></div>`;
+}
+function storyFinish(st){
+  if(!st) return; const prog = storyProg(); const first = !(prog.done || {})[st.id];
+  put("settings","stories",{...prog, done:{...(prog.done||{}), [st.id]:true}, reads:{...(prog.reads||{}), [st.id]:((prog.reads||{})[st.id]||0) + 1}});
+  if(first){ const p = typeof pet === "function" ? pet() : null; if(p){ petQuiet = true; patch("settings", petDocId(petKid), {hearts:(Number(p.hearts)||0) + 2}); petQuiet = false; } }
+  log(`${petKid || "Someone"} read ${st.title}`); render(); window.scrollTo(0,0); sfx && sfx("win");
+  say(first ? "You read the whole story! Well done!" + (pet() ? " Your pet got two hearts." : "") : "You read the whole story again! Well done!");
+}
+
+// ---------- Grown-up reads: a full-screen landscape picture book ----------
+let bookPage = 0, bookBusy = false, bookTouch = null;
+function bookPageHTML(st, i, cls){
+  if(i >= st.pages.length){
+    return `<div class="bk-page bk-endpage ${cls||''}"><div class="bk-end">
+      <div class="bk-endt">The End</div>
+      <div class="bk-endcols"><div><b>Real or legend?</b><ul>${st.facts.map(f => `<li>${esc(f)}</li>`).join("")}</ul></div>
+      <div><b>What would you do?</b><p>${esc(st.ask)}</p><div class="bk-endbtns"><button class="bk-btn" data-act="bookAgain">Read it again</button><button class="bk-btn ghost" data-act="bookClose">Close the book</button></div></div></div></div></div>`;
+  }
+  const pg = st.pages[i], [l, t, w] = pg.pos;
+  const line = s => s.split(" / ").map(h => `<span class="bk-h">${esc(h).replace(/\*([^*]+)\*/g, '<span class="bk-stamp">$1</span>')}</span>`).join(" ");
+  return `<div class="bk-page ${cls||''}"><img src="${stImg(st, i + 1)}" alt="Picture for page ${i + 1}">
+    <div class="bk-txt ink-${pg.ink}" style="left:${l}%;top:${t}%;width:${w}%">${pg.lines.map(s => `<span class="bk-l">${line(s)}</span>`).join("")}</div>
+    <div class="bk-num ink-${pg.ink === 'dark' ? 'dark' : 'light'}">${i + 1}</div></div>`;
+}
+function bookOpen(){
+  const st = curStory(); if(!st) return; storyStop(); bookPage = 0; storyFinished = false;
+  const el = document.createElement("div"); el.id = "book"; el.setAttribute("role","dialog"); el.setAttribute("aria-label", st.title + ", a picture book");
+  el.innerHTML = `<div class="bk-stage" id="bkStage">${bookPageHTML(st, 0)}</div>
+    <div class="bk-bar"><button class="bk-ic" data-act="bookClose" aria-label="Close the book">✕</button><button class="bk-ic" data-act="bookFilm" aria-label="Watch the start">🎬</button></div>
+    <button class="bk-nav prev" data-act="bookTurn" data-v="-1" aria-label="Previous page">‹</button>
+    <button class="bk-nav next" data-act="bookTurn" data-v="1" aria-label="Next page">›</button>
+    <div class="bk-rotate" aria-hidden="true">↻ Turn sideways for a bigger book</div>`;
+  document.body.appendChild(el); document.body.classList.add("bookopen");
+  try{ const p = el.requestFullscreen ? el.requestFullscreen() : null; if(p && p.then) p.then(() => { try{ screen.orientation.lock("landscape").catch(() => {}); }catch(e){} }).catch(() => {}); }catch(e){}
+  el.addEventListener("touchstart", e => { const t = e.touches[0]; bookTouch = {x:t.clientX, y:t.clientY}; }, {passive:true});
+  el.addEventListener("touchend", e => { if(!bookTouch) return; const t = e.changedTouches[0], dx = t.clientX - bookTouch.x, dy = t.clientY - bookTouch.y; bookTouch = null; if(Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) bookTurn(dx < 0 ? 1 : -1); }, {passive:true});
+  bookNavState(st);
+}
+function bookNavState(st){
+  const el = document.getElementById("book"); if(!el) return; const n = st.pages.length;
+  el.querySelector(".bk-nav.prev").disabled = bookPage === 0; el.querySelector(".bk-nav.next").style.visibility = bookPage >= n ? "hidden" : "visible";
+  
+}
+function bookTurn(d){
+  const st = curStory(), stage = document.getElementById("bkStage"); if(!st || !stage || bookBusy) return;
+  const n = st.pages.length, to = bookPage + d; if(to < 0 || to > n) return;
+  bookBusy = true; const from = bookPage; bookPage = to;
+  if(d > 0){ stage.innerHTML = bookPageHTML(st, to) + bookPageHTML(st, from, "bk-leave"); }
+  else { stage.innerHTML = bookPageHTML(st, from) + bookPageHTML(st, to, "bk-arrive"); }
+  if(soundOn()) sfx("page"); else if(!activeBoy()){ try{ SFX.page(); }catch(e){} }
+  setTimeout(() => { stage.innerHTML = bookPageHTML(st, bookPage); bookBusy = false; }, 620);
+  bookNavState(st);
+  if(to === n && !storyFinished){ storyFinished = true; setTimeout(() => storyFinish(st), 700); }
+}
+function bookClose(){
+  const el = document.getElementById("book"); if(el) el.remove(); document.body.classList.remove("bookopen");
+  try{ if(document.fullscreenElement) document.exitFullscreen(); }catch(e){} try{ screen.orientation.unlock(); }catch(e){}
+  render();
+}
+document.addEventListener("keydown", e => { if(!document.getElementById("book") || document.getElementById("sfilm")) return; if(e.key === "ArrowRight") bookTurn(1); if(e.key === "ArrowLeft") bookTurn(-1); if(e.key === "Escape") bookClose(); });
+
+// ---------- the title film: "donrí presents", the series badge, then the mythical title reveal ----------
+let sfilmT = null, sfilmAC = null;
+function storyFilm(after){
+  const st = curStory(); if(!st) return; storyStop(); storyFilmEnd(true);
+  const el = document.createElement("div"); el.id = "sfilm"; el.setAttribute("role","dialog"); el.setAttribute("aria-label", "Donrí presents " + st.series + ": " + st.title);
+  const T = [...st.title].map((c,i) => `<span class="sfT" style="--r:${[-5,3,-2,4,-4,2,-3][i % 7]}deg;animation-delay:${(8 + i * .12).toFixed(2)}s">${esc(c)}</span>`).join("");
+  const embers = Array.from({length:10}, (_, i) => `<span class="sfEm" style="left:${20 + i * 70}px;--dx:${[30,-20,15,-35,25,-10,40,-25,10,-30][i]}px;animation-delay:${[0,.7,1.4,.3,2.1,1,2.6,.5,1.8,1.2][i]}s"></span>`).join("");
+  el.innerHTML = `<div class="sf-fit"><div class="sfStage">
+    <div class="sf1"><div class="sfLogo">
+      <span class="sfL" style="color:#1F2A44;--r:-6deg;text-shadow:7px 6px 0 rgba(238,127,59,.35);animation-delay:.3s">d</span><span class="sfL" style="color:#2F7C78;--r:4deg;text-shadow:7px 6px 0 rgba(229,154,151,.45);animation-delay:.5s">o</span><span class="sfL" style="color:#EE7F3B;--r:-3deg;text-shadow:7px 6px 0 rgba(47,124,120,.3);animation-delay:.7s">n</span><span class="sfL" style="color:#E58F8B;--r:5deg;text-shadow:7px 6px 0 rgba(31,42,68,.25);animation-delay:.9s">r</span><span class="sfL" style="color:#1F2A44;--r:-2deg;text-shadow:7px 6px 0 rgba(238,127,59,.35);animation-delay:1.1s">ı</span>
+      <svg class="sfFada" viewBox="0 0 60 120" aria-hidden="true"><g transform="rotate(28 30 60)"><rect x="25" y="34" width="10" height="84" rx="5" fill="#C99A5B" stroke="#1F2A44" stroke-width="3"/><rect x="24" y="62" width="12" height="14" fill="#1F2A44"/><path d="M14,40 C10,18 16,4 30,2 C46,2 52,18 46,40 C40,46 20,46 14,40Z" fill="#E3B23C" stroke="#1F2A44" stroke-width="3"/></g></svg>
+      <svg class="sfDot" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="17" fill="#F2E2BE" stroke="#1F2A44" stroke-width="3"/><path d="M5,18 C12,24 28,24 35,18 M5,23 C12,29 28,29 35,23" fill="none" stroke="#1F2A44" stroke-width="2"/></svg></div>
+      <svg class="sfStripe" viewBox="0 0 600 48" aria-hidden="true"><path d="M4,6 L596,3 L594,13 L6,14Z" fill="#1F6B3A"/><path d="M6,16 L594,15 L596,25 L4,26Z" fill="#E3B23C"/><path d="M4,28 L596,27 L594,37 L6,38Z" fill="#F2E28B"/><path d="M6,40 L594,39 L596,47 L4,47Z" fill="#2A4C8C"/></svg>
+      <div class="sfPres">presents</div></div>
+    <div class="sf2"><div class="sfBadge"><svg viewBox="0 0 470 470" aria-hidden="true"><circle class="sfRing" cx="235" cy="235" r="210" fill="none" stroke="#F2E7D0" stroke-width="5"/><circle class="sfRing" cx="235" cy="235" r="194" fill="none" stroke="#E3B23C" stroke-width="3" stroke-dasharray="2 9"/></svg>
+      <div class="sfB1">${esc(st.series.split(" ")[0].toUpperCase())}</div><div class="sfB2">${esc(st.series.split(" ").slice(1).join(" "))}</div><div class="sfB3">Book ${["One","Two","Three","Four","Five","Six"][st.book - 1] || st.book}</div></div></div>
+    <div class="sf3"><div class="sfShk"><img class="sfArt" src="${stImg(st, st.key)}" alt=""><div class="sfDim"></div></div>
+      <div class="sfRaysWrap"><div class="sfRays"></div></div><div class="sfGlow"></div>
+      <svg class="sfKnot" viewBox="0 0 1600 1000" aria-hidden="true"><g fill="none" stroke="#E3B23C" stroke-linecap="round" opacity=".85"><circle class="sfK" cx="380" cy="140" r="250" stroke-width="4"/><circle class="sfK" cx="380" cy="140" r="266" stroke-width="2" stroke-dasharray="3 12"/><path class="sfK" stroke-width="5" d="M380,140 m0,-150 a75,75 0 1,1 -6,0 a50,50 0 1,0 -60,40 M380,140 m130,75 a75,75 0 1,1 3,-5 a50,50 0 1,0 -5,-72 M380,140 m-130,75 a75,75 0 1,1 4,4 a50,50 0 1,0 64,32"/></g></svg>
+      <div class="sfEmbers">${embers}</div><div class="sfShock"></div>
+      <svg class="sfTrailSvg" viewBox="0 0 1600 1000" aria-hidden="true"><defs><mask id="sfTM"><path class="sfTrailMask" d="M1080,196 C900,300 500,265 -120,214" fill="none" stroke="#fff" stroke-width="20"/></mask></defs><path mask="url(#sfTM)" d="M1080,196 C900,300 500,265 -120,214" fill="none" stroke="#FFE7A8" stroke-width="6" stroke-linecap="round" stroke-dasharray="4 14"/></svg>
+      <svg class="sfBall" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="17" fill="#F2E2BE" stroke="#16203A" stroke-width="3"/><path d="M5,18 C12,24 28,24 35,18 M5,23 C12,29 28,29 35,23" fill="none" stroke="#16203A" stroke-width="2"/></svg>
+      <div class="sfTtl">${T}</div>
+      <div class="sfSub"><span class="sfShine">${esc(st.sub)}</span></div>
+      <div class="sfFoot">donrí presents · ${esc(st.series)} · Book ${["One","Two","Three","Four","Five","Six"][st.book - 1] || st.book}</div></div>
+    <div class="sfGrain"></div></div></div>
+    <button class="ibtn sf-skip" data-act="sfilmEnd">Skip</button>`;
+  el.dataset.after = after || "";
+  document.body.appendChild(el);
+  const fit = () => { const s = Math.min(innerWidth / 1600, innerHeight / 1000); const f = el.querySelector(".sf-fit"); if(f) f.style.transform = `translate(-50%,-50%) scale(${s})`; };
+  fit(); el._fit = fit; addEventListener("resize", fit);
+  requestAnimationFrame(() => el.classList.add("go"));
+  if(stSoundOK()) storyFilmMusic();
+  clearTimeout(sfilmT); sfilmT = setTimeout(() => storyFilmEnd(), 14600);
+  setTimeout(() => { const b = el.querySelector(".sf-skip"); if(b) b.focus(); }, 50);
+}
+function storyFilmEnd(quiet){
+  clearTimeout(sfilmT); const el = document.getElementById("sfilm"); if(!el) return;
+  if(el._fit) removeEventListener("resize", el._fit); const after = el.dataset.after; el.remove();
+  try{ if(sfilmAC){ const a = sfilmAC; sfilmAC = null; a.close(); } }catch(e){}
+  const st = curStory(); if(st){ const pr = storyProg(); if(!(pr.seen||{})[st.id]) put("settings","stories",{...pr, seen:{...(pr.seen||{}), [st.id]:true}}); }
+  if(!quiet && after === "book") bookOpen();
+}
+// The series music: an original tin-whistle jig in D with harp and bodhrán, then a roll, a boom and a heroic tune. Made by the app.
+function storyFilmMusic(){
+  const AC = window.AudioContext || window.webkitAudioContext; if(!AC) return; let ac; try{ ac = new AC(); }catch(e){ return; } sfilmAC = ac;
+  const out = ac.createGain(); out.gain.value = 0.6; out.connect(ac.destination);
+  const dl = ac.createDelay(); dl.delayTime.value = 0.22; const fb = ac.createGain(); fb.gain.value = 0.32;
+  const lp = ac.createBiquadFilter(); lp.frequency.value = 2600; dl.connect(lp); lp.connect(fb); fb.connect(dl); lp.connect(out);
+  const f = m => 440 * Math.pow(2, (m - 69) / 12); const t0 = ac.currentTime + 0.08;
+  const noise = d => { const b = ac.createBuffer(1, Math.max(1, ac.sampleRate * d), ac.sampleRate); const c = b.getChannelData(0); for(let i = 0; i < c.length; i++) c[i] = Math.random() * 2 - 1; const s = ac.createBufferSource(); s.buffer = b; return s; };
+  const whistle = (m, t, d, g, vib) => { const o = ac.createOscillator(); o.type = 'sine'; o.frequency.value = f(m); const o2 = ac.createOscillator(); o2.type = 'triangle'; o2.frequency.value = f(m); const v = ac.createOscillator(); v.frequency.value = 5.5; const vg = ac.createGain(); vg.gain.value = f(m) * (vib || 0.007); v.connect(vg); vg.connect(o.frequency); vg.connect(o2.frequency); const e = ac.createGain(); e.gain.setValueAtTime(0, t0 + t); e.gain.linearRampToValueAtTime(g, t0 + t + 0.02); e.gain.setValueAtTime(g * 0.85, t0 + t + d * 0.7); e.gain.linearRampToValueAtTime(0, t0 + t + d); const m2 = ac.createGain(); m2.gain.value = 0.35; o.connect(e); o2.connect(m2); m2.connect(e); e.connect(out); e.connect(dl); [o, o2, v].forEach(x => { x.start(t0 + t); x.stop(t0 + t + d + 0.05); }); const ch = noise(0.04); const hp = ac.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 3000; const ng = ac.createGain(); ng.gain.setValueAtTime(g * 0.25, t0 + t); ng.gain.linearRampToValueAtTime(0, t0 + t + 0.04); ch.connect(hp); hp.connect(ng); ng.connect(out); ch.start(t0 + t); };
+  const pluck = (m, t, d, g) => { const o = ac.createOscillator(); o.type = 'triangle'; o.frequency.value = f(m); const e = ac.createGain(); e.gain.setValueAtTime(0, t0 + t); e.gain.linearRampToValueAtTime(g, t0 + t + 0.006); e.gain.exponentialRampToValueAtTime(0.0006, t0 + t + d); o.connect(e); e.connect(out); e.connect(dl); o.start(t0 + t); o.stop(t0 + t + d + 0.05); };
+  const bell = (m, t, g) => { [1, 2.76, 5.4].forEach((h, i) => { const o = ac.createOscillator(); o.type = 'sine'; o.frequency.value = f(m) * h; const e = ac.createGain(); e.gain.setValueAtTime(0, t0 + t); e.gain.linearRampToValueAtTime(g / (i + 1), t0 + t + 0.004); e.gain.exponentialRampToValueAtTime(0.0006, t0 + t + 2.4 / (i + 1)); o.connect(e); e.connect(out); e.connect(dl); o.start(t0 + t); o.stop(t0 + t + 2.6); }); };
+  const drum = (t, g, low) => { const o = ac.createOscillator(); o.type = 'sine'; o.frequency.setValueAtTime(low ? 95 : 140, t0 + t); o.frequency.exponentialRampToValueAtTime(low ? 42 : 70, t0 + t + 0.18); const e = ac.createGain(); e.gain.setValueAtTime(g, t0 + t); e.gain.exponentialRampToValueAtTime(0.001, t0 + t + 0.3); o.connect(e); e.connect(out); o.start(t0 + t); o.stop(t0 + t + 0.32); const n = noise(0.05); const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 900; const ng = ac.createGain(); ng.gain.setValueAtTime(g * 0.35, t0 + t); ng.gain.exponentialRampToValueAtTime(0.001, t0 + t + 0.05); n.connect(bp); bp.connect(ng); ng.connect(out); n.start(t0 + t); };
+  const stamp = t => { drum(t, 0.7, true); const n = noise(0.08); const lo = ac.createBiquadFilter(); lo.type = 'lowpass'; lo.frequency.value = 400; const g = ac.createGain(); g.gain.setValueAtTime(0.5, t0 + t); g.gain.exponentialRampToValueAtTime(0.001, t0 + t + 0.08); n.connect(lo); lo.connect(g); g.connect(out); n.start(t0 + t); };
+  const boing = t => { const o = ac.createOscillator(); o.type = 'sine'; o.frequency.setValueAtTime(260, t0 + t); o.frequency.exponentialRampToValueAtTime(880, t0 + t + 0.25); const e = ac.createGain(); e.gain.setValueAtTime(0.25, t0 + t); e.gain.exponentialRampToValueAtTime(0.001, t0 + t + 0.4); o.connect(e); e.connect(out); o.start(t0 + t); o.stop(t0 + t + 0.42); };
+  const whoosh = (t, d) => { const s = noise(d); const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 1.5; bp.frequency.setValueAtTime(500, t0 + t); bp.frequency.exponentialRampToValueAtTime(3500, t0 + t + d); const e = ac.createGain(); e.gain.setValueAtTime(0, t0 + t); e.gain.linearRampToValueAtTime(0.3, t0 + t + d * 0.5); e.gain.linearRampToValueAtTime(0, t0 + t + d); s.connect(bp); bp.connect(e); e.connect(out); s.start(t0 + t); };
+  const boom = t => { const o = ac.createOscillator(); o.type = 'sine'; o.frequency.setValueAtTime(70, t0 + t); o.frequency.exponentialRampToValueAtTime(28, t0 + t + 1.2); const e = ac.createGain(); e.gain.setValueAtTime(1.0, t0 + t); e.gain.exponentialRampToValueAtTime(0.001, t0 + t + 1.6); o.connect(e); e.connect(out); o.start(t0 + t); o.stop(t0 + t + 1.7); const n = noise(1.8); const hp = ac.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 2500; const ng = ac.createGain(); ng.gain.setValueAtTime(0.28, t0 + t); ng.gain.exponentialRampToValueAtTime(0.001, t0 + t + 1.8); n.connect(hp); hp.connect(ng); ng.connect(out); ng.connect(dl); n.start(t0 + t); };
+  const drone = (t, d, g) => [38, 45, 50].forEach(m => { const o = ac.createOscillator(); o.type = 'sawtooth'; o.frequency.value = f(m); const l = ac.createBiquadFilter(); l.type = 'lowpass'; l.frequency.value = 500; const e = ac.createGain(); e.gain.setValueAtTime(0, t0 + t); e.gain.linearRampToValueAtTime(g, t0 + t + 0.6); e.gain.setValueAtTime(g, t0 + t + d - 1); e.gain.linearRampToValueAtTime(0, t0 + t + d); o.connect(l); l.connect(e); e.connect(out); o.start(t0 + t); o.stop(t0 + t + d + 0.1); });
+  const e8 = 0.2, bar = 1.2;
+  const C = { D: [50, 62, 66, 69], G: [43, 59, 62, 67], A: [45, 61, 64, 69] };
+  const tune = [[74,76,78,81,78,76],[74,71,69,71,74,74],[79,78,76,74,76,78],[76,74,73,71,69,69],[74,76,78,81,83,81],[79,78,76,78,79,81]];
+  ['D','D','G','A','D','G'].forEach((c, i) => { const t = i * bar; C[c].forEach((m, k) => pluck(m, t + k * 0.02, 1.0, 0.09)); C[c].slice(1).forEach(m => pluck(m, t + 3 * e8, 0.6, 0.06)); drum(t, 0.45, true); drum(t + 3 * e8, 0.3, false); drum(t + 5 * e8, 0.15, false); });
+  tune.forEach((b, i) => b.forEach((m, j) => whistle(m, i * bar + j * e8, e8 * 0.95, 0.11)));
+  [0.3, 0.5, 0.7, 0.9, 1.1, 4.0].forEach(stamp); boing(1.75);
+  let t = 7.2, gap = 0.13, g = 0.12; while(t < 8.0){ drum(t, g, false); t += gap; gap = Math.max(0.035, gap * 0.86); g = Math.min(0.55, g * 1.12); }
+  drone(7.2, 7.4, 0.05);
+  const gl = ac.createOscillator(); gl.type = 'sine'; gl.frequency.setValueAtTime(f(62), t0 + 7.2); gl.frequency.exponentialRampToValueAtTime(f(81), t0 + 8.0); const gg = ac.createGain(); gg.gain.setValueAtTime(0, t0 + 7.2); gg.gain.linearRampToValueAtTime(0.09, t0 + 7.9); gg.gain.linearRampToValueAtTime(0, t0 + 8.05); gl.connect(gg); gg.connect(out); gg.connect(dl); gl.start(t0 + 7.2); gl.stop(t0 + 8.1);
+  [74, 76, 78, 81, 83, 86, 88].forEach((m, i) => bell(m, 8 + i * 0.12, 0.09));
+  boom(9.0); [50, 57, 62, 66, 69, 74, 78, 81, 86].forEach((m, k) => pluck(m, 9.0 + k * 0.035, 1.6, 0.1));
+  whoosh(9.4, 1.0);
+  [[81, 9.2, 0.6], [83, 9.8, 0.3], [81, 10.1, 0.3], [78, 10.4, 0.6], [79, 11.0, 0.3], [81, 11.3, 0.3], [86, 11.6, 2.2]].forEach(([m, s, d]) => whistle(m, s, d, 0.13, 0.012));
+  [['D', 9.0], ['G', 10.2], ['A', 11.0], ['D', 11.6]].forEach(([c, s]) => { drum(s, 0.6, true); C[c].forEach((m, k) => { pluck(m, s + k * 0.09, 1.2, 0.08); pluck(m + 12, s + 0.36 + k * 0.09, 1.0, 0.05); }); });
+  [86, 90, 93, 98].forEach((m, i) => bell(m, 10.9 + i * 0.09, 0.05));
+  [50, 57, 62, 66, 69, 74, 78].forEach((m, k) => pluck(m, 11.6 + k * 0.06, 3.4, 0.1));
+}
+
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-act]"); if(!b) return; const act = b.dataset.act, v = b.dataset.v;
+  if(act === "storyOpen"){ storyId = v; storyMode = ""; storyPage = -1; storyWord = -1; render(); window.scrollTo(0,0); if(!(storyProg().seen||{})[v]) setTimeout(() => storyFilm(), 300); }
+  if(act === "storyShelf"){ storyStop(); storyId = ""; storyMode = ""; storyPage = -1; kdGame = null; render(); window.scrollTo(0,0); }
+  if(act === "storyCoverBack"){ storyStop(); storyMode = ""; storyPage = -1; kdGame = null; render(); window.scrollTo(0,0); }
+  if(act === "storyFilm") storyFilm();
+  if(act === "sfilmEnd") storyFilmEnd();
+  if(act === "kdStart"){ storyStop(); storyMode = "kid"; storyPage = -1; storyWord = -1; kdGame = null; render(); window.scrollTo(0,0); }
+  if(act === "kdTurn") kdTurn(Number(v));
+  if(act === "kdHearPage"){ const st = curStory(); const pg = st && st.pages[storyPage]; if(pg){ storyStop(); say(stSpeak(stRhyme(pg))); } }
+  if(act === "kdHearLine") kdReadLine();
+  if(act === "kdSay"){ storyStop(); say(stSpeak(v)); if(b.dataset.i !== undefined){ storyWord = Number(b.dataset.i); document.querySelectorAll(".kd-line .kd-w").forEach((x,k) => x.classList.toggle("on", k === storyWord)); } }
+  if(act === "kdPick") kdPick(v);
+  if(act === "bookOpen"){ const st = curStory(); if(st && !(storyProg().seen||{})[st.id]) storyFilm("book"); else bookOpen(); }
+  if(act === "bookTurn") bookTurn(Number(v));
+  if(act === "bookClose") bookClose();
+  if(act === "bookAgain"){ const st = curStory(); const stage = document.getElementById("bkStage"); if(st && stage){ bookPage = 0; storyFinished = false; stage.innerHTML = bookPageHTML(st, 0); bookNavState(st); } }
+  if(act === "bookFilm") storyFilm();
+});
+
+function gamesView(kid, ctx){ petKid = kid || ""; if(gameView === "story") return pStory(kid); if(gameView === "pet") return pPet(kid, ctx); if(gameView === "snack") return pSnack(kid); return gamesHub(kid); }
 function gamesHub(kid){
   const p = pet(); const kind = p ? p.kind : "puppy"; const best = snackProg().best || {}; const open = snackUnlockedCount();
   return `<div class="kid">
     <div class="row"><button class="btn sm" data-act="petBack">‹ Back</button><span class="grow"></span><span class="pill info" style="font-size:16px" id="playLeft">${I.clock} ${fmtLeft(timeLeftSecs(kid))} left</span></div>
     <div class="kidhi" style="margin-top:10px">What will we play?</div>
+    <button class="card row gamecard" data-act="gameOpen" data-v="story"><div class="st-thumb">${STORIES[0].cover()}</div><div class="grow"><b style="font-size:24px">Story time 📖</b><div class="muted" style="font-size:17px">Irish legends: ${esc(STORIES.map(x => x.title).join(", "))}. Doesn't use playtime!</div></div></button>
     <button class="card row gamecard" data-act="gameOpen" data-v="pet"><div style="flex:none">${petSvg(kind, p ? petMoodNow(p) : "happy", 96)}</div><div class="grow"><b style="font-size:24px">${p ? esc(p.name) : "Our pet"}</b><div class="muted" style="font-size:17px">${p ? "Look after " + esc(p.name) + petTogether() : "Pick and name your pet"}</div></div><span style="font-size:30px" aria-hidden="true">›</span></button>
     <div class="card gamecard" style="padding-bottom:16px"><div class="row" style="gap:12px"><span style="font-size:56px;flex:none" aria-hidden="true">🍬</span><div class="grow"><b style="font-size:24px">Snack Drop</b><div class="muted" style="font-size:17px">Cut the ropes to feed ${p ? esc(p.name) : "your pet"}!</div></div></div>
       <div class="lvlgrid">${SNACK_LEVELS.map((L,i) => { const n = i + 1, got = best[n], ok = n <= open; return `<button class="lvl ${ok ? '' : 'locked'}" data-act="snackStart" data-v="${i}" ${ok ? '' : 'disabled'} aria-label="Level ${n}${ok ? '' : ', locked'}"><b>${ok ? n : I.lock}</b><span>${got !== undefined ? '✨'.repeat(got) || '✓' : ''}</span></button>`; }).join("")}</div></div>
@@ -1886,7 +2364,7 @@ const canPlay = kid => (jobToday(kid) || playDoc(kid).unlocked) && timeLeftSecs(
 function startPlay(kid, ctx){
   playKid = kid; playCtx = ctx; clearInterval(playTimer);
   playTimer = setInterval(() => {
-    if(document.visibilityState !== "visible" || !playKid) return;
+    if(document.visibilityState !== "visible" || !playKid || gameView === "story") return; // reading is free
     const s = localSecs(playKid) + 5; ls.set("donri.play." + playId(playKid), s);
     if(s % 60 === 0) put("play", playId(playKid), {...playDoc(playKid), kid:playKid, date:today(), secs:Math.max(s, Number(playDoc(playKid).secs)||0)});
     const left = timeLeftSecs(playKid); const el = document.getElementById("playLeft"); if(el) el.innerHTML = I.clock + " " + fmtLeft(left) + " left";
@@ -3401,7 +3879,7 @@ document.addEventListener("click", async e => {
     case "kidApprove": { const c = doc("chores", id); if(!c || !c.pendingBy) break; kitchenDone(id, c.pendingBy); break; }
     case "kidReject": { const c = doc("chores", id); if(!c) break; patch("chores", id, {pendingBy:"", pendingAt:0}); log(`said "not yet" to ${c.pendingBy}'s ${c.title}`); toast("OK. It's back on his list."); break; }
     case "playGo": { if(!canPlay(v)) { toast("Finish a job first, or ask a grown-up"); break; } closeSheet(); gameView = "hub"; setTimeout(() => sfx("unlock"), 50); if(kidMode) kidView = "pet"; else kitchenPlay = v; startPlay(v, kidMode ? "kid" : "kitchen"); render(); window.scrollTo(0,0); break; }
-    case "petBack": if(gameView !== "hub"){ gameView = "hub"; snackLoopId++; closeSheet(); render(); window.scrollTo(0,0); break; } stopPlay(); closeSheet(); render(); window.scrollTo(0,0); break;
+    case "petBack": if(gameView !== "hub"){ if(gameView === "story"){ storyStop(); storyId = ""; storyMode = ""; storyPage = -1; kdGame = null; } gameView = "hub"; snackLoopId++; closeSheet(); render(); window.scrollTo(0,0); break; } stopPlay(); closeSheet(); render(); window.scrollTo(0,0); break;
     case "gameOpen": gameView = v; closeSheet(); render(); window.scrollTo(0,0); break;
     case "snackStart": snackLevel = Math.max(0, Math.min(SNACK_LEVELS.length - 1, Number(v)||0)); gameView = "snack"; closeSheet(); render(); window.scrollTo(0,0); break;
     case "kPlayWho": openSheet("Who's playing?", () => kids().map(k => `<div class="muted small" style="margin:6px 0 2px;font-weight:600">${esc(k.name)}</div>${playCard(k.name)}`).join("")); break;
