@@ -2408,7 +2408,8 @@ async function phUrl(file, size){
 function phHydrate(){ document.querySelectorAll("img[data-ph]").forEach(async img => { const f = img.dataset.ph, sz = img.dataset.sz || "medium"; img.removeAttribute("data-ph"); const u = await phUrl(f, sz); if(u) img.src = u; else img.alt = "Photo not available offline"; }); }
 const photoSet = () => doc("settings","photos") || {};
 async function ensurePhotoFolder(){
-  if(CIRCLE_READY || !cfg.f || !me) return; // only the phone that created the family file owns its folder
+  if(CIRCLE_READY || !me || !cfg.d) return;
+  if(!cfg.f && !(await findOwnFolder())) return; // only the family file's owner (any of their devices) can make its folder
   let ps = photoSet(), folder = ps.folder;
   if(folder && Date.now() - phCheckAt < 10 * 60000) return; phCheckAt = Date.now();
   try{
@@ -2423,6 +2424,15 @@ async function ensurePhotoFolder(){
     for(const email of want){ try{ await graphJson(`/drives/${cfg.d}/items/${folder}/invite`, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({recipients:[{email}], roles:["write"], requireSignIn:true, sendInvitation:false})}); done.push(email); }catch(e){} }
     if(done.length) put("settings","photos",{...photoSet(), invited:[...(photoSet().invited || []), ...done]});
   }catch(e){}
+}
+// Is the family file in my own OneDrive? Then any of my devices can look after its Photos folder.
+async function findOwnFolder(){
+  const known = ls.get("donri.owner", null); if(known && known.d === cfg.d && !known.mine) return false;
+  try{ const mine = await graphJson("/me/drive?select=id"); const isMine = String(mine.id || "").toLowerCase() === String(cfg.d).toLowerCase();
+    ls.set("donri.owner", {d:cfg.d, mine:isMine}); if(!isMine) return false;
+    const meta = await graphJson(`/drives/${cfg.d}/items/${cfg.i}?select=id,parentReference`); const f = meta.parentReference && meta.parentReference.id;
+    if(!f) return false; cfg = {...cfg, f}; ls.set("donri.cfg", cfg); return true;
+  }catch(e){ return false; }
 }
 function photoBlob(file){
   return new Promise((ok, no) => { const r = new FileReader(); r.onerror = no;
@@ -2536,7 +2546,7 @@ document.addEventListener("click", e => {
     case "qEvent": calSheet(); setTimeout(() => { const t = document.getElementById("evT"); if(t){ t.scrollIntoView({block:"center"}); t.focus(); } }, 80); break;
     case "qDinner": closeSheet(); page = "meals"; mealView = "week"; ls.set("donri.page", "meals"); history.replaceState(null, "", "#meals"); render(); setTimeout(() => { const t = document.getElementById("din-" + today()); if(t){ t.scrollIntoView({block:"center"}); t.focus(); } }, 80); break;
     case "famGo": closeSheet(); page = "families"; famView = v; photoAlbum = ""; ls.set("donri.page", "families"); history.replaceState(null, "", "#families"); render(); window.scrollTo(0,0); break;
-    case "photoAdd": if(!CIRCLE_READY && !photoSet().folder){ toast(cfg.f ? "Getting the Photos folder ready. Try again in a moment." : "Photos will be ready once the person who set up Donrí opens it.", 5000); ensurePhotoFolder(); break; } photoFiles = []; photoAddForm(v || photoAlbum); break;
+    case "photoAdd": if(!CIRCLE_READY && !photoSet().folder){ toast("Getting the Photos folder ready…", 3000); ensurePhotoFolder().then(() => { if(photoSet().folder){ photoFiles = []; photoAddForm(v || photoAlbum); } else toast(cfg.f ? "Couldn't make the Photos folder. Check your connection and try again." : "Photos will be ready once the person who set up Donrí opens it on one of their devices.", 6000); }); break; } photoFiles = []; photoAddForm(v || photoAlbum); break;
     case "photoDraftDel": photoDraft.splice(Number(v), 1); photoFiles.splice(Number(v), 1); drawDraft(); break;
     case "photoOpen": photoSheet(id); break;
     case "photoReact": { const p = doc("c_photos", id); if(!p) break; const r = {...(p.reacts||{})}; const k = reactKey(); const was = r[k]; if(was === v) delete r[k]; else r[k] = v;
