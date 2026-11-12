@@ -296,6 +296,7 @@ body.introon{overflow:hidden}
 .iplus .bi{width:56px;height:56px;stroke-width:3}
 @keyframes ipulse{to{box-shadow:0 0 0 28px rgba(227,178,60,0)}}
 #intro.paused *{animation-play-state:paused!important}
+#intro .imus{font-size:18px;min-width:44px}#intro .imus.off{opacity:.55}
 @media (prefers-reduced-motion: reduce){#intro *{animation-duration:.01s!important;animation-delay:0s!important;animation-iteration-count:1!important}.iseg.on i{animation:none;width:50%}}
 
 .famdot{display:inline-block;width:10px;height:10px;border-radius:5px;vertical-align:middle;margin-right:2px}
@@ -2537,13 +2538,78 @@ function introPlay(){
   closeSheet(); introEnd(true); introIdx = 0; introPaused = false;
   const el = document.createElement("div"); el.id = "intro"; el.setAttribute("role","dialog"); el.setAttribute("aria-modal","true"); el.setAttribute("aria-label","Donrí in 30 seconds");
   el.innerHTML = `<div class="ibar">${INTRO_SCENES.map(() => '<span class="iseg"><i></i></span>').join("")}</div>
-    <div class="itools"><button class="ibtn" data-act="introPause" aria-label="Pause">❚❚</button><button class="ibtn" data-act="introSkip">Skip</button></div>
+    <div class="itools"><button class="ibtn imus" data-act="introMusic" aria-pressed="true" aria-label="Music">♪</button><button class="ibtn" data-act="introPause" aria-label="Pause">❚❚</button><button class="ibtn" data-act="introSkip">Skip</button></div>
     <div class="istage" aria-live="polite"></div>
     <div class="ifoot"><button class="ibtn ghost" data-act="introBack" aria-label="Previous">‹</button><button class="ibtn ghost" data-act="introFwd" aria-label="Next">›</button></div>`;
   document.body.appendChild(el); document.body.classList.add("introon"); introRender();
+  imButton(); if(introMusicOn()) imStart(true);
+  el.addEventListener("pointerdown", () => { if(actx && actx.state === "suspended" && !introPaused) actx.resume(); });
   setTimeout(() => { const b = el.querySelector("[data-act=introSkip]"); if(b) b.focus(); }, 50);
 }
-function introEnd(quiet){ clearTimeout(introT); const el = document.getElementById("intro"); if(el) el.remove(); document.body.classList.remove("introon"); if(!quiet) ls.set("donri.introSeen", true); }
+// ---- Intro music: an original jig-style tune in D, made by the app itself (Web Audio, no files) ----
+const IM_TUNE = [
+  "D4:2 F#4:1 A4:2 F#4:1", "G4:2 B4:1 A4:2 F#4:1", "E4:2 F#4:1 G4:1 F#4:1 E4:1", "D4:3 A3:3",
+  "D4:2 F#4:1 A4:2 D5:1", "B4:2 A4:1 G4:2 E4:1", "F#4:1 G4:1 A4:1 G4:1 F#4:1 E4:1", "D4:6",
+  "A4:2 D5:1 D5:2 E5:1", "F#5:2 E5:1 D5:2 B4:1", "A4:2 B4:1 A4:1 F#4:1 D4:1", "E4:3 A4:3",
+  "A4:2 D5:1 D5:2 E5:1", "F#5:1 G5:1 F#5:1 E5:2 C#5:1", "D5:2 B4:1 A4:1 F#4:1 E4:1", "D4:6"
+];
+const IM_CHORDS = ["D","G","A","D","D","G","A","D","D","Bm","D","A","D","A","G","D"];
+const IM_CH = {D:["D3","A3","D4","F#4"], G:["G2","D3","G3","B3"], A:["A2","E3","A3","C#4"], Bm:["B2","F#3","B3","D4"]};
+const IM_8 = 0.25, IM_BAR = 1.5;
+let im = null;
+const introMusicOn = () => ls.get("donri.introMusic", true);
+function imHz(n){ const m = n.match(/^([A-G])(#|b)?(\d)$/); const s = {C:-9,D:-7,E:-5,F:-4,G:-2,A:0,B:2}[m[1]] + (m[2] === "#" ? 1 : m[2] === "b" ? -1 : 0) + (Number(m[3]) - 4) * 12; return 440 * Math.pow(2, s / 12); }
+function imEnv(g, t, peak, att, dur){ g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + att); g.gain.exponentialRampToValueAtTime(0.0001, t + dur); }
+function imPluck(n, t, vol, dur){ const a = im.a, f = imHz(n), g = a.createGain(), lp = a.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 2600;
+  [["triangle", f, 1], ["sine", f * 2, 0.25]].forEach(([type, fr, m]) => { const o = a.createOscillator(), og = a.createGain(); o.type = type; o.frequency.value = fr; og.gain.value = m; o.connect(og); og.connect(g); o.start(t); o.stop(t + (dur || 1.6) + 0.05); });
+  imEnv(g, t, vol || 0.07, 0.006, dur || 1.6); g.connect(lp); lp.connect(im.bus); }
+function imWhistle(n, t, len){ const a = im.a, f = imHz(n), o = a.createOscillator(), o2 = a.createOscillator(), g = a.createGain(), g2 = a.createGain(), lfo = a.createOscillator(), lg = a.createGain();
+  o.type = "sine"; o.frequency.value = f; o2.type = "sine"; o2.frequency.value = f * 2; g2.gain.value = 0.07;
+  lfo.frequency.value = 5.5; lg.gain.setValueAtTime(0, t); lg.gain.linearRampToValueAtTime(f * 0.006, t + Math.min(0.35, len * 0.6)); lfo.connect(lg); lg.connect(o.frequency);
+  const end = t + len * 0.95; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.085, t + 0.035); g.gain.setValueAtTime(0.085, Math.max(t + 0.04, end - 0.06)); g.gain.exponentialRampToValueAtTime(0.0001, end);
+  o.connect(g); o2.connect(g2); g2.connect(g); g.connect(im.bus); [o, o2, lfo].forEach(x => { x.start(t); x.stop(end + 0.05); });
+  if(im.noise){ const s = a.createBufferSource(), bp = a.createBiquadFilter(), ng = a.createGain(); s.buffer = im.noise; bp.type = "bandpass"; bp.frequency.value = f * 3; bp.Q.value = 2; imEnv(ng, t, 0.018, 0.005, 0.05); s.connect(bp); bp.connect(ng); ng.connect(im.bus); s.start(t); s.stop(t + 0.06); } }
+function imThump(t, vol){ const a = im.a, o = a.createOscillator(), g = a.createGain(); o.type = "sine"; o.frequency.setValueAtTime(115, t); o.frequency.exponentialRampToValueAtTime(48, t + 0.18); imEnv(g, t, vol || 0.16, 0.004, 0.3); o.connect(g); g.connect(im.out); o.start(t); o.stop(t + 0.35); }
+function imHarpBar(ch, t, vol){ const c = IM_CH[ch]; [[0, 0], [2, 1], [3, 2], [5, 3]].forEach(([e, k]) => imPluck(c[k], t + e * IM_8, vol || 0.05, 1.4)); }
+function imBar(b, t){
+  if(b < 0){ imHarpBar("D", t, 0.045); if(b === -1) imThump(t, 0.09); return; }
+  const i = b % 16; imHarpBar(IM_CHORDS[i], t); imThump(t, 0.13); imThump(t + 3 * IM_8, 0.08);
+  let e = 0; IM_TUNE[i].split(" ").forEach(s => { const [n, l] = s.split(":"); imWhistle(n, t + e * IM_8, Number(l) * IM_8); e += Number(l); });
+}
+function imFinal(t){
+  ["D3","A3","D4","F#4","A4","D5"].forEach((n, k) => imPluck(n, t + k * 0.07, 0.06, 3.2)); imWhistle("D5", t + 0.1, 2.4); imThump(t, 0.12);
+  im.done = true; const a = im.a; im.out.gain.setValueAtTime(0.8, t + 2.2); im.out.gain.exponentialRampToValueAtTime(0.0001, t + 3.6);
+  const left = (t + 3.7 - a.currentTime) * 1000; const me = im; setTimeout(() => { if(im === me) imStop(true); }, Math.max(0, left));
+}
+function imTick(){
+  if(!im || im.done) return; const a = im.a, last = INTRO_SCENES.length - 1;
+  while(!im.done && im.next < a.currentTime + 0.6){
+    const b = im.bar;
+    if(b > 0 && b % 16 === 0 && introIdx >= last - 1){ imFinal(im.next); break; }
+    if(b > 1 && introIdx === last){ imFinal(im.next); break; }
+    imBar(b, im.next); im.next += IM_BAR; im.bar++;
+  }
+}
+function imStart(withIntroBars){
+  const a = audioCtx(); if(!a) return; imStop(true);
+  const t = a.currentTime + 0.08, out = a.createGain(), bus = a.createGain(), dl = a.createDelay(1), fb = a.createGain(), lp = a.createBiquadFilter(), wet = a.createGain();
+  out.gain.setValueAtTime(0.0001, t); out.gain.exponentialRampToValueAtTime(0.8, t + 0.6); out.connect(a.destination);
+  bus.connect(out); dl.delayTime.value = 0.23; fb.gain.value = 0.32; lp.type = "lowpass"; lp.frequency.value = 2400; wet.gain.value = 0.22;
+  bus.connect(dl); dl.connect(lp); lp.connect(fb); fb.connect(dl); lp.connect(wet); wet.connect(out);
+  let noise = null; try{ const n = Math.floor(a.sampleRate * 0.1); noise = a.createBuffer(1, n, a.sampleRate); const d = noise.getChannelData(0); for(let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1; }catch(e){}
+  const drone = ["D2", "A2"].map((n, k) => { const o = a.createOscillator(), g = a.createGain(); o.type = "triangle"; o.frequency.value = imHz(n); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(k ? 0.02 : 0.03, t + 2.5); o.connect(g); g.connect(out); o.start(t); return o; });
+  im = {a, out, bus, drone, noise, next: t + 0.05, bar: withIntroBars ? -2 : -1, done: false, timer: setInterval(imTick, 120)};
+  imTick();
+}
+function imStop(fast){
+  if(!im) return; const me = im; im = null; clearInterval(me.timer);
+  const a = me.a, t = a.currentTime, f = fast ? 0.12 : 0.8;
+  try{ me.out.gain.cancelScheduledValues(t); me.out.gain.setValueAtTime(Math.max(0.0001, me.out.gain.value), t); me.out.gain.exponentialRampToValueAtTime(0.0001, t + f); }catch(e){}
+  me.drone.forEach(o => { try{ o.stop(t + f + 0.05); }catch(e){} });
+  setTimeout(() => { try{ me.out.disconnect(); }catch(e){} }, (f + 4) * 1000);
+}
+function imButton(){ const b = document.querySelector("#intro [data-act=introMusic]"); if(!b) return; const on = introMusicOn(); b.classList.toggle("off", !on); b.setAttribute("aria-pressed", on ? "true" : "false"); b.setAttribute("aria-label", on ? "Music on. Tap to turn off" : "Music off. Tap to turn on"); b.textContent = on ? "♪" : "♪̸"; }
+function introEnd(quiet){ clearTimeout(introT); imStop(!!quiet); const el = document.getElementById("intro"); if(el) el.remove(); document.body.classList.remove("introon"); if(!quiet) ls.set("donri.introSeen", true); }
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-act]"); if(!b) return; const act = b.dataset.act;
   if(act === "introPlay") introPlay();
@@ -2551,7 +2617,8 @@ document.addEventListener("click", e => {
   if(act === "introFwd") introNext();
   if(act === "introBack"){ introIdx = Math.max(0, introIdx - 1); introRender(); }
   if(act === "introPause"){ const el = document.getElementById("intro"); if(!el) return; introPaused = !introPaused; el.classList.toggle("paused", introPaused); b.textContent = introPaused ? "▶" : "❚❚"; b.setAttribute("aria-label", introPaused ? "Play" : "Pause");
-    if(introPaused){ clearTimeout(introT); introLeft -= Date.now() - introStart; } else { introStart = Date.now(); introT = setTimeout(introNext, Math.max(300, introLeft)); } }
+    if(introPaused){ clearTimeout(introT); introLeft -= Date.now() - introStart; if(im && actx) actx.suspend(); } else { introStart = Date.now(); introT = setTimeout(introNext, Math.max(300, introLeft)); if(im && actx) actx.resume(); else if(introMusicOn()) imStart(false); } }
+  if(act === "introMusic"){ const on = !introMusicOn(); ls.set("donri.introMusic", on); if(on){ if(!introPaused) imStart(false); } else imStop(false); imButton(); }
   if(act === "palette"){ ls.set("donri.palette", b.dataset.v); render(); }
 });
 document.addEventListener("keydown", e => { if(!document.getElementById("intro")) return; if(e.key === "Escape") introEnd(); if(e.key === "ArrowRight") introNext(); if(e.key === "ArrowLeft"){ introIdx = Math.max(0, introIdx - 1); introRender(); } });
