@@ -759,7 +759,7 @@ async function loadTodayOutlook(){
   if(olToday.date === t && (olToday.state === "loading" || Date.now() - olToday.at < (olToday.state === "ok" ? 600000 : 60000))) return;
   olToday = {date:t, items:olToday.date === t ? olToday.items : [], state:"loading", at:Date.now()};
   try{
-    const q = new URLSearchParams({startDateTime:t+"T00:00:00", endDateTime:ymd(addDays(parse(t),1))+"T00:00:00", $select:"subject,start,end,isAllDay", $orderby:"start/dateTime", $top:"50"});
+    const q = new URLSearchParams({startDateTime:t+"T00:00:00", endDateTime:ymd(addDays(parse(t),2))+"T00:00:00", $select:"subject,start,end,isAllDay", $orderby:"start/dateTime", $top:"50"});
     const j = await graphJson("/me/calendarView?" + q.toString(), {headers:{Prefer:'outlook.timezone="GMT Standard Time"'}});
     if(olToday.date !== t) return;
     olToday.items = (j.value||[]).map(e => ({title:e.subject, date:e.start.dateTime.slice(0,10), start:e.isAllDay ? "" : e.start.dateTime.slice(11,16)}));
@@ -810,7 +810,7 @@ function pToday(){
                 ...docs("vaccines").filter(v => visible(v) && soon(v.nextDue)).map(v => ({who:v.person, what:"Vaccines due", d:v.nextDue}))].sort((a,b) => String(a.d).localeCompare(String(b.d)));
   const shopCounts = Object.entries(STORES).map(([k,l]) => [k, l, docs("shop").filter(x => x.store===k && !x.done).length]).filter(x => x[2]);
   const bdays = docs("people").map(p => ({p, n:nextBirthday(p.birthday)})).filter(x => x.n != null && x.n <= 14).sort((a,b) => a.n-b.n);
-  const tmr = ymd(addDays(now,1)); const tEvs = docs("events").filter(e => e.date === tmr).sort((a,b) => String(a.start||"").localeCompare(String(b.start||"")));
+  const tmr = ymd(addDays(now,1)); const tEvs = [...docs("events").filter(e => e.date === tmr), ...(olToday.date === t ? olToday.items : []).filter(o => o.date === tmr && !docs("events").some(e => e.date === tmr && e.title === o.title && (e.start||"") === o.start))].sort((a,b) => String(a.start||"").localeCompare(String(b.start||"")));
   const tMeal = (doc("meals", tmr)||{}).dinner;
   const ks = kids(); const showStars = ks.length && (docs("points").length || docs("chores").some(c => Number(c.points)));
   const sug = docs("suggest").filter(x => x.status === "new").sort((a,b) => String(a.date).localeCompare(b.date));
