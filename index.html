@@ -297,6 +297,8 @@ body.introon{overflow:hidden}
 @keyframes ipulse{to{box-shadow:0 0 0 28px rgba(227,178,60,0)}}
 #intro.paused *{animation-play-state:paused!important}
 .linkbtn{background:none;border:0;padding:0;color:var(--blue);font:inherit;text-decoration:underline;cursor:pointer;min-height:auto}
+.fambar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 10px}.fambar .chips{flex:1 1 100%;flex-wrap:wrap}
+.farmpet{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:110px;min-height:44px;padding:10px;cursor:pointer}
 #intro .imus{font-size:18px;min-width:44px}#intro .imus.off{opacity:.55}
 @media (prefers-reduced-motion: reduce){#intro *{animation-duration:.01s!important;animation-delay:0s!important;animation-iteration-count:1!important}.iseg.on i{animation:none;width:50%}}
 
@@ -672,7 +674,7 @@ function goLink(link, force){
   const [pg, extra] = String(link || "").replace(/^#/, "").split("/");
   if(force){ if(kidMode){ stopPlay(); kidView = "home"; kidMode = ""; ls.set("donri.kid", ""); resetZoom(); } if(kitchen){ kitchen = false; ls.set("donri.kitchen", false); resetZoom(); } }
   if(kidMode || kitchen) return; // a boy's tablet or the kitchen screen stays where it is
-  closeSheet(); page = PAGE_KEYS.includes(pg) ? pg : "today"; ls.set("donri.page", page);
+  closeSheet(); page = PAGE_KEYS.includes(pg) ? pg : "today"; if(familyTab && LOCKED_PAGES.includes(page) && !grownOK()) page = "today"; ls.set("donri.page", page);
   if(extra && STORES[extra]){ store = extra; ls.set("donri.store", store); }
   if(page === "families" && extra && FAM_VIEWS.some(x => x[0] === extra)) famView = extra;
   history.replaceState(null, "", "#" + page); window.scrollTo(0,0); render();
@@ -724,9 +726,10 @@ function render(){
   document.body.classList.toggle("gamefull", ((kidOk && kidView === "pet") || (!!kitchen && !!kitchenPlay)) && gameView !== "hub");
   if(kidOk){ $("#main").innerHTML = pKid(kidMode); if(document.getElementById("petstage")) startPetLoop(); if(document.getElementById("snackCanvas")) startSnack(); if(sheetRender && !($("#sheet").contains(document.activeElement) && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))) sheetRender(); return; }
   if(kitchen){ const h = new Date().getHours(); if(h >= 21 || h < 7) document.documentElement.dataset.theme = "dark"; document.body.classList.toggle("nospeech", !speechOn()); $("#main").innerHTML = pKitchen(); if(document.getElementById("petstage")) startPetLoop(); if(document.getElementById("snackCanvas")) startSnack(); updateBell(); if(sheetRender && !($("#sheet").contains(document.activeElement) && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))) sheetRender(); return; }
+  if(familyTab && LOCKED_PAGES.includes(page) && !grownOK()) page = "today";
   const tabs = [["today","Today",ICON.home],["shop","Shop",ICON.cart],["meals","Meals",ICON.meal],["chores","Chores",ICON.chore],["families","Families",ICON.people],["gifts","Gifts",ICON.gift],["meds","Health",ICON.pill]];
-  $("#tabs").innerHTML = tabs.map(([k,l,i]) => `<button data-act="go" data-v="${k}" ${page===k?'aria-current="page"':''}>${i}<span>${l}</span></button>`).join("");
-  $("#main").innerHTML = ({today:pToday, shop:pShop, meals:pMeals, chores:pChores, families:pFamilies, gifts:pGifts, meds:pMeds, renew:pRenew}[page])();
+  $("#tabs").innerHTML = tabs.map(([k,l,i]) => `<button data-act="go" data-v="${k}" ${page===k?'aria-current="page"':''}>${i}<span>${l}${familyTab && LOCKED_PAGES.includes(k) && !grownOK() ? ' 🔒' : ''}</span></button>`).join("");
+  $("#main").innerHTML = ((page === "today" || page === "chores") ? famBar() : "") + ({today:pToday, shop:pShop, meals:pMeals, chores:pChores, families:pFamilies, gifts:pGifts, meds:pMeds, renew:pRenew}[page])();
   if(page === "today") loadTodayOutlook();
   updateBell();
   if(sheetRender && !($("#sheet").contains(document.activeElement) && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))) sheetRender();
@@ -793,7 +796,7 @@ function pToday(){
   const now = new Date(), t = today(), h = now.getHours();
   const greet = h < 12 ? "Maidin mhaith" : h < 18 ? "Tráthnóna maith" : "Oíche mhaith";
   const nowHM = pad(h) + ":" + pad(now.getMinutes());
-  const olItems = olToday.date === t ? olToday.items : [];
+  const olItems = olToday.date === t && olShow() ? olToday.items : [];
   const evs = [...docs("events").filter(e => e.date === t).map(e => ({...e, mine:false})),
                ...(olItems.filter(o => o.date === t && !docs("events").some(e => e.date === t && e.title === o.title && (e.start||"") === o.start)).map(o => ({...o, ol:true})))]
               .sort((a,b) => String(a.start||"").localeCompare(String(b.start||"")));
@@ -801,7 +804,7 @@ function pToday(){
   const meal = doc("meals", t) || {};
   const onList = new Set(docs("shop").filter(x => !x.done).map(x => x.name.toLowerCase()));
   const missing = (meal.ingredients||[]).filter(i => !onList.has(i.toLowerCase()));
-  const myChores = docs("chores").filter(c => choreDue(c) && (!assignees(c).length || isFor(c, myName())));
+  const myChores = docs("chores").filter(c => choreDue(c) && (familyTab ? (!famWho || !assignees(c).length || isFor(c, famWho)) : (!assignees(c).length || isFor(c, myName()))));
   const meds = docs("meds").filter(m => m.forWho === myName() && visible(m));
   const medDue = meds.filter(m => m.lastLogged !== t);
   const medLow = docs("meds").filter(m => visible(m) && ["warn","bad"].includes(medInfo(m).st[0]));
@@ -810,13 +813,13 @@ function pToday(){
                 ...docs("vaccines").filter(v => visible(v) && soon(v.nextDue)).map(v => ({who:v.person, what:"Vaccines due", d:v.nextDue}))].sort((a,b) => String(a.d).localeCompare(String(b.d)));
   const shopCounts = Object.entries(STORES).map(([k,l]) => [k, l, docs("shop").filter(x => x.store===k && !x.done).length]).filter(x => x[2]);
   const bdays = docs("people").map(p => ({p, n:nextBirthday(p.birthday)})).filter(x => x.n != null && x.n <= 14).sort((a,b) => a.n-b.n);
-  const tmr = ymd(addDays(now,1)); const tEvs = [...docs("events").filter(e => e.date === tmr), ...(olToday.date === t ? olToday.items : []).filter(o => o.date === tmr && !docs("events").some(e => e.date === tmr && e.title === o.title && (e.start||"") === o.start))].sort((a,b) => String(a.start||"").localeCompare(String(b.start||"")));
+  const tmr = ymd(addDays(now,1)); const tEvs = [...docs("events").filter(e => e.date === tmr), ...(olToday.date === t && olShow() ? olToday.items : []).filter(o => o.date === tmr && !docs("events").some(e => e.date === tmr && e.title === o.title && (e.start||"") === o.start))].sort((a,b) => String(a.start||"").localeCompare(String(b.start||"")));
   const tMeal = (doc("meals", tmr)||{}).dinner;
   const ks = kids(); const showStars = ks.length && (docs("points").length || docs("chores").some(c => Number(c.points)));
   const sug = docs("suggest").filter(x => x.status === "new").sort((a,b) => String(a.date).localeCompare(b.date));
   const rDue = docs("renewals").filter(r => !r.autoRenews).map(r => ({r, i:renewInfo(r)})).filter(x => x.i.st[0] !== "ok").sort((a,b) => a.i.days - b.i.days);
   const S = {};
-  S.head = `<div class="hello">${greet}, ${esc(myName())}</div>
+  S.head = `<div class="hello">${greet}, ${familyTab ? "everyone" : esc(myName())}</div>
   <div class="muted" style="margin-bottom:14px">${DOW[now.getDay()]} ${now.getDate()} ${MONTHS[now.getMonth()]}</div>`;
   S.today = `<div class="card tcard"><h3><span class="grow">Today</span><button data-act="cal">Calendar</button></h3>
     ${evs.length ? evs.map((e,i) => `<div class="ev ${e.ol?'ol':''} ${i===nextIdx?'next':''}"><div class="t">${esc(e.start||'All day')}</div><div class="grow"><b>${esc(e.title)}</b>${i===nextIdx?' <span class="pill warn">Next up</span>':''}<div class="muted small">${e.ol ? 'Your Outlook' : esc(e.who||'')}</div>${e.note ? `<div class="small" style="margin-top:2px">${I.note} ${esc(e.note)}</div>` : ''}</div></div>`).join("") : '<div class="muted small">Nothing in the calendar today.</div>'}</div>`;
@@ -824,7 +827,7 @@ function pToday(){
   S.bins = `${binCard()}`;
   S.dinner = `<div class="card tcard"><h3><span class="grow">Dinner tonight</span><button data-act="go" data-v="meals">Meal plan</button></h3>
     ${meal.dinner ? `<div class="row"><div class="grow" style="font-weight:700">${esc(meal.dinner)}</div>${meal.recipeId && doc("recipes", meal.recipeId) ? `<button class="btn sm" data-act="recipeOpen" data-id="${esc(meal.recipeId)}">${I.book} Recipe</button>` : ''}</div>${missing.length ? `<div class="muted small" style="margin:6px 0">Not on a shopping list yet: ${esc(missing.join(", "))}</div><button class="btn sm" data-act="mealToList" data-v="${t}">Add to ${esc(STORES[store])} list</button>` : (meal.ingredients||[]).length ? '<div class="muted small" style="margin-top:4px">Ingredients are on the list or in the house.</div>' : ''}` : `<div class="muted small">No dinner planned.</div><button class="btn sm" style="margin-top:8px" data-act="go" data-v="meals">Plan it</button>`}</div>`;
-  S.chores = `<div class="card tcard"><h3><span class="grow">Your chores</span><button data-act="go" data-v="chores">All chores</button></h3>
+  S.chores = `<div class="card tcard"><h3><span class="grow">${familyTab ? (famWho ? esc(famWho) + "'s chores" : "Everyone's chores") : "Your chores"}</span><button data-act="go" data-v="chores">All chores</button></h3>
     ${myChores.length ? myChores.map(c => `<div class="item"><button class="check" data-act="choreDone" data-id="${esc(c.id)}" aria-label="Mark done: ${esc(c.title)}"></button><div class="grow"><div class="name">${esc(c.title)}</div><div class="muted small">${esc(whoLine(c))}</div></div></div>`).join("") : '<div class="muted small">Nothing due. Nice one!</div>'}</div>`;
   S.pending = `${pendingCard()}`;
   S.stars = `${showStars ? `<div class="card tcard"><h3><span class="grow">Stars</span><button data-act="go" data-v="chores">Chores</button></h3><div class="row wrap">${ks.map(k => `<button class="chip" data-act="starsOpen" data-v="${esc(k.name)}">${esc(k.name)} <span>${I.star} ${stars(k.name)}</span></button>`).join("")}</div></div>` : ''}`;
@@ -844,6 +847,7 @@ function pToday(){
     ${binsOn(tmr).length ? `<div class="muted small" style="margin-top:4px">Bin day: ${esc(binsOn(tmr).map(s=>s.name).join(", "))}</div>` : ''}</div>`;
   S.families = CIRCLE_READY ? famTodayCard() : "";
   S.photos = CIRCLE_READY ? photosTodayCard() : "";
+  if(!grownOK()){ S.health = ""; S.renewals = ""; } // family tablet: private health and household costs stay behind the PIN
   const {order, hidden} = homePrefs();
   return S.head + order.filter(k => !hidden.includes(k)).map(k => S[k] || "").join("\n") + `<div class="row" style="justify-content:center;margin-top:6px"><button class="btn sm" data-act="homeOpen">Change my home screen</button></div>`;
 }
@@ -1173,6 +1177,22 @@ function recipeForm(id){
 // ---------- KITCHEN DISPLAY (a tablet on the wall) ----------
 // Shows only family things: no medication, no gifts, no one's private Outlook events.
 let kitchen = ls.get("donri.kitchen", false); let wakeLock = null;
+// Family tablet: a shared device that opens on Everyone. Grown-up areas (Health, Gifts, Renewals, Settings,
+// the activity list and private Outlook events) need the grown-up PIN, then stay open for 10 minutes.
+let familyTab = ls.get("donri.familytab", false), famWho = "", grownUntil = 0, grownT = null;
+const LOCKED_PAGES = ["gifts","meds","renew"];
+const grownOK = () => !familyTab || Date.now() < grownUntil;
+const olShow = () => grownOK();
+function grownUnlock(){ grownUntil = Date.now() + 10 * 60000; clearTimeout(grownT); grownT = setTimeout(grownLock, 10 * 60000 + 200); }
+function grownLock(){ grownUntil = 0; clearTimeout(grownT); closeSheet(); if(LOCKED_PAGES.includes(page)){ page = "today"; ls.set("donri.page", page); } famWho = ""; choreWho = ""; render(); }
+function needGrown(then){ if(grownOK()) return then(); if(!kidSettings().pin){ pinSetSheet(""); return; } pinSheet("Grown-ups only", () => { grownUnlock(); closeSheet(); then(); }); }
+function setFamilyTab(on){ familyTab = on; ls.set("donri.familytab", on); famWho = ""; choreWho = ""; grownUntil = 0; closeSheet(); if(on && LOCKED_PAGES.includes(page)) page = "today"; render(); toast(on ? "Family tablet on. Grown-up areas now need the PIN." : "Family tablet off"); }
+function famBar(){
+  if(!familyTab) return "";
+  const ppl = members();
+  return `<div class="fambar"><div class="chips" role="group" aria-label="Show chores for">${[["","Everyone"], ...ppl.map(m => [m.name, m.name])].map(([v,l]) => `<button class="chip" data-act="famWho" data-v="${esc(v)}" aria-pressed="${famWho===v}">${esc(l)}</button>`).join("")}</div>
+    ${grownOK() ? `<button class="btn sm" data-act="grownLock">${I.lock} Lock grown-up areas</button>` : ''}</div>`;
+}
 async function keepAwake(){ try{ if(kitchen && navigator.wakeLock && document.visibilityState === "visible") wakeLock = await navigator.wakeLock.request("screen"); }catch(e){} }
 function setKitchen(on){ kitchen = on; ls.set("donri.kitchen", on); closeSheet(); if(on){ keepAwake(); } else { try{ wakeLock && wakeLock.release(); }catch(e){} wakeLock = null; page = "today"; resetZoom(); } render(); window.scrollTo(0,0); }
 setInterval(() => { if(kitchen && !holdT && !kitchenPlay) render(); }, 30000);
@@ -1213,7 +1233,7 @@ function pKitchen(){
     <div class="card kt"><h3><span class="grow">Dinner tonight</span>${meal.recipeId && doc("recipes", meal.recipeId) ? `<button class="btn sm" data-act="recipeOpen" data-id="${esc(meal.recipeId)}">${I.book} Recipe</button>` : ''}</h3><div class="kbig">${meal.dinner ? esc(meal.dinner) : '<span class="muted" style="font-size:19px;font-weight:500">Not planned yet</span>'}</div>${tMeal ? `<div class="muted" style="margin-top:6px">Tomorrow: ${esc(tMeal)}</div>` : ''}</div>
     <div class="card kt"><h3><span class="grow">Jobs to do</span></h3>${chores.length ? chores.map(c => `<div class="item"><button class="check" data-act="kChore" data-id="${esc(c.id)}" aria-label="Done: ${esc(c.title)}"></button><div class="grow"><div class="name"><b>${esc(c.title)}</b>${Number(c.points) ? ` <span class="pill warn">${I.star} ${Number(c.points)}</span>` : ''}</div><div class="muted small">${esc(whoLine(c))}</div></div></div>`).join("") : '<div class="kbig" style="font-size:22px">All done! 🎉</div>'}</div>
     ${ks.length ? `<div class="card kt"><h3><span class="grow">Stars</span></h3><div class="row" style="gap:12px">${ks.map(k => `<button class="card starcard" style="text-align:center" data-act="starsOpen" data-v="${esc(k.name)}"><div style="font-size:18px;font-weight:600">${esc(k.name)}</div><div class="starbig" style="font-size:44px">${I.star} ${stars(k.name)}</div></button>`).join("")}</div></div>` : ''}
-    ${ks.length ? (() => { const pp = pet(); return `<div class="card kt"><h3><span class="grow">Our pet</span></h3>${pp ? `<div class="row" style="gap:12px"><div style="flex:none">${petSvg(pp.kind, petMood(pp), 110)}</div><div class="grow"><div class="kbig" style="font-size:24px">${esc(pp.name)}</div><div class="muted">${petMood(pp) === 'sleep' ? 'Asleep 💤' : petMood(pp) === 'happy' ? 'Happy!' : 'Would love some care'}</div><div style="font-size:15px;margin-top:4px">${Object.entries(PETS[pp.kind].needs).map(([k,n]) => `${n.icon} ${needLevel(pp,k)}%`).join(' · ')}</div></div></div>` : '<div class="muted">No pet yet. Pick one together!</div>'}<div style="margin-top:10px"><button class="btn primary" data-act="kPlayWho">Play</button></div></div>`; })() : ''}
+    ${ks.length ? (() => { const own = petMode() === "own"; const one = pp => `${pp ? `<div class="row" style="gap:12px"><div style="flex:none">${petSvg(pp.kind, petMood(pp), 110)}</div><div class="grow"><div class="kbig" style="font-size:24px">${esc(pp.name)}</div><div class="muted">${petMood(pp) === 'sleep' ? 'Asleep 💤' : petMood(pp) === 'happy' ? 'Happy!' : 'Would love some care'}</div><div style="font-size:15px;margin-top:4px">${Object.entries(PETS[pp.kind].needs).map(([k,n]) => `${n.icon} ${needLevel(pp,k)}%`).join(' · ')}</div></div></div>` : (own ? '<div class="muted">No pet yet.</div>' : '<div class="muted">No pet yet. Pick one together!</div>')}`; return `<div class="card kt"><h3><span class="grow">${own ? "Pets" : "Our pet"}</span></h3>${own ? ks.map(k => `<div style="margin-top:6px"><b>${esc(k.name)}</b>${one(pet(k.name))}</div>`).join("") : one(pet(""))}<div style="margin-top:10px"><button class="btn primary" data-act="kPlayWho">Play</button></div></div>`; })() : ''}
     <div class="card kt ${binsTonight || bT.length ? 'next' : ''}"><h3><span class="grow">Bins</span></h3>${binsTonight ? `<div class="kbig" style="font-size:22px">Out tonight</div>${bTm.map(s => `<div class="row" style="min-height:34px"><span class="bindot" style="width:20px;height:20px;border-radius:10px;background:${BIN_COLOURS[s.colour]||'#999'}"></span><span>${esc(s.name)}</span></div>`).join("")}` : bT.length ? `<div class="kbig" style="font-size:22px">Collection today</div>${bT.map(s => `<div class="row" style="min-height:34px"><span class="bindot" style="width:20px;height:20px;border-radius:10px;background:${BIN_COLOURS[s.colour]||'#999'}"></span><span>${esc(s.name)}</span></div>`).join("")}` : (() => { for(let i = 2; i <= 14; i++){ const d = ymd(addDays(now,i)); if(binsOn(d).length) return `<div>Next: ${DOW[parse(d).getDay()]}</div><div class="muted small">${esc(binsOn(d).map(s => s.name).join(", "))}</div>`; } return '<div class="muted">No collection soon.</div>'; })()}</div>
     <div class="card kt"><h3><span class="grow">Tomorrow</span></h3>${tEvs.length ? tEvs.map(e => `<div style="padding:4px 0"><b>${esc(e.start||'All day')}</b> ${esc(e.title)}${e.note?`<div class="small">${I.note} ${esc(e.note)}</div>`:''}</div>`).join("") : '<div class="muted">Nothing planned yet.</div>'}</div>
     <div class="card kt"><h3><span class="grow">Shopping</span></h3>
@@ -1315,7 +1335,9 @@ function kidModeSettings(){
     <div class="row wrap" style="margin-top:10px"><button class="btn sm" data-act="kidPinSet">${ks.pin ? 'Change the grown-up PIN' : 'Set a grown-up PIN'}</button></div>
     <div class="row" style="margin-top:8px"><label class="f grow" for="kpm" style="margin:0">Playtime each day, for each boy</label><select id="kpm" data-playmins style="width:auto">${[5,10,15,20,30,45,60].map(n => `<option value="${n}" ${playLimitMins()===n?'selected':''}>${n} min</option>`).join("")}</select></div>
     <p class="muted small" style="margin:4px 0 0">Playtime unlocks once he's finished a job that day. A grown-up can unlock it, or add more time, with the PIN.</p>
-    ${pet() ? `<div class="row wrap" style="margin-top:8px"><button class="btn sm danger" data-act="petNew">Start again with a new pet</button></div>` : ''}
+    <div class="row" style="margin-top:8px"><label class="f grow" for="kpet" style="margin:0">Pets</label><select id="kpet" data-petmode style="width:auto"><option value="shared" ${petMode()==="shared"?'selected':''}>One pet they share</option><option value="own" ${petMode()==="own"?'selected':''}>A pet each</option></select></div>
+    <p class="muted small" style="margin:4px 0 0">Switching keeps every pet safe: switch back and they're all still there. The boys can change pet themselves; old pets go to the Pet Farm and can come back.</p>
+    ${(petMode() === "own" ? kids().some(k => pet(k.name)) : pet("")) ? `<div class="row wrap" style="margin-top:8px"><button class="btn sm danger" data-act="petNew">Start again with ${petMode() === "own" ? "new pets" : "a new pet"}</button></div>` : ''}
     <div style="margin-top:10px"><b class="small">For each boy</b>${kids().map(k => `<div class="row wrap" style="gap:14px;margin-top:4px"><span style="min-width:80px;font-weight:600">${esc(k.name)}</span><label class="toggle small"><input type="checkbox" data-kidpref="speech" data-v="${esc(k.name)}" ${kidPref("speech", k.name) ? "checked" : ""}> 🔊 Read aloud</label><label class="toggle small"><input type="checkbox" data-kidpref="sound" data-v="${esc(k.name)}" ${kidPref("sound", k.name) ? "checked" : ""}> 🎵 Sounds</label></div>`).join("")}</div>
     <label class="toggle small"><input type="checkbox" data-kidapprove ${ks.approval !== false ? 'checked' : ''}> <span>When a boy ticks a job, a grown-up says OK before the stars go on</span></label>
     <p class="muted small" style="margin-bottom:0">For a boy's own tablet: sign in on it, then tap his name above. It stays in kid mode, even after it's switched off, until the PIN is entered.</p></div>`;
@@ -1360,7 +1382,14 @@ const PETS = {
 };
 const NEED_RATE = {food:7, clean:4, special:5, fun:8, rest:6}; // points lost per awake hour
 const ITEM_AT = [3, 10, 20, 35, 55]; // hearts needed for each home item
-const pet = () => doc("settings","pet");
+// Pets: one shared pet, or a pet each (Settings → Kid mode). petKid = the boy playing now.
+let petKid = "";
+const petMode = () => kidSettings().petMode === "own" ? "own" : "shared";
+const petDocId = kid => petMode() === "own" && kid ? "pet-" + kid : "pet";
+const pet = kid => doc("settings", petDocId(kid === undefined ? petKid : kid));
+const petFarm = kid => (doc("settings", petDocId(kid === undefined ? petKid : kid) + "-farm") || {}).list || [];
+const petJobs = () => docs("points").filter(x => x.choreId && Number(x.amount) > 0 && (petMode() !== "own" || x.kid === petKid)).length;
+const petTogether = () => petMode() === "own" ? "" : " together";
 const asleep = d => { const h = (d || new Date()).getHours(); return h >= 21 || h < 7; };
 function awakeHours(fromMs){
   const now = Date.now(); if(!fromMs || fromMs > now) return 0; let t = fromMs, hrs = 0;
@@ -1371,7 +1400,7 @@ function awakeHours(fromMs){
 function agoAwake(n){ let t = Date.now(), left = n * 3600000, guard = 0; while(left > 0 && guard++ < 200){ const step = Math.min(3600000, left); t -= 3600000; if(!asleep(new Date(t))) left -= step; } return t; }
 const needLevel = (p, k) => Math.max(10, Math.round(100 - awakeHours((p.care||{})[k]) * NEED_RATE[k]));
 const petMood = p => petMoodNow(p);
-const petTreats = p => Math.max(0, docs("points").filter(x => x.choreId && Number(x.amount) > 0).length + (Number(p.bonusTreats)||0) - (Number(p.treatsUsed)||0));
+const petTreats = p => Math.max(0, petJobs() + (Number(p.bonusTreats)||0) - (Number(p.treatsUsed)||0));
 const nm = (s, p) => String(s).replace(/NAME/g, p.name || "your pet");
 // ---------- PET ART (layered SVG with gradients; expressions switch by CSS class st-happy/ok/low/tired/sleep/yawn) ----------
 function petFace(skin, ey, my, blush){
@@ -1469,8 +1498,10 @@ function sceneSvg(kind){
 }
 
 function petChooseView(back){
+  const own = petMode() === "own", farm = petFarm();
   return `<div class="kid"><div class="row"><button class="btn sm" data-act="petBack">‹ Back</button></div>
-    <div class="kidhi" style="margin-top:10px">Pick your pet together!</div><p>You'll look after it as a team. Choose one:</p>
+    <div class="kidhi" style="margin-top:10px">${own ? `Pick your own pet, ${esc(petKid)}!` : 'Pick your pet together!'}</div><p>${own ? "It's yours to look after." : "You'll look after it as a team."} Choose one:</p>
+    ${farm.length ? `<div class="card"><b style="font-size:20px">Bring a pet back from the Pet Farm</b><div class="row wrap" style="gap:10px;margin-top:8px">${farm.map((f,i) => `<button class="card farmpet" data-act="petBackFarm" data-v="${i}" aria-label="Bring ${esc(f.name)} back"><div>${petSvg(f.kind,"happy",80)}</div><b style="font-size:18px">${esc(f.name)}</b></button>`).join("")}</div></div>` : ''}
     ${Object.entries(PETS).map(([k,v]) => `<div class="card row" style="gap:14px"><div style="flex:none">${petSvg(k,"happy",96)}</div><div class="grow"><b style="font-size:24px">${v.label}</b><div><button class="saybtn" data-act="say" data-v="${esc(v.sayLabel)}" aria-label="Say ${esc(v.label)}">${I.speak}</button></div></div><button class="btn primary" style="min-height:56px;font-size:18px" data-act="petPick" data-v="${k}">This one</button></div>`).join("")}</div>`;
 }
 function petNameSheet(kind){
@@ -1500,8 +1531,8 @@ const PET_TALK = {
 };
 // Sweet spots in the 200×200 drawing (tummy for the puppy, top of the head for the dragon)
 const PET_SWEET = {puppy:{x:100, y:156, r:24}, dragon:{x:100, y:64, r:22}};
-let petPos = {x:50, y:0, dir:1}, petLoopId = 0, petQuiet = false, petAfter = null, napUntil = 0, petHintGone = false;
-const petSave = data => { petQuiet = true; patch("settings","pet",data); petQuiet = false; updatePetHud(); };
+let petCarry = 0, petPos = {x:50, y:0, dir:1}, petLoopId = 0, petQuiet = false, petAfter = null, napUntil = 0, petHintGone = false;
+const petSave = data => { petQuiet = true; patch("settings",petDocId(petKid),data); petQuiet = false; updatePetHud(); };
 function petMoodNow(p){
   if(asleep() || napUntil > Date.now()) return "sleep";
   const lv = k => needLevel(p,k); const lows = ["food","clean","special","fun"].map(lv);
@@ -1650,8 +1681,9 @@ function pPet(kid, ctx){
     <div class="card row" style="gap:12px;margin-top:8px"><span style="font-size:30px" aria-hidden="true">😴</span><div class="grow"><b>Energy</b><span class="bar" style="display:block;margin-top:6px" role="progressbar" aria-label="Energy"><i data-needbar="rest" style="width:${needLevel(p,'rest')}%"></i></span></div><button class="btn" data-act="petNap" ${mood === "sleep" ? "disabled" : ""}>🌙 Bedtime</button></div>
     <div class="needgrid">${Object.entries(P.needs).map(([k,n]) => { const lv = needLevel(p,k); return `<button class="card needbtn" data-act="petCare" data-v="${k}" ${mood === "sleep" ? "disabled" : ""}><span style="font-size:34px" aria-hidden="true">${n.icon}</span><b>${esc(n.label)}</b><span class="bar" style="width:100%" role="progressbar" aria-label="${esc(n.label)}"><i data-needbar="${k}" style="width:${lv}%;background:${lv > 60 ? 'var(--green)' : lv > 35 ? 'var(--fada)' : 'var(--red)'}"></i></span></button>`; }).join("")}</div>
     <div class="card row" style="gap:12px"><span style="font-size:34px" aria-hidden="true">🎁</span><div class="grow"><b id="petTreatsN">Treats: ${treats}</b><div class="muted" style="font-size:16px">You get a treat for every job you finish.</div></div><button class="btn primary" style="min-height:52px" data-act="petTreat" ${treats && mood !== "sleep" ? "" : "disabled"}>Give a treat</button></div>
-    <div class="card"><b id="petHearts">${I.heartf} ${hearts} hearts</b> <span class="muted" style="font-size:16px">from looking after ${esc(p.name)} together</span>${nextAt ? `<div class="muted" style="font-size:16px;margin-top:4px">${nextAt - hearts} more for a new thing in ${esc(p.name)}'s home: ${P.items[have]}</div>` : `<div class="muted" style="font-size:16px">${esc(p.name)}'s home is full of lovely things!</div>`}</div>
+    <div class="card"><b id="petHearts">${I.heartf} ${hearts} hearts</b> <span class="muted" style="font-size:16px">from looking after ${esc(p.name)}${petTogether()}</span>${nextAt ? `<div class="muted" style="font-size:16px;margin-top:4px">${nextAt - hearts} more for a new thing in ${esc(p.name)}'s home: ${P.items[have]}</div>` : `<div class="muted" style="font-size:16px">${esc(p.name)}'s home is full of lovely things!</div>`}</div>
     <div class="card row" style="align-items:flex-start"><div class="grow"><b>Did you know?</b><div>${esc(fact)}</div></div><button class="saybtn" data-act="say" data-v="${esc('Did you know? ' + fact)}" aria-label="Read it to me">${I.speak}</button></div>
+    <div class="row" style="justify-content:center"><button class="btn" data-act="petSwap" style="min-height:52px;font-size:17px">🔄 Change pet</button></div>
   </div>`;
 }
 
@@ -1743,13 +1775,13 @@ function snackTap(W, x, y){
 let gameView = "hub", snackLevel = 0, snackLoopId = 0;
 const snackProg = () => doc("settings","snack") || {best:{}};
 function snackUnlockedCount(){ const b = snackProg().best || {}; let n = 1; while(b[n] !== undefined && n < SNACK_LEVELS.length) n++; return n; }
-function gamesView(kid, ctx){ if(gameView === "pet") return pPet(kid, ctx); if(gameView === "snack") return pSnack(kid); return gamesHub(kid); }
+function gamesView(kid, ctx){ petKid = kid || ""; if(gameView === "pet") return pPet(kid, ctx); if(gameView === "snack") return pSnack(kid); return gamesHub(kid); }
 function gamesHub(kid){
   const p = pet(); const kind = p ? p.kind : "puppy"; const best = snackProg().best || {}; const open = snackUnlockedCount();
   return `<div class="kid">
     <div class="row"><button class="btn sm" data-act="petBack">‹ Back</button><span class="grow"></span><span class="pill info" style="font-size:16px" id="playLeft">${I.clock} ${fmtLeft(timeLeftSecs(kid))} left</span></div>
     <div class="kidhi" style="margin-top:10px">What will we play?</div>
-    <button class="card row gamecard" data-act="gameOpen" data-v="pet"><div style="flex:none">${petSvg(kind, p ? petMoodNow(p) : "happy", 96)}</div><div class="grow"><b style="font-size:24px">${p ? esc(p.name) : "Our pet"}</b><div class="muted" style="font-size:17px">${p ? "Look after " + esc(p.name) + " together" : "Pick and name your pet"}</div></div><span style="font-size:30px" aria-hidden="true">›</span></button>
+    <button class="card row gamecard" data-act="gameOpen" data-v="pet"><div style="flex:none">${petSvg(kind, p ? petMoodNow(p) : "happy", 96)}</div><div class="grow"><b style="font-size:24px">${p ? esc(p.name) : "Our pet"}</b><div class="muted" style="font-size:17px">${p ? "Look after " + esc(p.name) + petTogether() : "Pick and name your pet"}</div></div><span style="font-size:30px" aria-hidden="true">›</span></button>
     <div class="card gamecard" style="padding-bottom:16px"><div class="row" style="gap:12px"><span style="font-size:56px;flex:none" aria-hidden="true">🍬</span><div class="grow"><b style="font-size:24px">Snack Drop</b><div class="muted" style="font-size:17px">Cut the ropes to feed ${p ? esc(p.name) : "your pet"}!</div></div></div>
       <div class="lvlgrid">${SNACK_LEVELS.map((L,i) => { const n = i + 1, got = best[n], ok = n <= open; return `<button class="lvl ${ok ? '' : 'locked'}" data-act="snackStart" data-v="${i}" ${ok ? '' : 'disabled'} aria-label="Level ${n}${ok ? '' : ', locked'}"><b>${ok ? n : I.lock}</b><span>${got !== undefined ? '✨'.repeat(got) || '✓' : ''}</span></button>`; }).join("")}</div></div>
   </div>`;
@@ -1823,7 +1855,7 @@ function startSnack(){
     sfx("munch"); setTimeout(() => sfx("sweet"), 350); for(let i = 0; i < 8; i++) parts.push({x:L.goal[0], y:L.goal[1] - 40, dx:Math.random() * 2 - 1, t:now + i * 60});
     const n = snackLevel + 1, prog = snackProg(), best = {...(prog.best || {})}, first = best[n] === undefined;
     best[n] = Math.max(best[n] || 0, W.got); petQuiet = true; put("settings","snack",{...prog, best}); petQuiet = false;
-    if(first && p){ petQuiet = true; patch("settings","pet",{hearts:(Number(p.hearts)||0) + 1}); petQuiet = false; }
+    if(first && p){ petQuiet = true; patch("settings",petDocId(petKid),{hearts:(Number(p.hearts)||0) + 1}); petQuiet = false; }
     const nextOk = n < SNACK_LEVELS.length;
     over.innerHTML = `<div class="kidhi" style="font-size:30px">Yum! 🎉</div><div style="font-size:26px;margin:4px 0">${'✨'.repeat(W.got)}${'<span style="opacity:.25">✨</span>'.repeat(3 - W.got)}</div>
       ${first && p ? `<div style="font-size:17px">${esc(p.name)} got a ${I.heartf} for your home!</div>` : ''}
@@ -1851,13 +1883,13 @@ function startPlay(kid, ctx){
     const s = localSecs(playKid) + 5; ls.set("donri.play." + playId(playKid), s);
     if(s % 60 === 0) put("play", playId(playKid), {...playDoc(playKid), kid:playKid, date:today(), secs:Math.max(s, Number(playDoc(playKid).secs)||0)});
     const left = timeLeftSecs(playKid); const el = document.getElementById("playLeft"); if(el) el.innerHTML = I.clock + " " + fmtLeft(left) + " left";
-    if(left <= 0){ const k = playKid; const p = pet(); stopPlay(); closeSheet(); render(); toast(`Time's up for today, ${k}! ${p ? p.name + " will see you tomorrow" : "See you tomorrow"} 🌙`, 5000); say(`Time's up for today. ${p ? p.name + " will see you tomorrow." : ""}`); }
+    if(left <= 0){ const k = playKid; const p = pet(k); stopPlay(); closeSheet(); render(); toast(`Time's up for today, ${k}! ${p ? p.name + " will see you tomorrow" : "See you tomorrow"} 🌙`, 5000); say(`Time's up for today. ${p ? p.name + " will see you tomorrow." : ""}`); }
   }, 5000);
 }
 function stopPlay(){ if(playKid){ const s = localSecs(playKid); put("play", playId(playKid), {...playDoc(playKid), kid:playKid, date:today(), secs:Math.max(s, Number(playDoc(playKid).secs)||0)}); } clearInterval(playTimer); playTimer = null; playKid = ""; if(kidMode) kidView = "home"; kitchenPlay = ""; gameView = "hub"; snackLoopId++; }
 let kidView = "home", kitchenPlay = "";
 function playCard(kid){
-  const p = pet(); const ok = canPlay(kid); const left = timeLeftSecs(kid);
+  const p = pet(kid); const ok = canPlay(kid); const left = timeLeftSecs(kid);
   const why = timeLeftSecs(kid) <= 0 ? "No more playtime today. See you tomorrow! 🌙" : "Finish a job to unlock playtime! 🔒";
   return `<div class="card row" style="gap:12px">${p ? `<div style="flex:none">${petSvg(p.kind, petMood(p), 84)}</div>` : '<span style="font-size:44px" aria-hidden="true">🐾</span>'}
     <div class="grow">${ok ? `<b>Games time! 🎮</b><div style="font-size:16px">${p ? "Play with " + esc(p.name) : "Pick your pet"} · 🍬 Snack Drop</div><div class="muted" style="font-size:16px">${fmtLeft(left)} of playtime left today</div>` : `<b>${esc(why)}</b>`}</div>
@@ -2855,7 +2887,7 @@ function calSheet(){
   openSheet("Family calendar", () => {
     const {days} = calRange();
     const evs = d => docs("events").filter(e => e.date===d).sort((a,b) => String(a.start||"").localeCompare(String(b.start||"")));
-    const ols = d => outlook.items.filter(o => o.date===d && !evs(d).some(e => e.title === o.title && (e.start||"") === o.start));
+    const ols = d => (olShow() ? outlook.items : []).filter(o => o.date===d && !evs(d).some(e => e.title === o.title && (e.start||"") === o.start));
     const chores = d => d===today() ? docs("chores").filter(choreDue) : [];
     const famEmails = adults().filter(m => m.email && m.name !== myName());
     return `<div class="row wrap" style="margin-bottom:10px"><div class="seg" role="group" aria-label="View"><button data-act="calView" data-v="day" aria-pressed="${calView==='day'}">Day</button><button data-act="calView" data-v="week" aria-pressed="${calView==='week'}">Week</button></div><div class="grow"></div>
@@ -3198,8 +3230,9 @@ function settingsSheet(){
     <h2>Ideas and requests</h2>
     ${requestsBlock()}
     <h2>This phone</h2>
+    <p class="muted small" style="margin:-4px 0 8px">Family tablet: for a tablet everyone uses. It opens on everyone's chores, with a name button for each person. Health, Gifts, Renewals, Settings, the activity list and your own Outlook events need the grown-up PIN, then lock again after 10 minutes.</p>
     <div class="card small">Signed in as <b>${esc(me ? me.name + (me.email ? " (" + me.email + ")" : "") : "?")}</b>, using Donrí as <b>${esc(myName())}</b>.<br>Sync: ${syncState === "off" ? "not synced, check your connection" : "up to date"}.
-      <div class="row wrap" style="margin-top:10px"><button class="btn sm" data-act="syncNow">Sync now</button><button class="btn sm" data-act="kitchenOn">Use as kitchen display</button><button class="btn sm" data-act="switchWho">I'm not ${esc(myName())}</button><button class="btn sm danger" data-act="signout">Sign out</button></div></div>`;
+      <div class="row wrap" style="margin-top:10px"><button class="btn sm" data-act="syncNow">Sync now</button><button class="btn sm" data-act="kitchenOn">Use as kitchen display</button>${familyTab ? '<button class="btn sm" data-act="familyTabOff">Stop using as family tablet</button>' : '<button class="btn sm" data-act="familyTabOn">Use as family tablet</button>'}<button class="btn sm" data-act="switchWho">I'm not ${esc(myName())}</button><button class="btn sm danger" data-act="signout">Sign out</button></div></div>`;
   });
 }
 function activitySheet(){
@@ -3262,13 +3295,17 @@ document.addEventListener("click", async e => {
       const existing = [...RTAG_DEFAULTS, ...recipeTags(), ...rtagExtra].find(x => x.toLowerCase() === t.toLowerCase()); const tag = existing || t.charAt(0).toUpperCase() + t.slice(1);
       if(!existing) rtagExtra.push(tag); inp.value = ""; document.getElementById("reTagNewRow").hidden = true; rtagSet([...rtagChosen(), tag]); break; }
     case "home": closeSheet(); page = "today"; ls.set("donri.page", "today"); history.replaceState(null, "", "#today"); window.scrollTo(0,0); render(); break;
-    case "go": closeSheet(); page = v; ls.set("donri.page", v); history.replaceState(null, "", "#" + v); window.scrollTo(0,0); render(); break;
+    case "go": if(familyTab && LOCKED_PAGES.includes(v) && !grownOK()){ needGrown(() => { page = v; ls.set("donri.page", v); history.replaceState(null, "", "#" + v); window.scrollTo(0,0); render(); }); break; } closeSheet(); page = v; ls.set("donri.page", v); history.replaceState(null, "", "#" + v); window.scrollTo(0,0); render(); break;
     case "theme": ls.set("donri.theme", document.documentElement.dataset.theme === "dark" ? "light" : "dark"); render(); break;
     case "cal": calSheet(); break;
     case "help": openSheet("How to use: " + ({today:"Today",shop:"Shopping",meals:"Meal plan",chores:"Chores",families:"Families",gifts:"Gifts",meds:"Health",renew:"Renewals"}[page]), () => `<button class="card row" style="width:100%;text-align:left;gap:12px" data-act="introPlay"><span class="iplaybadge" aria-hidden="true">▶</span><span class="grow"><b>Watch Donrí in 30 seconds</b><div class="muted small">A quick tour of the app</div></span></button><div class="card help">${HELP[page]}</div>`); break;
     case "calHelp": openSheet("How to use: Calendar", () => `<div class="card help">${HELP.calendar}</div><button class="btn" data-act="cal">Back to calendar</button>`); break;
-    case "activity": activitySheet(); break;
-    case "settings": settingsSheet(); break;
+    case "activity": needGrown(activitySheet); break;
+    case "settings": needGrown(settingsSheet); break;
+    case "famWho": famWho = v || ""; choreWho = famWho; render(); break;
+    case "grownLock": grownLock(); toast("Locked"); break;
+    case "familyTabOn": if(!kidSettings().pin){ pinSetSheet(""); toast("Set a grown-up PIN first"); break; } setFamilyTab(true); break;
+    case "familyTabOff": setFamilyTab(false); break;
     case "close": closeSheet(); break;
     case "signin": signIn(false); break;
     case "signout": signOut(); break;
@@ -3351,14 +3388,23 @@ document.addEventListener("click", async e => {
     case "petNameIdea": { const i = document.getElementById("pnN"); if(i){ i.value = v; } break; }
     case "petCare": petTip = ""; petCareSheet(v); break;
     case "petChoose": { const p = pet(); if(!p) break; const o = PETS[p.kind].needs[id].opts[Number(v)];
-      if(o[2]){ const care = {...(p.care||{}), [id]:Date.now()}; petTip = ""; sfx("right"); petAfter = {hearts:4, say:nm(o[3], p), excite:true}; closeSheet(); patch("settings","pet",{care, hearts:(Number(p.hearts)||0) + 1}); say(nm(o[3], p)); }
+      if(o[2]){ const care = {...(p.care||{}), [id]:Date.now()}; petTip = ""; sfx("right"); petAfter = {hearts:4, say:nm(o[3], p), excite:true}; closeSheet(); patch("settings",petDocId(petKid),{care, hearts:(Number(p.hearts)||0) + 1}); say(nm(o[3], p)); }
       else { petTip = o[3]; sfx("wrong"); say(nm(o[3], p)); if(sheetRender) sheetRender(); } break; }
     case "petTreat": { const p = pet(); if(!p || !petTreats(p)) break; petAfter = {hearts:6, say:`Yum! ${p.name} loved the treat!`, excite:true, sound:"munch"};
-      patch("settings","pet",{treatsUsed:(Number(p.treatsUsed)||0) + 1, hearts:(Number(p.hearts)||0) + 2, care:{...(p.care||{}), fun:Date.now()}}); say(`${p.name} loved the treat!`); break; }
+      patch("settings",petDocId(petKid),{treatsUsed:(Number(p.treatsUsed)||0) + 1, hearts:(Number(p.hearts)||0) + 2, care:{...(p.care||{}), fun:Date.now()}}); say(`${p.name} loved the treat!`); break; }
     case "petNap": { const p = pet(); if(!p) break; if(needLevel(p,"rest") > 80){ petAfter = {hearts:0, say:"I'm not sleepy yet! Let's play!"}; render(); break; }
       napUntil = Date.now() + 20000; render(); sfx("lullaby"); say(`Night night, ${p.name}`);
-      setTimeout(() => { napUntil = 0; const q = pet(); if(!q) return; petAfter = {hearts:3, say:PET_TALK[q.kind].nap, sound:"wake"}; patch("settings","pet",{care:{...(q.care||{}), rest:Date.now()}, hearts:(Number(q.hearts)||0) + (needLevel(q,"rest") < 60 ? 1 : 0)}); }, 20000); break; }
-    case "petNew": closeSheet(); del("settings","pet"); toast("The boys can pick a new pet next time they play"); break;
+      setTimeout(() => { napUntil = 0; const q = pet(); if(!q) return; petAfter = {hearts:3, say:PET_TALK[q.kind].nap, sound:"wake"}; patch("settings",petDocId(petKid),{care:{...(q.care||{}), rest:Date.now()}, hearts:(Number(q.hearts)||0) + (needLevel(q,"rest") < 60 ? 1 : 0)}); }, 20000); break; }
+    case "petNew": closeSheet(); if(petMode() === "own") kids().forEach(k => { if(pet(k.name)) del("settings", petDocId(k.name)); }); else del("settings","pet"); toast(petMode() === "own" ? "Each boy can pick a new pet next time he plays" : "The boys can pick a new pet next time they play"); break;
+    case "petSwap": { const p = pet(); if(!p) break; openSheet("Change pet?", () => `<div style="text-align:center">${petSvg(p.kind,"happy",120)}</div>
+      <p class="kidtxt" style="text-align:center">${esc(p.name)} will go to stay at the <b>Pet Farm</b>, with lots of friends to play with. You can bring ${esc(p.name)} back any time.</p>
+      <div class="row wrap" style="justify-content:center"><button class="btn primary" style="min-height:56px;font-size:18px" data-act="petSwapYes">Pick a new pet</button><button class="btn" style="min-height:56px;font-size:18px" data-act="closeSheet">Keep ${esc(p.name)}</button></div>`); say(`${p.name} will go to stay at the Pet Farm. You can bring ${p.name} back any time.`); break; }
+    case "petSwapYes": { const p = pet(); if(!p) break; petCarry = petTreats(p); const id = petDocId(petKid); const list = [{...p, carry:petCarry}, ...petFarm()].slice(0, 8);
+      put("settings", id + "-farm", {list}); del("settings", id); closeSheet(); log(`${p.name} went to the Pet Farm`); render(); say("Pick a new pet!"); break; }
+    case "petBackFarm": { const list = petFarm().slice(); const f = list[Number(v)]; if(!f) break; list.splice(Number(v), 1); const id = petDocId(petKid);
+      const carry = Number(f.carry)||0; const back = {...f}; delete back.carry; delete back.id; delete back.u;
+      put("settings", id, {...back, treatsUsed:petJobs() + (Number(back.bonusTreats)||0) - (petCarry || carry), care:{...(back.care||{}), food:agoAwake(5), clean:agoAwake(5), special:agoAwake(5), fun:agoAwake(4), rest:agoAwake(3)}});
+      put("settings", id + "-farm", {list}); petCarry = 0; log(`${f.name} came back from the Pet Farm`); render(); toast(`${f.name} is home! 🎉`); say(`Welcome back, ${f.name}!`); break; }
     case "kitchenOn": setKitchen(true); toast("Kitchen display on. Press and hold Exit at the bottom to leave.", 4500); break;
     case "kChore": kitchenWhoSheet(id); break;
     case "kChoreBy": kitchenDone(id, v); closeSheet(); break;
@@ -3489,9 +3535,9 @@ document.addEventListener("submit", async e => {
     const r = await addSuggestion(x, {title, date:fd.date, start:fd.start||"", end:fd.end||"", who:(fd.who||"").trim(), note:(fd.note||"").trim(), outlook:!!fd.outlook});
     toast(r.ok ? `Added ${title} to the calendar` : "Added in Donrí, but Outlook didn't confirm. Check your calendar.", r.ok ? 3500 : 6000); schoolSheet(); return; }
   if(kind === "petName"){ const name = (fd.name||"").trim().slice(0,16); if(!name){ toast("Give your pet a name first"); return; } const k = f.dataset.v; if(!PETS[k]) return;
-    const now = Date.now(), jobsSoFar = docs("points").filter(x => x.choreId && Number(x.amount) > 0).length;
-    put("settings","pet",{kind:k, name, born:today(), care:{food:agoAwake(6), clean:agoAwake(8), special:agoAwake(7), fun:agoAwake(5), rest:agoAwake(4)}, hearts:0, treatsUsed:jobsSoFar, bonusTreats:2});
-    log(`welcomed ${name} the ${PETS[k].label.toLowerCase()} to the family`); closeSheet(); render(); toast(`Say hello to ${name}! 🎉`); say(`Hello ${name}!`); return; }
+    const now = Date.now(), jobsSoFar = petJobs(), carry = petCarry; petCarry = 0;
+    put("settings",petDocId(petKid),{kind:k, name, born:today(), owner:petMode() === "own" ? petKid : "", care:{food:agoAwake(6), clean:agoAwake(8), special:agoAwake(7), fun:agoAwake(5), rest:agoAwake(4)}, hearts:0, treatsUsed:jobsSoFar, bonusTreats:2 + carry});
+    log(petMode() === "own" ? `${petKid} welcomed ${name} the ${PETS[k].label.toLowerCase()}` : `welcomed ${name} the ${PETS[k].label.toLowerCase()} to the family`); closeSheet(); render(); toast(`Say hello to ${name}! 🎉`); say(`Hello ${name}!`); return; }
   if(kind === "kidPin"){ const a = (fd.a||"").trim(), b2 = (fd.b||"").trim();
     if(!/^\d{4,6}$/.test(a)){ toast("Use 4 to 6 numbers"); return; } if(a !== b2){ toast("The two PINs don't match"); return; }
     put("settings","kids",{...kidSettings(), pin:pinHash(a)}); const then = f.dataset.v; closeSheet(); toast("Grown-up PIN saved"); if(then){ setKid(then); } return; }
@@ -3527,6 +3573,7 @@ document.addEventListener("change", e => {
   if(el.dataset.rtag){ const v = el.value; if(v === "__new"){ const row = document.getElementById("reTagNewRow"); if(row){ row.hidden = false; document.getElementById("reTagNew").focus(); } el.value = ""; } else if(v){ rtagSet([...rtagChosen(), v]); } }
   if("sugol" in el.dataset){ sugOutlook = el.checked; }
   if(el.dataset.kidpref){ const key = el.dataset.kidpref, ks = kidSettings(); put("settings","kids",{...ks, [key]:{...(ks[key] || {}), [el.dataset.v]:el.checked}}); }
+  if("petmode" in el.dataset){ put("settings","kids",{...kidSettings(), petMode:el.value === "own" ? "own" : "shared"}); toast(el.value === "own" ? "Each boy can now have his own pet" : "The boys now share one pet"); }
   if("playmins" in el.dataset){ put("settings","kids",{...kidSettings(), playMins:Number(el.value)||10}); }
   if("kidapprove" in el.dataset){ put("settings","kids",{...kidSettings(), approval:el.checked}); }
   if("rkind" in el.dataset){ const k = RENEW_KINDS[el.value]; const f = el.form; if(k && f){ f.every.value = String(k.every); f.remindDays.value = String(k.remind); f.autoRenews.checked = !!k.auto; } }

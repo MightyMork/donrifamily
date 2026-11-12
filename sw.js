@@ -2,7 +2,7 @@
 // Pages are fetched fresh when online (so updates arrive straight away),
 // falling back to the saved copy when offline. Only this site's own files
 // are cached: Microsoft sign-in, OneDrive, Outlook and ntfy are never touched.
-const CACHE = "donri-shell-v5";
+const CACHE = "donri-shell-v6";
 const SHELL = ["./", "index.html", "manifest.webmanifest",
   "icons/favicon-64.png", "icons/apple-180.png", "icons/icon-192.png",
   "icons/icon-512.png", "icons/maskable-512.png"];
