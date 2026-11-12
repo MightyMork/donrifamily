@@ -399,7 +399,7 @@ body.bookopen{overflow:hidden}
 .bk-btn.ghost{background:transparent;color:#1F2A44;border:2px solid #1F2A44;box-shadow:none}
 
 /* ---------- the title film ---------- */
-#sfilm{position:fixed;inset:0;z-index:9500;background:#F2E7D0;overflow:hidden}
+#sfilm{position:fixed;inset:0;z-index:9500;background:#0F1628!important;overflow:hidden}
 #sfilm .sf-skip{position:absolute;top:14px;right:14px;z-index:3;background:rgba(255,255,255,.9);color:#121B33;border-radius:999px;padding:8px 16px;font-weight:700}
 .sf-fit{position:absolute;left:50%;top:50%;width:1600px;height:1000px;transform-origin:center}
 .sfStage{position:absolute;inset:0;overflow:hidden;background:#F2E7D0;font-family:'Patrick Hand',cursive}
@@ -459,6 +459,23 @@ body.bookopen{overflow:hidden}
 @keyframes sfEmber{0%{transform:translateY(0) scale(1);opacity:0}15%{opacity:1}100%{transform:translateY(-360px) translateX(var(--dx,20px)) scale(.4);opacity:0}}
 @keyframes sfUnfurl{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(-20px -20px -20px -20px)}}
 @keyframes sfShineA{from{background-position:100% 0}to{background-position:0 0}}
+
+/* the film ends on its title frame, which is the book's cover */
+#sfilm.done *{animation-delay:0s!important;animation-duration:.01s!important}
+#sfilm.done .sfGlow{animation:sfPulse 2.4s infinite!important}
+#sfilm.done .sfEm{animation:sfEmber 3.2s linear infinite!important}
+#sfilm.done .sfRays{animation:sfSpin 40s linear infinite!important}
+#sfilm.done .sfEm:nth-child(2n){animation-delay:-1.4s!important}#sfilm.done .sfEm:nth-child(3n){animation-delay:-2.3s!important}
+#sfilm.done .sf-skip{display:none}
+.sf-menu{position:absolute;inset:0;display:none;flex-direction:column;justify-content:flex-end;align-items:center;gap:10px;padding:14px 14px calc(18px + env(safe-area-inset-bottom));pointer-events:none;background:linear-gradient(to top,rgba(10,16,34,.85) 0%,rgba(10,16,34,.35) 32%,rgba(10,16,34,0) 55%)}
+#sfilm.done .sf-menu{display:flex;animation:sfIn .5s both!important;animation-duration:.5s!important}
+.sf-menu>*{pointer-events:auto}
+.sf-mtop{position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between}
+.sf-mq{font:clamp(22px,4.4vw,34px) 'Patrick Hand',cursive;color:#F6ECD6;text-shadow:0 2px 8px #0F1628}
+.sf-mrow{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.sf-mbtn{font:clamp(17px,3.4vw,24px) 'Patrick Hand',cursive;min-height:52px;padding:8px 20px;border-radius:999px;border:2px solid #E3B23C;background:#1F2A44;color:#F6ECD6;box-shadow:3px 3px 0 #EE7F3B;cursor:pointer}
+.sf-mbtn:disabled{opacity:.6;cursor:default;box-shadow:none}
+.sf-mbtn.ghost{min-height:44px;background:rgba(18,24,38,.6);border-color:rgba(246,236,214,.5);box-shadow:none;font-size:18px}
 @media (prefers-reduced-motion:reduce){#sfilm *{animation-duration:.01s!important;animation-delay:0s!important}.bk-leave,.bk-arrive{animation:none}}
 </style>
 </head>
@@ -2187,15 +2204,26 @@ function storyFilm(after){
       <div class="sfSub"><span class="sfShine">${esc(st.sub)}</span></div>
       <div class="sfFoot">donrí presents · ${esc(st.series)} · Book ${["One","Two","Three","Four","Five","Six"][st.book - 1] || st.book}</div></div>
     <div class="sfGrain"></div></div></div>
-    <button class="ibtn sf-skip" data-act="sfilmEnd">Skip</button>`;
+    <button class="ibtn sf-skip" data-act="sfilmSkip">Skip ›</button>
+    <div class="sf-menu" role="group" aria-label="How shall we read?">
+      <div class="sf-mtop"><button class="sf-mbtn ghost" data-act="sfilmShelf">‹ Stories</button><button class="sf-mbtn ghost" data-act="sfilmAgain">↺ Watch again</button></div>
+      <div class="sf-mq">How shall we read?</div>
+      <div class="sf-mrow"><button class="sf-mbtn" data-act="sfilmPick" data-v="book">📖 Grown-up reads</button><button class="sf-mbtn" data-act="sfilmPick" data-v="kid">⭐ I’ll read it</button><button class="sf-mbtn" disabled aria-disabled="true">🎧 Listen · coming soon</button></div>
+    </div>`;
   el.dataset.after = after || "";
   document.body.appendChild(el);
   const fit = () => { const s = Math.min(innerWidth / 1600, innerHeight / 1000); const f = el.querySelector(".sf-fit"); if(f) f.style.transform = `translate(-50%,-50%) scale(${s})`; };
   fit(); el._fit = fit; addEventListener("resize", fit);
   requestAnimationFrame(() => el.classList.add("go"));
   if(stSoundOK()) storyFilmMusic();
-  clearTimeout(sfilmT); sfilmT = setTimeout(() => storyFilmEnd(), 14600);
+  clearTimeout(sfilmT); sfilmT = setTimeout(() => storyFilmCover(), 13800);
   setTimeout(() => { const b = el.querySelector(".sf-skip"); if(b) b.focus(); }, 50);
+}
+// The film's last frame is the book's cover: the reading choices appear on it. Skip jumps straight there.
+function storyFilmCover(skipped){
+  clearTimeout(sfilmT); const el = document.getElementById("sfilm"); if(!el) return;
+  el.classList.add("done"); if(skipped){ try{ if(sfilmAC){ const a = sfilmAC; sfilmAC = null; a.close(); } }catch(e){} }
+  const b = el.querySelector('.sf-menu [data-act="sfilmPick"]'); if(b) setTimeout(() => b.focus(), 50);
 }
 function storyFilmEnd(quiet){
   clearTimeout(sfilmT); const el = document.getElementById("sfilm"); if(!el) return;
@@ -2241,18 +2269,22 @@ function storyFilmMusic(){
 
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-act]"); if(!b) return; const act = b.dataset.act, v = b.dataset.v;
-  if(act === "storyOpen"){ storyId = v; storyMode = ""; storyPage = -1; storyWord = -1; render(); window.scrollTo(0,0); if(!(storyProg().seen||{})[v]) setTimeout(() => storyFilm(), 300); }
+  if(act === "storyOpen"){ storyId = v; storyMode = ""; storyPage = -1; storyWord = -1; render(); window.scrollTo(0,0); storyFilm(); }
   if(act === "storyShelf"){ storyStop(); storyId = ""; storyMode = ""; storyPage = -1; kdGame = null; render(); window.scrollTo(0,0); }
   if(act === "storyCoverBack"){ storyStop(); storyMode = ""; storyPage = -1; kdGame = null; render(); window.scrollTo(0,0); }
   if(act === "storyFilm") storyFilm();
-  if(act === "sfilmEnd") storyFilmEnd();
+  if(act === "sfilmEnd") storyFilmEnd(true);
+  if(act === "sfilmSkip") storyFilmCover(true);
+  if(act === "sfilmAgain") storyFilm();
+  if(act === "sfilmShelf"){ storyFilmEnd(true); storyStop(); storyId = ""; storyMode = ""; storyPage = -1; kdGame = null; render(); window.scrollTo(0,0); }
+  if(act === "sfilmPick"){ storyFilmEnd(true); if(v === "book"){ if(!document.getElementById("book")) bookOpen(); } else { const bk = document.getElementById("book"); if(bk) bookClose(); storyStop(); storyMode = "kid"; storyPage = -1; storyWord = -1; kdGame = null; render(); window.scrollTo(0,0); } }
   if(act === "kdStart"){ storyStop(); storyMode = "kid"; storyPage = -1; storyWord = -1; kdGame = null; render(); window.scrollTo(0,0); }
   if(act === "kdTurn") kdTurn(Number(v));
   if(act === "kdHearPage"){ const st = curStory(); const pg = st && st.pages[storyPage]; if(pg){ storyStop(); say(stSpeak(stRhyme(pg))); } }
   if(act === "kdHearLine") kdReadLine();
   if(act === "kdSay"){ storyStop(); say(stSpeak(v)); if(b.dataset.i !== undefined){ storyWord = Number(b.dataset.i); document.querySelectorAll(".kd-line .kd-w").forEach((x,k) => x.classList.toggle("on", k === storyWord)); } }
   if(act === "kdPick") kdPick(v);
-  if(act === "bookOpen"){ const st = curStory(); if(st && !(storyProg().seen||{})[st.id]) storyFilm("book"); else bookOpen(); }
+  if(act === "bookOpen") bookOpen();
   if(act === "bookTurn") bookTurn(Number(v));
   if(act === "bookClose") bookClose();
   if(act === "bookAgain"){ const st = curStory(); const stage = document.getElementById("bkStage"); if(st && stage){ bookPage = 0; storyFinished = false; stage.innerHTML = bookPageHTML(st, 0); bookNavState(st); } }
