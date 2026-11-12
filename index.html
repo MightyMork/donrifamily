@@ -9,7 +9,7 @@
 <link rel="icon" href="icons/favicon-64.png">
 <link rel="apple-touch-icon" href="icons/apple-180.png">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600&family=Andika:wght@400;700&family=Lilita+One&family=Patrick+Hand&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600&family=Andika:wght@400;700&family=Lilita+One&family=Patrick+Hand&family=Press+Start+2P&display=swap">
 <style>
 :root{
   --bg:#FAF8F2; --card:#FFFFFF; --ink:#121B33; --muted:#575E70; --line:#E4E1D6;
@@ -331,37 +331,96 @@ body.gamefull #main{padding-top:6px!important}
 .st-book{max-width:760px}.st-page{position:relative;border-radius:22px;overflow:hidden;background:#FFF6E3;box-shadow:0 8px 24px rgba(18,27,51,.14);margin-top:10px;cursor:pointer}
 .st-art{display:block;width:100%;height:auto}.st-thumb{flex:none;width:120px;border-radius:14px;overflow:hidden}.st-thumb .st-art{width:120px}
 .st-nav{justify-content:space-between;gap:12px}.st-big{min-height:60px;min-width:72px;font-size:22px}
-/* ---------- STORIES: shelf, cover, Donnacha's reader ---------- */
-.kd-series{font-size:15px;font-weight:700;color:#2F7C78}
-.kd-soon{opacity:.75}.kd-soonpic{display:flex;align-items:center;justify-content:center;height:75px;background:#E9E2D2;color:#6B6B6B}
-.kd-cover{position:relative;border-radius:22px;overflow:hidden;margin-top:10px;box-shadow:0 8px 24px rgba(18,27,51,.18)}
+/* ---------- STORIES: shelf, cover, Donnacha's reader (Donrí look; Andika for reading) ---------- */
+.kd{max-width:720px;margin:0 auto;color:var(--ink)}
+.kd .bi{width:24px;height:24px;flex:none}
+.kd-head{display:flex;align-items:center;gap:12px;padding:2px 0 8px}
+.kd-round{flex:none;width:52px;height:52px;border-radius:50%;border:2px solid var(--ink);background:var(--card);color:var(--ink);font-size:32px;line-height:1;padding:0 0 4px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.kd-round.big{width:64px;height:64px;font-size:38px}
+.kd-htitle{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.15}
+.kd-hseries{font-size:14px;font-weight:700;color:var(--muted)}
+.kd-htitle b{font-family:'Bricolage Grotesque',Inter,sans-serif;font-weight:800;font-size:28px}
+.kd-hlabel{flex:none;font-size:15px;font-weight:700;color:var(--muted)}
+.kd-stripe{height:6px;border-radius:3px;background:linear-gradient(90deg,#1F6B3A 0 25%,#E3B23C 25% 50%,#F2E28B 50% 75%,#2A4C8C 75%);margin:2px 0 14px}
+.kd-prog{display:grid;grid-template-columns:repeat(13,1fr);gap:4px;margin:2px 0 12px}
+.kd-prog i{height:8px;border-radius:4px;background:var(--line)}
+.kd-prog i.done:nth-child(4n+1){background:#1F6B3A}.kd-prog i.done:nth-child(4n+2){background:#E3B23C}.kd-prog i.done:nth-child(4n+3){background:#F2E28B}.kd-prog i.done:nth-child(4n){background:#2A4C8C}
+.kd-prog i.now{background:var(--ink);transform:scaleY(1.4)}
+.kd h2.kd-h{font-family:'Bricolage Grotesque',Inter,sans-serif;font-weight:800;font-size:32px;line-height:1.15;margin:6px 0 4px;text-transform:none;letter-spacing:0;color:var(--ink)}
+.kd h2.kd-h.sm{font-size:23px;margin-top:22px}
+.kd-lead{font-size:19px;color:var(--muted);margin:0 0 14px}
+.kd-small{font-size:16px;color:var(--muted);margin:6px 0 0}
+.kd-go{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;margin-top:18px;min-height:64px;border-radius:999px;border:0;background:#121B33;color:#FAF8F2;font:800 22px 'Bricolage Grotesque',Inter,sans-serif;cursor:pointer;box-shadow:0 5px 0 #E3B23C}
+.kd-go span{color:#E3B23C;font-size:34px;line-height:0;margin-top:-4px}
+[data-theme=dark] .kd-go{background:#E3B23C;color:#121B33;box-shadow:0 5px 0 #8A5F0B}[data-theme=dark] .kd-go span{color:#121B33}
+.kd-ghost{display:flex;align-items:center;justify-content:center;width:100%;margin-top:14px;min-height:56px;border-radius:999px;border:2px solid var(--ink);background:transparent;color:var(--ink);font:700 19px Inter,sans-serif;cursor:pointer}
+.kd-ghost.sm{width:auto;margin:0;min-height:44px;padding:0 14px;font-size:15px;flex:none}
+/* shelf */
+.kd-book{display:grid;grid-template-columns:minmax(120px,42%) 1fr;gap:14px;align-items:center;width:100%;text-align:left;padding:10px;border-radius:22px;border:2px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;margin-bottom:12px;font:inherit;box-shadow:var(--shadow)}
+.kd-bcover{position:relative;display:block;border-radius:14px;overflow:hidden;aspect-ratio:16/10;background:#121B33}
+.kd-bcover img{width:100%;height:100%;object-fit:cover;display:block}
+.kd-btitle{position:absolute;left:8px;top:4px;font-family:'Lilita One',sans-serif;font-size:clamp(20px,6vw,30px);color:#EE7F3B;text-shadow:2px 2px 0 #0F1628;transform:rotate(-3deg)}
+.kd-bcover.soon{display:flex;align-items:center;justify-content:center;color:#A6ADBF}.kd-bcover.soon .bi{width:34px;height:34px}
+.kd-bmeta{display:flex;flex-direction:column;gap:4px;min-width:0}.kd-bmeta b{font-family:'Bricolage Grotesque',Inter,sans-serif;font-size:24px;line-height:1.1}.kd-bmeta>span{font-size:16px;color:var(--muted)}
+.kd-chip{align-self:flex-start;font-size:13px!important;font-weight:700;color:#1F6B3A!important;background:#E3F0E6;border-radius:999px;padding:2px 10px}
+.kd-chip.soon{color:#575E70!important;background:#ECEAE3}
+.kd-read{display:inline-flex;align-items:center;gap:6px;color:#8A5F0B!important;font-weight:700}.kd-read .bi{width:20px;height:20px}
+.kd-read.big{margin-top:12px;font-size:18px}
+.kd-book.soon{opacity:.75;cursor:default}
+/* cover (shown when the film isn't on screen) */
+.kd-cover{position:relative;border-radius:22px;overflow:hidden;margin-top:6px;box-shadow:0 8px 24px rgba(18,27,51,.2)}
 .kd-cover img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover}
 .kd-ctitle{position:absolute;left:4%;top:4%}
-.kd-cseries{font:clamp(15px,3.2vw,21px) 'Patrick Hand',cursive;color:#F6ECD6;text-shadow:0 1px 6px #0F1628}
 .kd-cname{font-family:'Lilita One',sans-serif;font-size:clamp(42px,12vw,84px);line-height:1;color:#EE7F3B;text-shadow:4px 4px 0 #0F1628;transform:rotate(-3deg);transform-origin:left}
 .kd-csub{display:inline-block;margin-top:8px;background:#1F2A44;color:#F6ECD6;border:2px solid #E3B23C;padding:2px 12px;font:clamp(16px,3.8vw,24px) 'Patrick Hand',cursive;transform:rotate(-1.5deg)}
-.kd-modes{display:grid;gap:12px;margin-top:10px}
-.kd-mode{display:grid;grid-template-columns:56px 1fr;column-gap:12px;text-align:left;align-items:center;padding:14px 16px;border-radius:20px;border:2px solid var(--line,#ddd);background:var(--card,#fff);color:var(--ink);cursor:pointer;min-height:76px;font:inherit}
-.kd-mode .kd-mi{grid-row:span 2;font-size:40px;text-align:center}.kd-mode b{font-size:22px}.kd-mode span:last-child{font-size:16px;color:var(--muted)}
-.kd-mode:disabled{opacity:.55;cursor:default}
-.kd-pic img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:20px;margin-top:10px;box-shadow:0 6px 18px rgba(18,27,51,.15)}
-.kd-hear{margin-top:12px;width:100%}
-.kd-turn{margin-top:14px;background:#FFF8E6;border:3px solid #F2C14E;border-radius:22px;padding:14px 16px 16px;color:#121B33}
-.kd-lbl{font-weight:700;font-size:16px;color:#B5652B}
-.kd-line{font-family:'Andika',sans-serif;font-size:clamp(28px,7.4vw,40px);line-height:1.7;letter-spacing:.04em;word-spacing:.22em;margin:6px 0 10px;color:#121B33}
+.kd-modes{display:grid;gap:12px}
+.kd-mode{display:grid;grid-template-columns:44px 1fr;column-gap:12px;text-align:left;align-items:center;padding:14px 16px;border-radius:20px;border:2px solid var(--ink);background:var(--card);color:var(--ink);cursor:pointer;min-height:76px;font:inherit;box-shadow:4px 4px 0 #E3B23C}
+.kd-mode .bi{grid-row:span 2;width:34px;height:34px;justify-self:center}.kd-mode b{font-family:'Bricolage Grotesque',Inter,sans-serif;font-size:22px}.kd-mode span{font-size:16px;color:var(--muted)}
+.kd-mode:disabled{opacity:.5;cursor:default;box-shadow:none;border-color:var(--line)}
+/* words to meet */
+.kd-meet{display:grid;gap:18px;margin-top:10px}
+.kd-mcard{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;padding:20px 64px 16px 20px;border-radius:22px;border:2px solid var(--ink);background:var(--card);color:var(--ink);cursor:pointer;font:inherit;box-shadow:4px 4px 0 #E3B23C}
+.kd-mnum{position:absolute;top:-13px;left:16px;width:30px;height:30px;border-radius:50%;background:#121B33;color:#E3B23C;font:800 16px 'Bricolage Grotesque',Inter,sans-serif;display:flex;align-items:center;justify-content:center}
+.kd-mword{font-family:'Andika',sans-serif;font-size:54px;line-height:1.2;letter-spacing:.04em}
+.kd-hl{color:#1F6B3A;text-decoration:underline;text-decoration-color:#E3B23C;text-decoration-thickness:5px;text-underline-offset:8px}
+[data-theme=dark] .kd-hl{color:#7FC79A}
+.kd-mtip{font-size:17px;color:var(--muted)}
+.kd-mspk{position:absolute;right:18px;top:50%;transform:translateY(-50%)}.kd-mspk .bi{width:30px;height:30px}
+.kd-names{display:flex;flex-wrap:wrap;gap:10px}
+/* the page */
+.kd-pic img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:18px;border:5px solid #FAF8F2;box-shadow:0 0 0 2px var(--line),0 8px 20px rgba(18,27,51,.18)}
+.kd-hear{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-top:14px;min-height:56px;border-radius:999px;border:2px solid var(--ink);background:var(--card);color:var(--ink);font:700 20px Inter,sans-serif;cursor:pointer}
+.kd-turn{position:relative;margin-top:26px;background:#FFFDF6;border:3px solid #121B33;border-radius:24px;padding:24px 18px 16px;color:#121B33;box-shadow:5px 5px 0 #E3B23C}
+.kd-tab{position:absolute;top:-17px;left:16px;display:flex;align-items:center;gap:6px;background:#121B33;color:#FAF8F2;border-radius:999px;padding:5px 16px 5px 10px;font:800 17px 'Bricolage Grotesque',Inter,sans-serif}.kd-tab .bi{width:20px;height:20px}
+.kd-line{font-family:'Andika',sans-serif;font-size:clamp(28px,7.4vw,40px);line-height:1.75;letter-spacing:.04em;word-spacing:.22em;margin:4px 0 12px;color:#121B33}
 .kd-w{background:none;border:0;padding:0 3px;margin:0;font:inherit;color:inherit;letter-spacing:inherit;border-radius:10px;cursor:pointer;min-height:auto}
-.kd-w.on{background:#FFE08A;color:#121B33;box-shadow:0 0 0 3px #FFE08A}
-.kd-name{background:#F2C14E;color:#121B33;border:0;border-radius:12px;padding:2px 10px;font:inherit;cursor:pointer}
-button.kd-name:not(.kd-w){font-family:'Andika',sans-serif;font-size:22px;padding:8px 14px;min-height:48px}
-.kd-meet{display:grid;gap:12px}
-.kd-mcard{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:16px 18px;border-radius:20px;border:3px solid #F2C14E;background:#FFF8E6;cursor:pointer;text-align:left;color:#121B33;font:inherit}
-.kd-mword{font-family:'Andika',sans-serif;font-size:48px;line-height:1.2;letter-spacing:.04em}
-.kd-hl{color:#C8501A;text-decoration:underline;text-decoration-thickness:4px;text-underline-offset:6px}
-.kd-mtip{font-size:17px;color:#4A4A4A}
-.kd-choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:14px}
-.kd-choice{font-family:'Andika',sans-serif;font-size:40px;padding:18px 10px;border-radius:20px;border:3px solid #2F7C78;background:#fff;color:#121B33;cursor:pointer;min-height:90px;transition:transform .2s}
-.kd-choice.kd-yes{background:#C8F0D2;border-color:#1F6B3A;transform:scale(1.06)}
+.kd-w.on{background:#F2E28B;color:#121B33;box-shadow:0 0 0 3px #F2E28B}
+.kd-name{background:#F2E28B;color:#121B33;border:0;border-radius:12px;padding:0 10px;font:inherit;cursor:pointer;box-shadow:inset 0 -4px 0 #E3B23C}
+.kd-name.on{background:#E3B23C;box-shadow:0 0 0 3px #E3B23C}
+button.kd-name:not(.kd-w){font-family:'Andika',sans-serif;font-size:23px;padding:8px 16px 10px;min-height:50px}
+.kd-with{display:inline-flex;align-items:center;gap:8px;min-height:46px;padding:6px 16px;border-radius:999px;border:2px solid #121B33;background:transparent;color:#121B33;font:700 16px Inter,sans-serif;cursor:pointer}.kd-with .bi{width:22px;height:22px}
+.kd-nav{display:flex;align-items:center;gap:12px;margin-top:18px}.kd-nav .kd-next{margin:0;flex:1}
+/* word hunt */
+.kd-stars{display:flex;gap:6px;justify-content:center;margin:2px 0 6px}.kd-stars span{opacity:.22;filter:grayscale(1)}.kd-stars span.on{opacity:1;filter:none;animation:kdPop .4s both}.kd-stars .bi{width:34px;height:34px}
+.kd-bigspk{display:flex;align-items:center;justify-content:center;width:112px;height:112px;margin:8px auto 6px;border-radius:50%;border:0;background:#E3B23C;color:#121B33;box-shadow:0 6px 0 #A8740E;cursor:pointer}.kd-bigspk .bi{width:54px;height:54px}
+.kd-bigspk:active{transform:translateY(4px);box-shadow:0 2px 0 #A8740E}
+.kd-choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-top:16px}
+.kd-choice{font-family:'Andika',sans-serif;font-size:42px;padding:16px 10px;border-radius:22px;border:3px solid #121B33;background:#FFFDF6;color:#121B33;cursor:pointer;min-height:96px;box-shadow:4px 4px 0 #2A4C8C;transition:transform .2s}
+.kd-choice.kd-yes{background:#1F6B3A;color:#FAF8F2;border-color:#1F6B3A;box-shadow:4px 4px 0 #E3B23C;transform:scale(1.06)}
 .kd-wobble{animation:kdWob .45s}@keyframes kdWob{25%{transform:rotate(-3deg)}75%{transform:rotate(3deg)}}
+@keyframes kdPop{0%{transform:scale(.3)}70%{transform:scale(1.25)}100%{transform:scale(1)}}
+.kd-nudge{text-align:center;color:var(--muted);font-size:18px;min-height:28px;margin-top:12px}
+/* the end */
+.kd-win{position:relative;overflow:hidden;text-align:center;padding:24px 16px 28px;border-radius:26px;background:#121B33;color:#FAF8F2;margin-top:6px}
+.kd-win::after{content:"";position:absolute;left:0;right:0;bottom:0;height:8px;background:linear-gradient(90deg,#1F6B3A 0 25%,#E3B23C 25% 50%,#F2E28B 50% 75%,#2A4C8C 75%)}
+.kd-wstars{display:flex;justify-content:center;gap:10px}.kd-wstars .bi{width:44px;height:44px;animation:kdPop .5s both}.kd-wstars .bi:nth-child(2){animation-delay:.15s;transform:translateY(-8px)}.kd-wstars .bi:nth-child(3){animation-delay:.3s}
+.kd-wt{font:800 42px 'Bricolage Grotesque',Inter,sans-serif;margin:8px 0 4px}
+.kd-win p{font-size:19px;margin:0;color:#E4E1D6}
+.kd-card{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:16px 16px 12px;margin-top:14px}
+.kd-card h3{display:flex;align-items:center;gap:8px;font:800 22px 'Bricolage Grotesque',Inter,sans-serif;margin:0 0 6px}.kd-card h3 .bi{width:24px;height:24px}
+.kd-card p{font-size:19px;margin:0}
+.kd-fact{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line);font-size:18px}.kd-fact:first-of-type{border-top:0}.kd-fact span{flex:1}
+.kd-spk{flex:none;width:46px;height:46px;border-radius:50%;border:2px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center}.kd-spk .bi{width:22px;height:22px}
 
 /* ---------- Grown-up reads: the full-screen picture book ---------- */
 body.bookopen{overflow:hidden}
@@ -477,6 +536,57 @@ body.bookopen{overflow:hidden}
 .sf-mbtn:disabled{opacity:.6;cursor:default;box-shadow:none}
 .sf-mbtn.ghost{min-height:44px;background:rgba(18,24,38,.6);border-color:rgba(246,236,214,.5);box-shadow:none;font-size:18px}
 @media (prefers-reduced-motion:reduce){#sfilm *{animation-duration:.01s!important;animation-delay:0s!important}.bk-leave,.bk-arrive{animation:none}}
+/* ---------- PLAY: the cartridge selector ---------- */
+.arc{--cw:200px;--gap:22px;position:relative;max-width:720px;margin:0 auto;padding:12px 12px 18px;min-height:calc(100dvh - 24px);box-sizing:border-box;border-radius:24px;color:#FAF8F2;display:flex;flex-direction:column;gap:12px;
+  background:radial-gradient(1px 1px at 20% 30%,#FAF8F2 50%,transparent 51%),radial-gradient(1px 1px at 70% 12%,#F2E28B 50%,transparent 51%),radial-gradient(1.5px 1.5px at 86% 60%,#FAF8F2 50%,transparent 51%),radial-gradient(1px 1px at 40% 80%,#FAF8F2 50%,transparent 51%),radial-gradient(ellipse at 50% 0%,#24305A 0%,#121B33 60%,#0B1022 100%)}
+.arc .bi{width:20px;height:20px}
+.arc-top{display:flex;align-items:center;gap:8px}
+.arc-pill{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 12px;border-radius:10px;border:2px solid #3A4670;background:#1A2547;color:#FAF8F2;font:700 15px Inter,sans-serif;cursor:pointer;white-space:nowrap}
+.arc-logo{flex:1;text-align:center;font-family:'Press Start 2P',monospace;font-size:15px;line-height:1.4;color:#FAF8F2;text-shadow:3px 3px 0 #2A4C8C;letter-spacing:1px}
+.arc-logo span{display:block;font-size:11px;color:#E3B23C;text-shadow:2px 2px 0 #121B33;letter-spacing:4px}
+.arc-stripe{display:flex;gap:4px;justify-content:center}.arc-stripe i{width:48px;height:8px}
+.arc-stripe i:nth-child(1){background:#1F6B3A}.arc-stripe i:nth-child(2){background:#E3B23C}.arc-stripe i:nth-child(3){background:#F2E28B}.arc-stripe i:nth-child(4){background:#2A4C8C}
+.arc-screen{position:relative;overflow:hidden;border-radius:18px;background:#0B1022;border:6px solid #2A3350;box-shadow:inset 0 0 40px rgba(42,76,140,.45);padding:26px 0 30px;touch-action:pan-y}
+.arc-track{display:flex;gap:var(--gap);padding-left:calc(50% - var(--cw) / 2);transform:translateX(calc(var(--sel) * -1 * (var(--cw) + var(--gap))));transition:transform .32s cubic-bezier(.3,1.4,.5,1)}
+.arc-scan{position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 2px,transparent 2px 4px)}
+.cart{flex:none;width:var(--cw);height:236px;border:0;padding:0;position:relative;border-radius:16px 16px 8px 8px;background:linear-gradient(180deg,#C2C6CF 0%,#9A9FAB 100%);box-shadow:inset 0 3px 0 rgba(255,255,255,.55),inset 0 -10px 0 rgba(0,0,0,.16),0 8px 0 #4C515C,0 16px 24px rgba(0,0,0,.45);transform:scale(.8);opacity:.55;transition:transform .3s,opacity .3s;cursor:pointer}
+.cart.on{transform:scale(1);opacity:1;animation:cartBob 1.8s ease-in-out infinite}
+@keyframes cartBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.cart-grip{position:absolute;left:22px;right:22px;top:11px;height:20px;border-radius:4px;background:repeating-linear-gradient(90deg,#7E838F 0 6px,#AEB3BE 6px 12px)}
+.cart-label{position:absolute;left:14px;right:14px;top:40px;bottom:20px;background:var(--lab);border-radius:6px;padding:5px;display:flex;flex-direction:column;gap:5px;box-shadow:inset 0 0 0 2px rgba(0,0,0,.18)}
+.cart-art{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:3px;background:#121B33}
+.cart-art img{width:100%;height:100%;object-fit:cover;display:block}
+.arc-petart{display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:radial-gradient(circle at 50% 70%,#2A4C8C,#121B33)}.arc-petart svg{width:104px;height:104px}
+.arc-pix{width:84%;height:auto;image-rendering:pixelated}
+.cart-name{font-family:'Press Start 2P',monospace;font-size:10px;line-height:1.35;color:#FAF8F2;text-align:center;padding:2px 2px 3px;text-shadow:1px 1px 0 rgba(0,0,0,.5)}
+.cart.locked .cart-art{background:repeating-linear-gradient(45deg,#232838 0 8px,#2C3245 8px 16px)}
+.cart-q{font-family:'Press Start 2P',monospace;font-size:46px;color:#E3B23C;text-shadow:4px 4px 0 #121B33}
+.arc-shake{animation:arcShake .4s!important}@keyframes arcShake{20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(4px)}}
+.arc-dots{display:flex;gap:8px;justify-content:center}.arc-dots i{width:10px;height:10px;background:#3A4670}.arc-dots i.on{background:#E3B23C}
+.arc-info{text-align:center;padding:0 6px}
+.arc-title{display:flex;align-items:center;justify-content:center;gap:10px;font:800 30px 'Bricolage Grotesque',Inter,sans-serif;line-height:1.15}
+.arc-say{width:44px;height:44px;border-radius:50%;border:2px solid #3A4670;background:#1A2547;color:#FAF8F2;cursor:pointer;display:flex;align-items:center;justify-content:center;flex:none}
+.arc-sub{font-size:18px;color:#C9CEDB;margin-top:4px}
+.arc-note{display:inline-block;margin-top:8px;padding:3px 12px;border-radius:999px;background:#1F6B3A;color:#FAF8F2;font-size:15px;font-weight:700}
+.arc-lvls{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:12px}
+.arc-lvl{min-height:52px;border-radius:8px;border:2px solid #E3B23C;background:#1A2547;color:#FAF8F2;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:4px 0}
+.arc-lvl b{font-family:'Press Start 2P',monospace;font-size:13px;font-weight:400}
+.arc-lvl span{display:flex;gap:2px;height:6px}.arc-lvl span i{width:6px;height:6px;background:#F2E28B}
+.arc-lvl.locked{border-color:#3A4670;color:#7D869E;cursor:default}.arc-lvl.locked .bi{width:16px;height:16px}
+.arc-pad{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 10px 4px}
+.arc-dpad{display:flex;gap:4px;padding:6px;border-radius:16px;background:#1A2547;border:2px solid #3A4670}
+.arc-dpad button{width:66px;height:62px;border:0;border-radius:10px;background:#2A3350;color:#FAF8F2;font-size:22px;cursor:pointer;box-shadow:inset 0 -5px 0 rgba(0,0,0,.35)}
+.arc-dpad button:active{transform:translateY(3px);box-shadow:inset 0 -2px 0 rgba(0,0,0,.35)}
+.arc-ab{display:flex;gap:14px;align-items:flex-end}
+.arc-btn{display:flex;flex-direction:column;align-items:center;gap:4px;border:0;background:none;color:#C9CEDB;cursor:pointer;padding:0}
+.arc-btn b{display:flex;align-items:center;justify-content:center;width:70px;height:70px;border-radius:50%;font-family:'Press Start 2P',monospace;font-size:20px;font-weight:400;box-shadow:inset 0 -6px 0 rgba(0,0,0,.28),0 4px 0 rgba(0,0,0,.35)}
+.arc-btn.a b{background:#E3B23C;color:#121B33;width:82px;height:82px;font-size:24px}
+.arc-btn.b b{background:#1F6B3A;color:#FAF8F2;margin-bottom:6px}
+.arc-btn span{font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px}
+.arc-btn:active b{transform:translateY(3px)}
+.arc-btn.a[aria-disabled="true"] b{background:#575E70;color:#C9CEDB}
+@media (min-width:600px){.arc{--cw:230px}.cart{height:270px}}
+@media (prefers-reduced-motion:reduce){.cart.on{animation:none}.arc-track{transition:none}}
 </style>
 </head>
 <body>
@@ -879,7 +989,7 @@ function render(){
   const kidOk = kidMode && kids().some(k => k.name === kidMode);
   document.body.classList.toggle("kiosk", !!kitchen || kidOk);
   document.body.classList.toggle("nospeech", !speechOn());
-  document.body.classList.toggle("gamefull", ((kidOk && kidView === "pet") || (!!kitchen && !!kitchenPlay)) && gameView !== "hub");
+  document.body.classList.toggle("gamefull", ((kidOk && kidView === "pet") || (!!kitchen && !!kitchenPlay)));
   if(kidOk){ $("#main").innerHTML = pKid(kidMode); if(document.getElementById("petstage")) startPetLoop(); if(document.getElementById("snackCanvas")) startSnack(); if(sheetRender && !($("#sheet").contains(document.activeElement) && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))) sheetRender(); return; }
   if(kitchen){ const h = new Date().getHours(); if(h >= 21 || h < 7) document.documentElement.dataset.theme = "dark"; document.body.classList.toggle("nospeech", !speechOn()); $("#main").innerHTML = pKitchen(); if(document.getElementById("petstage")) startPetLoop(); if(document.getElementById("snackCanvas")) startSnack(); updateBell(); if(sheetRender && !($("#sheet").contains(document.activeElement) && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))) sheetRender(); return; }
   if(familyTab && LOCKED_PAGES.includes(page) && !grownOK()) page = "today";
@@ -1999,50 +2109,54 @@ const storyProg = () => doc("settings","stories") || {done:{}};
 const curStory = () => STORIES.find(s => s.id === storyId);
 function storyStop(){ clearTimeout(storyTimer); storyUtt++; try{ speechSynthesis.cancel(); }catch(e){} }
 
-// ---------- the shelf, the cover and Donnacha's reader (inside the app) ----------
+// ---------- the shelf, the cover and Donnacha's reader (inside the app), in the Donrí look ----------
+const kdHead = (st, label, back) => `<div class="kd-head"><button class="kd-round" data-act="${back || 'storyCoverBack'}" aria-label="Back">‹</button>
+  <div class="kd-htitle"><span class="kd-hseries">${esc(st.series)} · Book ${st.book}</span><b>${esc(st.title)}</b></div>${label ? `<span class="kd-hlabel">${esc(label)}</span>` : ''}</div>`;
+const kdProg = (st, at) => `<div class="kd-prog" aria-hidden="true">${st.pages.map((_, i) => `<i class="${i < at ? 'done' : ''}${i === at ? ' now' : ''}"></i>`).join("")}</div>`;
 function pStory(kid){
   const st = curStory();
   if(!st){
     const done = storyProg().done || {};
-    return `<div class="kid st-book"><div class="row"><button class="btn sm" data-act="petBack">‹ Back</button></div>
-      <div class="kidhi" style="margin-top:10px">Story time 📖</div><p>Pick a story. Reading doesn't use up your playtime!</p>
-      ${STORIES.map(s => `<button class="card row gamecard" data-act="storyOpen" data-v="${s.id}"><div class="st-thumb">${s.cover()}</div><div class="grow"><div class="kd-series">${esc(s.series)} · Book ${s.book}</div><b style="font-size:24px">${esc(s.title)}</b><div class="muted" style="font-size:17px">${esc(s.sub)}</div>${done[s.id] ? '<div class="pill ok" style="margin-top:6px">⭐ Read it!</div>' : ''}</div></button>`).join("")}
-      ${STORIES_NEXT.map(s => `<div class="card row gamecard kd-soon"><div class="st-thumb kd-soonpic" aria-hidden="true">${I.lock}</div><div class="grow"><div class="kd-series">Coming soon</div><b style="font-size:22px">${esc(s.title)}</b><div class="muted" style="font-size:17px">${esc(s.sub)}</div></div></div>`).join("")}</div>`;
+    return `<div class="kd kid"><div class="kd-head"><button class="kd-round" data-act="petBack" aria-label="Back to games">‹</button><div class="kd-htitle"><span class="kd-hseries">Donrí</span><b>Story time</b></div></div>
+      <div class="kd-stripe"></div><p class="kd-lead">Pick a book. Reading doesn't use up your playtime!</p>
+      ${STORIES.map(s => `<button class="kd-book" data-act="storyOpen" data-v="${s.id}"><span class="kd-bcover"><img src="${stImg(s, s.key)}" alt=""><span class="kd-btitle">${esc(s.title)}</span></span>
+        <span class="kd-bmeta"><span class="kd-chip">${esc(s.series)} · Book ${s.book}</span><b>${esc(s.title)}</b><span>${esc(s.sub)}</span>${done[s.id] ? `<span class="kd-read">${I.star} Read it!</span>` : ''}</span></button>`).join("")}
+      ${STORIES_NEXT.map(s => `<div class="kd-book soon"><span class="kd-bcover soon">${I.lock}</span><span class="kd-bmeta"><span class="kd-chip soon">Coming soon</span><b>${esc(s.title)}</b><span>${esc(s.sub)}</span></span></div>`).join("")}</div>`;
   }
   if(storyMode !== "kid") return storyCover(st);
   if(storyPage === -1) return kdMeet(st);
   if(storyPage >= st.pages.length && kdGame && !kdGame.over) return kdGameView(st);
   if(storyPage >= st.pages.length) return kdEnd(st);
-  const pg = st.pages[storyPage], n = st.pages.length;
-  return `<div class="kid st-book"><div class="row"><button class="btn sm" data-act="storyCoverBack">‹ Story</button><span class="grow"></span><span class="pill info" style="font-size:16px">Page ${storyPage + 1} of ${n}</span></div>
+  const pg = st.pages[storyPage], n = st.pages.length, last = storyPage === n - 1;
+  return `<div class="kd kid">${kdHead(st, `Page ${storyPage + 1} of ${n}`)}${kdProg(st, storyPage)}
     <div class="kd-pic"><img src="${stImg(st, storyPage + 1)}" alt="Picture for page ${storyPage + 1}"></div>
-    ${speechOn() ? `<button class="btn st-big kd-hear" data-act="kdHearPage">🔊 Hear the story</button>` : ''}
-    <div class="kd-turn"><div class="kd-lbl">My turn</div><p class="kd-line">${kdTokens(st, pg.kid)}</p>
-      ${speechOn() ? `<button class="btn sm" data-act="kdHearLine" aria-label="Read my line to me">🔊 Read it with me</button>` : ''}</div>
-    <div class="row st-nav"><button class="btn st-big" data-act="kdTurn" data-v="-1" ${storyPage === 0 ? 'disabled' : ''} aria-label="Back a page">‹</button>
-      <button class="btn primary st-big" data-act="kdTurn" data-v="1" aria-label="Next page">${storyPage === n - 1 ? 'Word hunt 🔍' : '›'}</button></div></div>`;
+    ${speechOn() ? `<button class="kd-hear" data-act="kdHearPage">${I.speak}<span>Hear the story</span></button>` : ''}
+    <div class="kd-turn"><span class="kd-tab">${I.star}My turn</span><p class="kd-line">${kdTokens(st, pg.kid)}</p>
+      ${speechOn() ? `<button class="kd-with" data-act="kdHearLine">${I.speak}Read it with me</button>` : ''}</div>
+    <div class="kd-nav"><button class="kd-round big" data-act="kdTurn" data-v="-1" aria-label="Back a page">‹</button>
+      <button class="kd-go kd-next" data-act="kdTurn" data-v="1">${last ? 'Word hunt' : 'Next page'}<span aria-hidden="true">›</span></button></div></div>`;
 }
 function storyCover(st){
   const done = (storyProg().done || {})[st.id];
-  return `<div class="kid st-book"><div class="row"><button class="btn sm" data-act="storyShelf">‹ Stories</button><span class="grow"></span><button class="btn sm" data-act="storyFilm">🎬 Watch the start</button></div>
-    <div class="kd-cover"><img src="${stImg(st, st.key)}" alt="">
-      <div class="kd-ctitle"><div class="kd-cseries">${esc(st.series)} · Book ${st.book}</div><div class="kd-cname">${esc(st.title)}</div><div class="kd-csub">${esc(st.sub)}</div></div></div>
-    ${done ? '<div class="pill ok" style="margin:10px 0 0">⭐ You read this one!</div>' : ''}
-    <div class="kidhi" style="margin-top:14px">How shall we read?</div>
+  return `<div class="kd kid"><div class="kd-head"><button class="kd-round" data-act="storyShelf" aria-label="Back to the stories">‹</button><div class="kd-htitle"><span class="kd-hseries">${esc(st.series)} · Book ${st.book}</span><b>${esc(st.title)}</b></div>
+      <button class="kd-ghost sm" data-act="storyFilm">↺ Watch the start</button></div>
+    <div class="kd-cover"><img src="${stImg(st, st.key)}" alt=""><div class="kd-ctitle"><div class="kd-cname">${esc(st.title)}</div><div class="kd-csub">${esc(st.sub)}</div></div></div>
+    ${done ? `<div class="kd-read big">${I.star} You read this one!</div>` : ''}
+    <h2 class="kd-h">How shall we read?</h2>
     <div class="kd-modes">
-      <button class="kd-mode" data-act="bookOpen"><span class="kd-mi" aria-hidden="true">📖</span><b>Grown-up reads</b><span>A big picture book. Turn your phone sideways.</span></button>
-      <button class="kd-mode" data-act="kdStart"><span class="kd-mi" aria-hidden="true">⭐</span><b>I’ll read it</b><span>My turn on every page, then a word hunt.</span></button>
-      <button class="kd-mode" disabled aria-disabled="true"><span class="kd-mi" aria-hidden="true">🎧</span><b>Listen</b><span>Dad’s reading it. Coming soon!</span></button>
+      <button class="kd-mode" data-act="bookOpen">${I.book}<b>Grown-up reads</b><span>A big picture book. Turn your phone sideways.</span></button>
+      <button class="kd-mode" data-act="kdStart">${I.star}<b>I’ll read it</b><span>My turn on every page, then a word hunt.</span></button>
+      <button class="kd-mode" disabled aria-disabled="true">${I.speak}<b>Listen</b><span>Dad’s reading it. Coming soon!</span></button>
     </div></div>`;
 }
 function kdMeet(st){
-  return `<div class="kid st-book"><div class="row"><button class="btn sm" data-act="storyCoverBack">‹ Story</button></div>
-    <div class="kidhi" style="margin-top:10px">Words to meet 👋</div><p style="font-size:19px">These words are in the story. Tap one to hear it.</p>
-    <div class="kd-meet">${st.meet.map(m => { const i = m.w.indexOf(m.hl); const html = i < 0 ? esc(m.w) : esc(m.w.slice(0,i)) + `<span class="kd-hl">${esc(m.hl)}</span>` + esc(m.w.slice(i + m.hl.length));
-      return `<button class="kd-mcard" data-act="kdSay" data-v="${esc(m.w)}"><span class="kd-mword">${html}</span><span class="kd-mtip">${esc(m.tip)}</span></button>`; }).join("")}</div>
-    <p style="font-size:19px;margin-top:14px">Some names are tricky. Gold names say themselves when you tap them:</p>
-    <div class="row wrap" style="gap:10px">${st.names.map(n => `<button class="kd-name" data-act="kdSay" data-v="${esc(n)}">${esc(n)}</button>`).join("")}</div>
-    <div class="row" style="margin-top:18px"><span class="grow"></span><button class="btn primary st-big" data-act="kdTurn" data-v="1">Start the story ›</button></div></div>`;
+  return `<div class="kd kid">${kdHead(st)}<div class="kd-stripe"></div>
+    <h2 class="kd-h">Words to meet</h2><p class="kd-lead">These words are in the story. Tap one to hear it.</p>
+    <div class="kd-meet">${st.meet.map((m, k) => { const i = m.w.indexOf(m.hl); const html = i < 0 ? esc(m.w) : esc(m.w.slice(0,i)) + `<span class="kd-hl">${esc(m.hl)}</span>` + esc(m.w.slice(i + m.hl.length));
+      return `<button class="kd-mcard" data-act="kdSay" data-v="${esc(m.w)}"><span class="kd-mnum">${k + 1}</span><span class="kd-mword">${html}</span><span class="kd-mtip">${esc(m.tip)}</span><span class="kd-mspk">${I.speak}</span></button>`; }).join("")}</div>
+    <h2 class="kd-h sm">Tricky names</h2><p class="kd-lead">Gold names say themselves when you tap them.</p>
+    <div class="kd-names">${st.names.map(n => `<button class="kd-name" data-act="kdSay" data-v="${esc(n)}">${esc(n)}</button>`).join("")}</div>
+    <button class="kd-go" data-act="kdTurn" data-v="1">Start the story<span aria-hidden="true">›</span></button></div>`;
 }
 // Donnacha's line: every word is a button that says itself; names are gold tags
 function kdTokens(st, line){
@@ -2091,11 +2205,12 @@ function kdGameRound(){
 }
 function kdGameView(st){
   const g = kdGame; const t = g.order[g.round];
-  return `<div class="kid st-book"><div class="row"><button class="btn sm" data-act="storyCoverBack">‹ Story</button><span class="grow"></span><span class="pill info" style="font-size:16px">${"⭐".repeat(g.found)}${"☆".repeat(g.rounds - g.found)}</span></div>
-    <div class="kidhi" style="margin-top:10px">Word hunt 🔍</div><p style="font-size:20px">Listen, then tap the word.</p>
-    ${speechOn() ? `<button class="btn primary st-big kd-hear" data-act="kdSay" data-v="${esc(t)}">🔊 Hear the word</button>` : `<p class="kd-line">${esc(t)}</p>`}
+  return `<div class="kd kid">${kdHead(st, 'Word hunt')}
+    <div class="kd-stars" aria-label="${g.found} of ${g.rounds} words found">${Array.from({length:g.rounds}, (_, i) => `<span class="${i < g.found ? 'on' : ''}">${I.star}</span>`).join("")}</div>
+    <h2 class="kd-h">Word hunt</h2><p class="kd-lead">Listen, then tap the word.</p>
+    ${speechOn() ? `<button class="kd-bigspk" data-act="kdSay" data-v="${esc(t)}" aria-label="Hear the word">${I.speak}</button>` : `<p class="kd-line" style="text-align:center">${esc(t)}</p>`}
     <div class="kd-choices">${g.choices.map(c => `<button class="kd-choice ${g.nudge === c ? 'kd-wobble' : ''}" data-act="kdPick" data-v="${esc(c)}">${esc(c)}</button>`).join("")}</div>
-    <p class="muted" style="font-size:17px;min-height:26px">${g.nudge ? "Nearly! Have another listen." : ""}</p></div>`;
+    <p class="kd-nudge">${g.nudge ? "Nearly! Have another listen." : ""}</p></div>`;
 }
 function kdPick(w){
   const g = kdGame; if(!g || g.over || g.busy) return; const t = g.order[g.round];
@@ -2108,15 +2223,16 @@ function kdPick(w){
   }
 }
 function kdEnd(st){
-  return `<div class="kid st-book"><div class="row"><button class="btn sm" data-act="storyShelf">‹ Stories</button></div>
-    <div class="kidhi" style="margin-top:10px;text-align:center">You read the whole story! ⭐</div>
-    ${kdGame ? `<p style="text-align:center;font-size:20px">You found ${kdGame.found} words in the word hunt.</p>` : ''}
+  return `<div class="kd kid">${kdHead(st, '', 'storyShelf')}
+    <div class="kd-win"><div class="kd-wstars">${I.star}${I.star}${I.star}</div><div class="kd-wt">Well done!</div>
+      <p>You read the whole story${kdGame ? ` and found ${kdGame.found} words in the word hunt` : ''}.</p></div>
     ${storyEndBits(st)}
-    <div class="row wrap" style="justify-content:center;gap:12px"><button class="btn primary st-big" data-act="kdStart">Read it again</button><button class="btn st-big" data-act="storyShelf">Pick another story</button></div></div>`;
+    <button class="kd-go" data-act="kdStart">Read it again<span aria-hidden="true">›</span></button>
+    <button class="kd-ghost" data-act="storyShelf">Pick another story</button></div>`;
 }
 function storyEndBits(st){
-  return `<div class="card"><b style="font-size:20px">Real or legend?</b>${st.facts.map(f => `<div class="row" style="gap:8px;margin-top:8px"><span class="grow" style="font-size:18px">${esc(f)}</span>${speechOn() ? `<button class="btn sm" data-act="kdSay" data-v="${esc(f)}" aria-label="Read this to me">🔊</button>` : ''}</div>`).join("")}</div>
-    <div class="card"><b style="font-size:20px">What would you do?</b><p style="font-size:19px;margin:6px 0 0">${esc(st.ask)}</p><p class="muted" style="font-size:16px;margin:6px 0 0">Talk about it with a grown-up.</p></div>`;
+  return `<div class="kd-card"><h3>${I.book}Real or legend?</h3>${st.facts.map(f => `<div class="kd-fact"><span>${esc(f)}</span>${speechOn() ? `<button class="kd-spk" data-act="kdSay" data-v="${esc(f)}" aria-label="Read this to me">${I.speak}</button>` : ''}</div>`).join("")}</div>
+    <div class="kd-card ask"><h3>${I.star}What would you do?</h3><p>${esc(st.ask)}</p><p class="kd-small">Talk about it with a grown-up.</p></div>`;
 }
 function storyFinish(st){
   if(!st) return; const prog = storyProg(); const first = !(prog.done || {})[st.id];
@@ -2292,17 +2408,72 @@ document.addEventListener("click", e => {
 });
 
 function gamesView(kid, ctx){ petKid = kid || ""; if(gameView === "story") return pStory(kid); if(gameView === "pet") return pPet(kid, ctx); if(gameView === "snack") return pSnack(kid); return gamesHub(kid); }
-function gamesHub(kid){
-  const p = pet(); const kind = p ? p.kind : "puppy"; const best = snackProg().best || {}; const open = snackUnlockedCount();
-  return `<div class="kid">
-    <div class="row"><button class="btn sm" data-act="petBack">‹ Back</button><span class="grow"></span><span class="pill info" style="font-size:16px" id="playLeft">${I.clock} ${fmtLeft(timeLeftSecs(kid))} left</span></div>
-    <div class="kidhi" style="margin-top:10px">What will we play?</div>
-    <button class="card row gamecard" data-act="gameOpen" data-v="story"><div class="st-thumb">${STORIES[0].cover()}</div><div class="grow"><b style="font-size:24px">Story time 📖</b><div class="muted" style="font-size:17px">Irish legends: ${esc(STORIES.map(x => x.title).join(", "))}. Doesn't use playtime!</div></div></button>
-    <button class="card row gamecard" data-act="gameOpen" data-v="pet"><div style="flex:none">${petSvg(kind, p ? petMoodNow(p) : "happy", 96)}</div><div class="grow"><b style="font-size:24px">${p ? esc(p.name) : "Our pet"}</b><div class="muted" style="font-size:17px">${p ? "Look after " + esc(p.name) + petTogether() : "Pick and name your pet"}</div></div><span style="font-size:30px" aria-hidden="true">›</span></button>
-    <div class="card gamecard" style="padding-bottom:16px"><div class="row" style="gap:12px"><span style="font-size:56px;flex:none" aria-hidden="true">🍬</span><div class="grow"><b style="font-size:24px">Snack Drop</b><div class="muted" style="font-size:17px">Cut the ropes to feed ${p ? esc(p.name) : "your pet"}!</div></div></div>
-      <div class="lvlgrid">${SNACK_LEVELS.map((L,i) => { const n = i + 1, got = best[n], ok = n <= open; return `<button class="lvl ${ok ? '' : 'locked'}" data-act="snackStart" data-v="${i}" ${ok ? '' : 'disabled'} aria-label="Level ${n}${ok ? '' : ', locked'}"><b>${ok ? n : I.lock}</b><span>${got !== undefined ? '✨'.repeat(got) || '✓' : ''}</span></button>`; }).join("")}</div></div>
-  </div>`;
+// ---------- PLAY: a retro cartridge selector (an original design with a 16-bit console feel) ----------
+// Swipe or use the D-pad to pick a game cartridge, press A to start, B to go back. Chip-tune blips are made by the app.
+let arcSel = 0, arcFrom = 0, arcTouch = null;
+const arcCandy = () => `<svg class="arc-pix" viewBox="0 0 16 12" shape-rendering="crispEdges" aria-hidden="true">
+  <path fill="#E58F8B" d="M0 3h3v1h1v1h1v2H4v1H3v1H0V8h1V7h1V5H1V4H0z"/><path fill="#E58F8B" d="M16 3h-3v1h-1v1h-1v2h1v1h1v1h3V8h-1V7h-1V5h1V4h1z"/>
+  <path fill="#EE7F3B" d="M5 2h6v1h1v6h-1v1H5V9H4V3h1z"/><path fill="#F2E28B" d="M6 3h2v1H7v1H6zM9 6h1v2H9v1H8V8h1z"/><path fill="#FAF8F2" d="M6 3h1v1H6z"/></svg>`;
+function arcCarts(kid){
+  const p = pet(); const kind = p ? p.kind : "puppy"; const st = STORIES[0];
+  return [
+    {id:"story", title:"Story Time", sub:`${esc(st.series)}: ${esc(st.title)}`, note:"Reading doesn't use playtime!", lab:"#1F6B3A", art:`<img src="${stImg(st, st.key)}" alt="">`},
+    {id:"pet", title:p ? p.name : "Our Pet", sub:p ? "Look after " + esc(p.name) + petTogether() : "Pick and name your pet", lab:"#B5862A", art:`<span class="arc-petart">${petSvg(kind, p ? petMoodNow(p) : "happy", 120)}</span>`},
+    {id:"snack", title:"Snack Drop", sub:`Cut the ropes to feed ${p ? esc(p.name) : "your pet"}!`, lab:"#2A4C8C", art:arcCandy(), levels:true},
+    {id:"soon1", title:"Setanta's Sliotar", sub:"A hurling game for the Setanta book. Coming soon!", lab:"#575E70", locked:true},
+    {id:"soon2", title:"New Adventure", sub:"Something big is coming…", lab:"#575E70", locked:true}
+  ];
 }
+function gamesHub(kid){
+  const carts = arcCarts(kid); arcSel = Math.max(0, Math.min(carts.length - 1, arcSel)); const c = carts[arcSel];
+  const best = snackProg().best || {}; const open = snackUnlockedCount();
+  return `<div class="arc" data-arc>
+    <div class="arc-top"><button class="arc-pill" data-act="petBack" aria-label="Back">‹ Back</button>
+      <div class="arc-logo">DONRÍ<span>PLAY</span></div>
+      <span class="arc-pill" id="playLeft">${I.clock} ${fmtLeft(timeLeftSecs(kid))} left</span></div>
+    <div class="arc-stripe" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="arc-screen"><div class="arc-track" style="--sel:${arcFrom}">${carts.map((k, i) => `<button class="cart ${i === arcSel ? 'on' : ''} ${k.locked ? 'locked' : ''}" data-act="arcPick" data-v="${i}" aria-label="${esc(k.title)}${k.locked ? ', coming soon' : ''}" style="--lab:${k.lab}">
+        <span class="cart-grip"></span><span class="cart-label"><span class="cart-art">${k.locked ? `<span class="cart-q">?</span>` : k.art}</span><span class="cart-name">${esc(k.title)}</span></span></button>`).join("")}</div>
+      <div class="arc-scan" aria-hidden="true"></div></div>
+    <div class="arc-dots" aria-hidden="true">${carts.map((k, i) => `<i class="${i === arcSel ? 'on' : ''}"></i>`).join("")}</div>
+    <div class="arc-info" aria-live="polite"><div class="arc-title">${esc(c.title)}${speechOn() ? `<button class="arc-say" data-act="say" data-v="${esc(c.title + '. ' + c.sub.replace(/<[^>]+>/g, ''))}" aria-label="Read it to me">${I.speak}</button>` : ''}</div>
+      <div class="arc-sub">${c.sub}</div>${c.note ? `<div class="arc-note">${esc(c.note)}</div>` : ''}
+      ${c.levels ? `<div class="arc-lvls">${SNACK_LEVELS.map((L, i) => { const n = i + 1, got = best[n], ok = n <= open; return `<button class="arc-lvl ${ok ? '' : 'locked'}" data-act="snackStart" data-v="${i}" ${ok ? '' : 'disabled'} aria-label="Level ${n}${ok ? '' : ', locked'}"><b>${ok ? n : I.lock}</b><span>${got ? '<i></i>'.repeat(got) : ''}</span></button>`; }).join("")}</div>` : ''}</div>
+    <div class="arc-pad">
+      <div class="arc-dpad"><button data-act="arcMove" data-v="-1" aria-label="Previous game"><span>◀</span></button><button data-act="arcMove" data-v="1" aria-label="Next game"><span>▶</span></button></div>
+      <div class="arc-ab"><button class="arc-btn b" data-act="petBack" aria-label="Back"><b>B</b><span>Back</span></button>
+        <button class="arc-btn a" data-act="arcStart" ${c.locked ? 'aria-disabled="true"' : ''} aria-label="${c.locked ? 'Coming soon' : 'Start ' + esc(c.title)}"><b>A</b><span>${c.locked ? 'Soon' : 'Start'}</span></button></div>
+    </div></div>`;
+}
+function arcBeep(kind){
+  if(!soundOn()) return;
+  if(kind === "move") tone(988, 988, .05, "square", .045);
+  else if(kind === "start") [523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, f, .09, "square", .05, i * .06));
+  else if(kind === "nope") { tone(220, 180, .12, "square", .05); tone(180, 150, .14, "square", .05, .13); }
+}
+function arcGo(i){
+  const carts = arcCarts(petKid); if(!carts.length) return;
+  arcFrom = arcSel; arcSel = (i + carts.length) % carts.length; arcBeep("move"); render();
+  requestAnimationFrame(() => requestAnimationFrame(() => { const t = document.querySelector(".arc-track"); if(t) t.style.setProperty("--sel", arcSel); arcFrom = arcSel; }));
+}
+function arcStart(){
+  const c = arcCarts(petKid)[arcSel]; if(!c) return;
+  if(c.locked){ arcBeep("nope"); say("Coming soon!"); const a = document.querySelector(".cart.on"); if(a){ a.classList.remove("arc-shake"); void a.offsetWidth; a.classList.add("arc-shake"); } return; }
+  arcBeep("start");
+  if(c.id === "snack"){ snackLevel = Math.max(0, snackUnlockedCount() - 1); gameView = "snack"; }
+  else gameView = c.id;
+  closeSheet(); render(); window.scrollTo(0,0);
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-act]"); if(!b) return; const act = b.dataset.act, v = b.dataset.v;
+  if(act === "arcMove") arcGo(arcSel + Number(v));
+  if(act === "arcPick"){ const i = Number(v); if(i === arcSel) arcStart(); else arcGo(i); }
+  if(act === "arcStart") arcStart();
+});
+document.addEventListener("touchstart", e => { const t = e.target.closest && e.target.closest(".arc-screen"); if(!t) return; arcTouch = {x:e.touches[0].clientX, y:e.touches[0].clientY}; }, {passive:true});
+document.addEventListener("touchend", e => { if(!arcTouch) return; const t = e.changedTouches[0], dx = t.clientX - arcTouch.x, dy = t.clientY - arcTouch.y; arcTouch = null; if(Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) arcGo(arcSel + (dx < 0 ? 1 : -1)); }, {passive:true});
+document.addEventListener("keydown", e => { if(!document.querySelector("[data-arc]") || document.getElementById("sfilm") || document.getElementById("book")) return;
+  if(e.key === "ArrowRight"){ arcGo(arcSel + 1); e.preventDefault(); } if(e.key === "ArrowLeft"){ arcGo(arcSel - 1); e.preventDefault(); } if(e.key === "Enter" && !e.target.closest("button")) arcStart(); });
 function pSnack(kid){
   const L = SNACK_LEVELS[snackLevel];
   return `<div class="kid">
