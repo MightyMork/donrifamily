@@ -622,7 +622,7 @@ function sync(force){
     setSync("busy");
     try{ const got = await pull(force); if(dirty) await push();
       let pgot = false; try{ pgot = await syncPrivate(force); }catch(pe){ if(pe.code === "signed_out") throw pe; toast("Couldn't reach your private (Just me) file. It'll try again shortly.", 5000); }
-      setSync("ok"); if(got || pgot) { render(); } if(got) sendOutbox(); if(myName()) checkRenewalReminders(); }
+      setSync("ok"); if(got || pgot) { render(); } if(got) sendOutbox(); ensurePhotoFolder(); if(myName()) checkRenewalReminders(); }
     catch(e){ setSync("off"); if(e.code === "signed_out"){ render(); } else if(e.status === 404 || e.status === 403){ toast("Can't reach the family file. Check it's still shared with you.", 6000); } }
   });
 }
@@ -2143,7 +2143,7 @@ function famTodayCard(){
     ${!lines.length && !evs.length ? '<div class="muted small">Nothing coming up with other families.</div>' : ''}</div>`;
 }
 function pFamilies(){
-  if(!CIRCLE_READY) return `<h1>Families</h1><div class="row" style="margin:-6px 0 12px"><span class="muted grow">You're <b style="color:var(--ink)">${esc(famName())}</b></span><button class="btn sm" data-act="famEdit" data-id="${US}">Change</button></div><div class="card next"><b style="font-size:17px">Coming next: other families</b><p class="small" style="margin:6px 0 0">Get-togethers, polls, shared photos, wish lists, babysitting and shared allergies with grandparents, cousins and friends. It's being connected now and will appear here.</p></div>`;
+  if(!CIRCLE_READY) return `<h1>Families</h1><div class="row" style="margin:-6px 0 12px"><span class="muted grow">You're <b style="color:var(--ink)">${esc(famName())}</b></span><button class="btn sm" data-act="famEdit" data-id="${US}">Change</button></div><div class="card next"><b style="font-size:17px">Coming next: other families</b><p class="small" style="margin:6px 0 0">Get-togethers, polls, wish lists, babysitting, shared allergies and sharing photos with grandparents, cousins and friends. It's being connected now and will appear here.</p></div><h2>Our photos</h2>${famPhotosView()}`;
   setTimeout(sitSweep, 0);
   const fs = circle().sort((a,b) => (a.status === "invited") - (b.status === "invited") || fname(a.id).localeCompare(fname(b.id)));
   const chips = `<div class="chips" role="group" aria-label="Families sections" style="margin:4px 0 14px;flex-wrap:wrap">${FAM_VIEWS.map(([k,l]) => `<button class="chip" data-act="famView" data-v="${k}" aria-pressed="${famView===k}">${l}</button>`).join("")}</div>`;
@@ -2342,7 +2342,61 @@ document.addEventListener("submit", e => {
 // ---------- SHARED PHOTOS and COLLECTIONS ----------
 // Prototype: photos are small JPEGs in c_photos, collections in c_albums. Real app: files in the shared OneDrive
 // folder Donri/Photos/<collection>, with likes, captions and who-can-see in the circle file.
-let photoDraft = [], photoAlbum = "", photoOpen = "";
+let photoDraft = [], photoFiles = [], photoAlbum = "", photoOpen = "";
+// Real app, before the circle: each photo is a JPEG in Donri/Photos in the family file owner's OneDrive.
+// The owner's phone creates that folder and shares it (write) with the other grown-ups; settings/photos = {folder, invited[]}.
+const BLANK_IMG = "data:image/gif;base64,R0lGODlhAQABAAAAACw=";
+const phCache = {}; let phBusy = {}, phT = null, phCheckAt = 0;
+function phSrc(p, size){
+  if(p.photo) return `src="${esc(p.photo)}"`;
+  if(!p.file) return `src="${BLANK_IMG}"`;
+  const c = phCache[p.file + size]; if(c && Date.now() - c.at < 45 * 60000) return `src="${esc(c.url)}"`;
+  clearTimeout(phT); phT = setTimeout(phHydrate, 30);
+  return `src="${BLANK_IMG}" data-ph="${esc(p.file)}" data-sz="${size}"`;
+}
+async function phUrl(file, size){
+  const k = file + size, c = phCache[k]; if(c && Date.now() - c.at < 45 * 60000) return c.url;
+  if(phBusy[k]) return phBusy[k];
+  phBusy[k] = (async () => { try{
+    const j = await graphJson(`/drives/${cfg.d}/items/${file}/thumbnails`); const t = (j.value || [])[0] || {};
+    let url = (t[size] || t.large || t.medium || {}).url;
+    if(!url){ const m = await graphJson(`/drives/${cfg.d}/items/${file}?select=id,@microsoft.graph.downloadUrl`); url = m["@microsoft.graph.downloadUrl"]; }
+    if(url) phCache[k] = {url, at:Date.now()}; return url || "";
+  }catch(e){ return ""; } finally{ delete phBusy[k]; } })();
+  return phBusy[k];
+}
+function phHydrate(){ document.querySelectorAll("img[data-ph]").forEach(async img => { const f = img.dataset.ph, sz = img.dataset.sz || "medium"; img.removeAttribute("data-ph"); const u = await phUrl(f, sz); if(u) img.src = u; else img.alt = "Photo not available offline"; }); }
+const photoSet = () => doc("settings","photos") || {};
+async function ensurePhotoFolder(){
+  if(CIRCLE_READY || !cfg.f || !me) return; // only the phone that created the family file owns its folder
+  let ps = photoSet(), folder = ps.folder;
+  if(folder && Date.now() - phCheckAt < 10 * 60000) return; phCheckAt = Date.now();
+  try{
+    if(!folder){
+      let j; try{ j = await graphJson(`/drives/${cfg.d}/items/${cfg.f}/children`, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({name:"Photos", folder:{}, "@microsoft.graph.conflictBehavior":"fail"})}); }
+      catch(e){ if(e.status !== 409) throw e; j = await graphJson(`/drives/${cfg.d}/items/${cfg.f}:/Photos`); }
+      folder = j.id; put("settings","photos",{...ps, folder, invited:ps.invited || []}); ps = photoSet();
+    }
+    const want = (settings().members || []).map(m => (m.email||"").toLowerCase()).filter(e => e && e !== me.email && !(ps.invited || []).includes(e));
+    if(!want.length) return;
+    const done = [];
+    for(const email of want){ try{ await graphJson(`/drives/${cfg.d}/items/${folder}/invite`, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({recipients:[{email}], roles:["write"], requireSignIn:true, sendInvitation:false})}); done.push(email); }catch(e){} }
+    if(done.length) put("settings","photos",{...photoSet(), invited:[...(photoSet().invited || []), ...done]});
+  }catch(e){}
+}
+function photoBlob(file){
+  return new Promise((ok, no) => { const r = new FileReader(); r.onerror = no;
+    r.onload = () => { const img = new Image(); img.onerror = no; img.onload = () => { const s = Math.min(1, 2000 / Math.max(img.width, img.height)); const c = document.createElement("canvas"); c.width = Math.round(img.width * s); c.height = Math.round(img.height * s); c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); c.toBlob(b => b ? ok(b) : no(new Error("blob")), "image/jpeg", 0.85); }; img.src = r.result; };
+    r.readAsDataURL(file); });
+}
+async function uploadPhoto(file, id){
+  const folder = photoSet().folder; if(!folder) throw Object.assign(new Error("no folder"), {code:"nofolder"});
+  const blob = await photoBlob(file);
+  const r = await graph(`/drives/${cfg.d}/items/${folder}:/${id}.jpg:/content`, {method:"PUT", headers:{"Content-Type":"image/jpeg"}, body:blob});
+  const j = await r.json().catch(() => ({})); if(!r.ok) throw Object.assign(new Error((j.error && j.error.message) || r.status), {status:r.status});
+  return j.id;
+}
+function delPhotoFile(p){ if(p && p.file && cfg.d) graph(`/drives/${cfg.d}/items/${p.file}`, {method:"DELETE"}).catch(() => {}); }
 const shareScope = x => !x.sharedWith || x.sharedWith === "none" ? "Only our family" : x.sharedWith === "all" ? "All families" : "Shared with " + x.sharedWith.map(fname).join(", ");
 const canSee = x => x.fam === US || x.sharedWith === "all" || (Array.isArray(x.sharedWith) && x.sharedWith.includes(US));
 const photosAll = () => docs("c_photos").filter(canSee).sort((a,b) => (b.at||0) - (a.at||0));
@@ -2360,20 +2414,20 @@ function pickedShare(fd, prefix){ const sc = fd[prefix + "Scope"]; if(sc === "al
 function albumOptions(sel){ const mine = docs("c_albums").filter(a => a.fam === US); return `<option value="">No collection</option>${mine.map(a => `<option value="${esc(a.id)}" ${sel===a.id?'selected':''}>${esc(a.name)}</option>`).join("")}<option value="__new">+ New collection…</option>`; }
 function photoGrid(list){
   if(!list.length) return '<div class="card empty">No photos here yet.</div>';
-  return `<div class="pgrid">${list.map(p => { const n = Object.keys(p.reacts||{}).length; return `<button class="ptile" data-act="photoOpen" data-id="${esc(p.id)}" aria-label="Photo${p.caption ? ': ' + esc(p.caption) : ''} from ${esc(fname(p.fam))}"><img src="${esc(p.photo)}" alt="" loading="lazy">${p.fam !== US ? `<span class="pfrom" style="background:${esc((fam(p.fam)||{}).colour||'#999')}" aria-hidden="true"></span>` : ''}${n ? `<span class="preact">${reactCount(p,'love') ? I.heartf : I.thumb} ${n}</span>` : ''}</button>`; }).join("")}</div>`;
+  return `<div class="pgrid">${list.map(p => { const n = Object.keys(p.reacts||{}).length; return `<button class="ptile" data-act="photoOpen" data-id="${esc(p.id)}" aria-label="Photo${p.caption ? ': ' + esc(p.caption) : ''} from ${esc(fname(p.fam))}"><img ${phSrc(p,"medium")} alt="" loading="lazy">${p.fam !== US ? `<span class="pfrom" style="background:${esc((fam(p.fam)||{}).colour||'#999')}" aria-hidden="true"></span>` : ''}${n ? `<span class="preact">${reactCount(p,'love') ? I.heartf : I.thumb} ${n}</span>` : ''}</button>`; }).join("")}</div>`;
 }
 function famPhotosView(){
   const albums = albumsAll(); const a = photoAlbum ? doc("c_albums", photoAlbum) : null;
   if(a){
     const list = photosAll().filter(p => (p.albums||[]).includes(a.id)); const own = a.fam === US;
     return `<div class="row" style="margin-bottom:8px"><button class="btn sm" data-act="albumOpen" data-id="">‹ All photos</button></div>
-      <div class="card"><div class="row"><div class="grow"><b style="font-size:19px">${esc(a.name)}</b><div class="muted small">${own ? esc(shareScope(a)) : 'From ' + esc(fname(a.fam))} · ${list.length} photo${list.length === 1 ? '' : 's'}</div><div class="muted small">OneDrive › Donri › Photos › ${esc(a.name)}</div></div></div>
+      <div class="card"><div class="row"><div class="grow"><b style="font-size:19px">${esc(a.name)}</b><div class="muted small">${own ? esc(shareScope(a)) : 'From ' + esc(fname(a.fam))} · ${list.length} photo${list.length === 1 ? '' : 's'}</div><div class="muted small">OneDrive › Donri › Photos</div></div></div>
       <div class="row wrap" style="margin-top:8px"><button class="btn sm primary" data-act="photoAdd" data-v="${esc(a.id)}">Add photos</button>${own ? `<button class="btn sm" data-act="albumEdit" data-id="${esc(a.id)}">Edit</button><button class="btn sm danger" data-act="albumDelAsk" data-id="${esc(a.id)}">Remove collection</button>` : ''}</div></div>
       ${photoGrid(list)}`;
   }
   const recent = photosAll();
   return `<div class="row wrap"><button class="btn primary" data-act="photoAdd">Add photos</button><button class="btn" data-act="albumNew">New collection</button></div>
-    <h2>Collections</h2>${albums.length ? `<div class="agrid">${albums.map(al => { const ps = photosAll().filter(p => (p.albums||[]).includes(al.id)); return `<button class="acard" data-act="albumOpen" data-id="${esc(al.id)}">${ps[0] ? `<img src="${esc(ps[0].photo)}" alt="">` : '<span class="aempty">No photos yet</span>'}<span class="aname"><b>${esc(al.name)}</b><span class="muted small">${ps.length} · ${al.fam === US ? esc(shareScope(al)) : esc(fname(al.fam))}</span></span></button>`; }).join("")}</div>` : '<div class="card empty">No collections yet. Make one for a day out, a birthday or Christmas.</div>'}
+    <h2>Collections</h2>${albums.length ? `<div class="agrid">${albums.map(al => { const ps = photosAll().filter(p => (p.albums||[]).includes(al.id)); return `<button class="acard" data-act="albumOpen" data-id="${esc(al.id)}">${ps[0] ? `<img ${phSrc(ps[0],"medium")} alt="">` : '<span class="aempty">No photos yet</span>'}<span class="aname"><b>${esc(al.name)}</b><span class="muted small">${ps.length} · ${al.fam === US ? esc(shareScope(al)) : esc(fname(al.fam))}</span></span></button>`; }).join("")}</div>` : '<div class="card empty">No collections yet. Make one for a day out, a birthday or Christmas.</div>'}
     <h2>All photos</h2>${photoGrid(recent)}
     <p class="muted small">You choose who sees each photo and collection. Only the family who shared a photo can remove it.</p>`;
 }
@@ -2385,8 +2439,9 @@ function photoAddForm(albumId){
     <label class="f" for="phC">Caption (optional)</label><input id="phC" type="text" name="caption" placeholder="e.g. Saoirse's party">
     <label class="f" for="phA">Add to a collection</label><select id="phA" name="album" data-albumpick>${albumOptions(albumId || "")}</select>
     <input type="text" name="newAlbum" id="phNA" placeholder="Name the new collection" hidden style="margin-top:6px">
-    <fieldset style="border:0;padding:0;margin:12px 0 0"><legend style="font-size:13px;font-weight:600;color:var(--muted)">Who can see them</legend>${sharePicker("ph", albumId ? (doc("c_albums", albumId)||{}).sharedWith || "all" : "all")}</fieldset>
-    <div class="row wrap" style="margin-top:12px"><button class="btn primary" type="submit">Share the photos</button></div></form>`);
+    ${CIRCLE_READY ? `<fieldset style="border:0;padding:0;margin:12px 0 0"><legend style="font-size:13px;font-weight:600;color:var(--muted)">Who can see them</legend>${sharePicker("ph", albumId ? (doc("c_albums", albumId)||{}).sharedWith || "all" : "all")}</fieldset>` : '<p class="muted small">Saved to OneDrive › Donri › Photos, for the four of you.</p>'}
+    <div id="photoUp" class="muted small" aria-live="polite"></div>
+    <div class="row wrap" style="margin-top:12px"><button class="btn primary" type="submit">${CIRCLE_READY ? 'Share the photos' : 'Save the photos'}</button></div></form>`);
 }
 function photoSheet(id){
   photoOpen = id;
@@ -2395,32 +2450,32 @@ function photoSheet(id){
     const mine = (p.reacts||{})[reactKey()]; const own = p.fam === US;
     const who = Object.entries(p.reacts||{}).map(([k,v]) => { const [f, n] = k.split(":"); return `${v === 'love' ? I.heartf : I.thumb} ${esc(n)}${f !== US ? ' (' + esc(fname(f)) + ')' : ''}`; });
     const inAlbums = (p.albums||[]).map(x => doc("c_albums", x)).filter(Boolean);
-    return `<img src="${esc(p.photo)}" alt="${esc(p.caption||'Photo')}" style="width:100%;border-radius:14px;display:block">
+    return `<img ${phSrc(p,"large")} alt="${esc(p.caption||'Photo')}" style="width:100%;min-height:200px;border-radius:14px;display:block;background:var(--line)">
       <div class="card" style="margin-top:10px">${p.caption ? `<b>${esc(p.caption)}</b>` : ''}<div class="muted small">${own ? 'Shared by ' + esc(p.by||'us') + ' · ' + esc(shareScope(p)) : 'From ' + esc(fname(p.fam))} · ${new Date(p.at).toLocaleDateString("en-IE",{day:"numeric", month:"short"})}</div>
         <div class="row" style="gap:8px;margin-top:10px"><button class="btn ${mine==='like'?'primary':''}" data-act="photoReact" data-id="${esc(id)}" data-v="like" aria-pressed="${mine==='like'}">${I.thumb} ${reactCount(p,'like')}</button><button class="btn ${mine==='love'?'primary':''}" data-act="photoReact" data-id="${esc(id)}" data-v="love" aria-pressed="${mine==='love'}">${mine==='love' ? I.heartf : I.heart} ${reactCount(p,'love')}</button></div>
         ${who.length ? `<div class="muted small" style="margin-top:6px">${who.join(" · ")}</div>` : ''}
         ${inAlbums.length ? `<div class="small" style="margin-top:8px">In: ${inAlbums.map(a => `<button class="chip" data-act="albumOpen" data-id="${esc(a.id)}">${esc(a.name)}</button>`).join(" ")}</div>` : ''}</div>
       <form class="card row" data-form="photoToAlbum" data-id="${esc(id)}" style="flex-wrap:wrap"><label class="f grow" for="ptA" style="margin:0;width:100%">Add to collection</label><select id="ptA" name="album" data-albumpick style="flex:1;min-width:150px">${albumOptions("")}</select><input type="text" name="newAlbum" placeholder="Name the new collection" hidden style="flex-basis:100%"><button class="btn primary" type="submit">Add</button></form>
-      ${own ? `<form class="card" data-form="photoShare" data-id="${esc(id)}"><b class="small">Who can see it</b>${sharePicker("ps", p.sharedWith)}<div class="row wrap" style="margin-top:8px"><button class="btn sm" type="submit">Save</button><button class="btn sm danger" type="button" data-act="photoDelAsk" data-id="${esc(id)}">Remove photo</button></div></form>` : ''}`;
+      ${own ? (CIRCLE_READY ? `<form class="card" data-form="photoShare" data-id="${esc(id)}"><b class="small">Who can see it</b>${sharePicker("ps", p.sharedWith)}<div class="row wrap" style="margin-top:8px"><button class="btn sm" type="submit">Save</button><button class="btn sm danger" type="button" data-act="photoDelAsk" data-id="${esc(id)}">Remove photo</button></div></form>` : `<div class="row wrap"><button class="btn sm danger" type="button" data-act="photoDelAsk" data-id="${esc(id)}">Remove photo</button></div>`) : ''}`;
   });
 }
 function albumForm(id){
   const a = doc("c_albums", id) || {sharedWith:"all"};
   openSheet(id ? "Edit collection" : "New collection", () => `<form class="card" data-form="saveAlbum" data-id="${esc(id||'')}">
     <label class="f" for="abN">Name</label><input id="abN" type="text" name="name" value="${esc(a.name||'')}" placeholder="e.g. Glenveagh day trip">
-    <fieldset style="border:0;padding:0;margin:12px 0 0"><legend style="font-size:13px;font-weight:600;color:var(--muted)">Who can see it</legend>${sharePicker("ab", a.sharedWith)}</fieldset>
-    <p class="muted small">It's kept in your OneDrive in Donri › Photos, shared with the families you pick.</p>
+    ${CIRCLE_READY ? `<fieldset style="border:0;padding:0;margin:12px 0 0"><legend style="font-size:13px;font-weight:600;color:var(--muted)">Who can see it</legend>${sharePicker("ab", a.sharedWith)}</fieldset>
+    <p class="muted small">It's kept in your OneDrive in Donri › Photos, shared with the families you pick.</p>` : '<p class="muted small">Photos are kept in OneDrive › Donri › Photos.</p>'}
     <div class="row wrap" style="margin-top:12px"><button class="btn primary" type="submit">Save</button></div></form>`);
 }
-function newAlbum(name, sharedWith){ const id = uid(); put("c_albums", id, {fam:US, by:myName(), name:name.trim(), sharedWith:sharedWith || "all", at:Date.now()}); return id; }
+function newAlbum(name, sharedWith){ const id = uid(); put("c_albums", id, {fam:US, by:myName(), name:name.trim(), sharedWith:CIRCLE_READY ? (sharedWith || "all") : "none", at:Date.now()}); return id; }
 function photosTodayCard(){
   const l = photosAll().filter(p => p.fam !== US).slice(0,4); if(!l.length) return "";
-  return `<div class="card tcard"><h3><span class="grow">New photos</span><button data-act="famGo" data-v="photos">All photos</button></h3><div class="pgrid" style="grid-template-columns:repeat(4,minmax(0,1fr))">${l.map(p => `<button class="ptile" data-act="photoOpen" data-id="${esc(p.id)}" aria-label="Photo from ${esc(fname(p.fam))}"><img src="${esc(p.photo)}" alt=""></button>`).join("")}</div></div>`;
+  return `<div class="card tcard"><h3><span class="grow">New photos</span><button data-act="famGo" data-v="photos">All photos</button></h3><div class="pgrid" style="grid-template-columns:repeat(4,minmax(0,1fr))">${l.map(p => `<button class="ptile" data-act="photoOpen" data-id="${esc(p.id)}" aria-label="Photo from ${esc(fname(p.fam))}"><img ${phSrc(p,"medium")} alt=""></button>`).join("")}</div></div>`;
 }
 
 // ---------- the + button: quick add ----------
 function quickSheet(){
-  const items = [["qShop",I.cart,"Add to a shopping list"],["photoAdd",I.camera,"Add photos"],["qEvent",I.cal,"Add an event"],["editChore",I.chore,"Add a chore"],["cevNew",I.party,"Plan a get-together"],["sitNew",I.babysit,"Ask for a babysitter"],["qDinner",I.plate,"Plan tonight's dinner"],["allergyEdit",I.alert,"Add an allergy"]].filter(x => CIRCLE_READY || !["photoAdd","cevNew","sitNew"].includes(x[0]));
+  const items = [["qShop",I.cart,"Add to a shopping list"],["photoAdd",I.camera,"Add photos"],["qEvent",I.cal,"Add an event"],["editChore",I.chore,"Add a chore"],["cevNew",I.party,"Plan a get-together"],["sitNew",I.babysit,"Ask for a babysitter"],["qDinner",I.plate,"Plan tonight's dinner"],["allergyEdit",I.alert,"Add an allergy"]].filter(x => CIRCLE_READY || !["cevNew","sitNew"].includes(x[0]));
   openSheet("Quick add", () => `<div class="qgrid">${items.map(([a,i,l]) => `<button class="card qbtn" data-act="${a}"><span aria-hidden="true">${i}</span><b>${l}</b></button>`).join("")}</div>`);
 }
 function quickShopForm(){
@@ -2441,29 +2496,36 @@ document.addEventListener("click", e => {
     case "qEvent": calSheet(); setTimeout(() => { const t = document.getElementById("evT"); if(t){ t.scrollIntoView({block:"center"}); t.focus(); } }, 80); break;
     case "qDinner": closeSheet(); page = "meals"; mealView = "week"; ls.set("donri.page", "meals"); history.replaceState(null, "", "#meals"); render(); setTimeout(() => { const t = document.getElementById("din-" + today()); if(t){ t.scrollIntoView({block:"center"}); t.focus(); } }, 80); break;
     case "famGo": closeSheet(); page = "families"; famView = v; photoAlbum = ""; ls.set("donri.page", "families"); history.replaceState(null, "", "#families"); render(); window.scrollTo(0,0); break;
-    case "photoAdd": photoAddForm(v || photoAlbum); break;
-    case "photoDraftDel": photoDraft.splice(Number(v), 1); drawDraft(); break;
+    case "photoAdd": if(!CIRCLE_READY && !photoSet().folder){ toast(cfg.f ? "Getting the Photos folder ready. Try again in a moment." : "Photos will be ready once the person who set up Donrí opens it.", 5000); ensurePhotoFolder(); break; } photoFiles = []; photoAddForm(v || photoAlbum); break;
+    case "photoDraftDel": photoDraft.splice(Number(v), 1); photoFiles.splice(Number(v), 1); drawDraft(); break;
     case "photoOpen": photoSheet(id); break;
     case "photoReact": { const p = doc("c_photos", id); if(!p) break; const r = {...(p.reacts||{})}; const k = reactKey(); const was = r[k]; if(was === v) delete r[k]; else r[k] = v;
       patch("c_photos", id, {reacts:r}); if(was !== v && p.fam !== US) notifyFamilies([p.fam], "Photos", `${myName()} from ${famName()} ${v === "love" ? "loved" : "liked"} your photo`); break; }
     case "photoDelAsk": openSheet("Remove this photo?", () => `<div class="card"><p style="margin-top:0">It's removed for every family, and from any collections it's in.</p><div class="row wrap"><button class="btn danger" data-act="photoDel" data-id="${esc(id)}">Yes, remove it</button><button class="btn" data-act="photoOpen" data-id="${esc(id)}">Keep it</button></div></div>`); break;
-    case "photoDel": del("c_photos", id); closeSheet(); toast("Photo removed"); break;
+    case "photoDel": delPhotoFile(doc("c_photos", id)); del("c_photos", id); closeSheet(); toast("Photo removed"); break;
     case "albumOpen": closeSheet(); photoAlbum = id || ""; famView = "photos"; page = "families"; render(); window.scrollTo(0,0); break;
     case "albumNew": albumForm(); break;
     case "albumEdit": albumForm(id); break;
     case "albumDelAsk": { const a = doc("c_albums", id); if(!a) break; openSheet("Remove " + a.name + "?", () => `<div class="card"><p style="margin-top:0">The collection goes for every family. What about the photos in it?</p><div class="row wrap"><button class="btn" data-act="albumDel" data-id="${esc(id)}" data-v="keep">Keep the photos</button><button class="btn danger" data-act="albumDel" data-id="${esc(id)}" data-v="all">Remove our photos too</button><button class="btn" data-act="close">Cancel</button></div><p class="muted small">Photos other families added stay with them.</p></div>`); break; }
-    case "albumDel": { docs("c_photos").filter(p => (p.albums||[]).includes(id)).forEach(p => { if(v === "all" && p.fam === US) del("c_photos", p.id); else patch("c_photos", p.id, {albums:(p.albums||[]).filter(x => x !== id)}); }); del("c_albums", id); photoAlbum = ""; closeSheet(); toast("Collection removed"); break; }
+    case "albumDel": { docs("c_photos").filter(p => (p.albums||[]).includes(id)).forEach(p => { if(v === "all" && p.fam === US){ delPhotoFile(p); del("c_photos", p.id); } else patch("c_photos", p.id, {albums:(p.albums||[]).filter(x => x !== id)}); }); del("c_albums", id); photoAlbum = ""; closeSheet(); toast("Collection removed"); break; }
   }
 });
 document.addEventListener("change", e => {
   const el = e.target;
-  if("photos" in el.dataset && el.files && el.files.length){ const files = [...el.files].slice(0, 20); files.forEach(f => readPhoto(f, url => { photoDraft.push(url); drawDraft(); })); el.value = ""; }
+  if("photos" in el.dataset && el.files && el.files.length){ const files = [...el.files].slice(0, 20); files.forEach(f => readPhoto(f, url => { photoDraft.push(url); photoFiles.push(f); drawDraft(); })); el.value = ""; }
   if("albumpick" in el.dataset){ const n = el.form && el.form.querySelector("input[name=newAlbum]"); if(n){ n.hidden = el.value !== "__new"; if(!n.hidden) n.focus(); } }
 });
 document.addEventListener("submit", e => {
   const f = e.target.closest("form[data-form]"); if(!f) return;
   const fd = Object.fromEntries(new FormData(f)); const kind = f.dataset.form, id = f.dataset.id;
   const albumFrom = (sharedWith) => fd.album === "__new" ? ((fd.newAlbum||"").trim() ? newAlbum(fd.newAlbum, sharedWith) : "") : (fd.album || "");
+  if(kind === "savePhotos" && !CIRCLE_READY){ if(!photoFiles.length){ toast("Choose some photos first"); return; } const al = albumFrom("none"); const files = photoFiles.slice(); const n = files.length;
+    const btn = f.querySelector("button[type=submit]"); btn.disabled = true; const st = document.getElementById("photoUp"); let ok = 0;
+    (async () => { for(let i = 0; i < n; i++){ if(st) st.textContent = `Saving photo ${i + 1} of ${n}…`; const id = uid();
+        try{ const file = await uploadPhoto(files[i], id); put("c_photos", id, {fam:US, by:myName(), file, caption:(fd.caption||"").trim(), albums:al ? [al] : [], sharedWith:"none", reacts:{}, at:Date.now() + i}); ok++; }
+        catch(err){ toast(err.status === 403 || err.status === 404 ? "Couldn't reach the Photos folder. Ask the person who set up Donrí to open it once." : "A photo didn't save. Check your connection and try again.", 6000); break; } }
+      photoDraft = []; photoFiles = []; if(ok){ log(`added ${ok} photo${ok > 1 ? "s" : ""}`); closeSheet(); page = "families"; famView = "photos"; photoAlbum = al; render(); window.scrollTo(0,0); toast(`${ok} photo${ok > 1 ? "s" : ""} saved`); } else btn.disabled = false; })();
+    return; }
   if(kind === "savePhotos"){ if(!photoDraft.length){ toast("Choose some photos first"); return; } const sw = pickedShare(fd, "ph"); const al = albumFrom(sw); const n = photoDraft.length;
     photoDraft.forEach((u,i) => put("c_photos", uid(), {fam:US, by:myName(), photo:u, caption:(fd.caption||"").trim(), albums:al ? [al] : [], sharedWith:sw, reacts:{}, at:Date.now() + i}));
     photoDraft = []; if(sw !== "none") notifyFamilies(sw === "all" ? joined().map(x => x.id) : sw, "New photos", `${famName()} shared ${n} photo${n > 1 ? "s" : ""}${fd.caption ? ": " + fd.caption.trim() : ""}`);
