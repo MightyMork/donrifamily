@@ -6,8 +6,8 @@
 <meta name="theme-color" content="#FFFFFF">
 <title>Donrí</title>
 <link rel="manifest" href="app.webmanifest">
-<link rel="icon" href="icons/d-favicon-64.png">
-<link rel="apple-touch-icon" href="icons/d-apple-180.png">
+<link rel="icon" href="icons/d2-favicon-64.png">
+<link rel="apple-touch-icon" href="icons/d2-apple-180.png">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600&family=Andika:wght@400;700&family=Lilita+One&family=Patrick+Hand&family=Press+Start+2P&family=Pixelify+Sans:wght@500;700&family=Baloo+2:wght@700&family=Poppins:wght@500;600;700&family=Open+Sans:wght@400;600&display=swap">
 <style>
@@ -1039,6 +1039,39 @@ input[type=text]:focus,input[type=number]:focus,input[type=date]:focus,input[typ
 .homeedit{display:flex;justify-content:center;margin-top:14px}
 @media (prefers-reduced-motion:reduce){.bento>.bt,.toast.show{animation:none}.bento>.bt>.card:hover,.bstat:hover{transform:none}}
 #phone,#toast{touch-action:none;user-select:none;-webkit-user-select:none}
+/* v18: no visible scroll bars anywhere (scrolling still works) */
+html,body,*{scrollbar-width:none;-ms-overflow-style:none}
+*::-webkit-scrollbar{display:none;width:0;height:0}
+/* v18: kitchen display tiles you can move and resize */
+.kgrid{grid-template-columns:repeat(auto-fill,minmax(300px,1fr));grid-auto-flow:row dense}
+.kgrid>.kt.kw{grid-column:span 2}
+.kgrid>.kt.kf{grid-column:1/-1}
+@media (max-width:660px){.kgrid>.kt.kw{grid-column:1/-1}}
+.kgrid>.kt.kw .klist,.kgrid>.kt.kf .klist{columns:2;column-gap:24px}
+.kgrid>.kt.kf .klist{columns:3}
+.klist>*{break-inside:avoid}
+.kt.kbigtxt{font-size:23px}.kt.kbigtxt .kbig{font-size:32px}
+.karr{position:relative;outline:2px dashed var(--accent);outline-offset:3px}
+.kedit{display:flex;flex-wrap:wrap;gap:6px;margin:-4px 0 10px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.kedit button{min-height:44px;min-width:44px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:15px;padding:0 10px}
+.kedit button[aria-pressed=true]{background:var(--accent);color:var(--on-accent,#fff);border-color:var(--accent)}
+.kt.khid{opacity:.45}
+.kfoot{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end;align-items:center;margin-top:16px}
+.kfoot .kbtn{min-height:44px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:0 14px;font:inherit;font-size:15px}
+/* v18: Settings sections fold away */
+details.sset{margin:10px 0;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+details.sset>summary{list-style:none;font-family:var(--head);font-weight:600;font-size:1.05rem;padding:12px 14px;min-height:52px;gap:10px}
+details.sset>summary::-webkit-details-marker{display:none}
+details.sset>summary::after{content:"";margin-left:auto;width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);transition:transform .2s}
+details.sset[open]>summary::after{transform:rotate(-135deg)}
+details.sset>.sbody{padding:0 12px 12px}
+details.sset>.sbody>.card:first-child{margin-top:0}
+/* v18: swipe between photos */
+.pview{position:relative;touch-action:pan-y}
+.pview img{width:100%;border-radius:14px;display:block;user-select:none;-webkit-user-drag:none}
+.pnav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:22px;border:0;background:rgba(0,0,0,.45);color:#fff;font-size:24px;line-height:1}
+.pnav.l{left:8px}.pnav.r{right:8px}
+.pcount{text-align:center;margin-top:6px}
 .kidtogether{width:100%;min-height:52px;font-size:18px;margin-top:4px}
 /* ---------- end BENTO LOOK ---------- */
 
@@ -1578,7 +1611,7 @@ function render(){
   document.body.classList.toggle("gamefull", ((kidOk && kidView === "pet") || (!!kitchen && !!kitchenPlay)));
   document.body.classList.toggle("pucas", !!kidOk || (!!kitchen && !!kitchenPlay));
   if(kidOk){ $("#main").innerHTML = pKid(kidMode); if(document.getElementById("petstage")) startPetLoop(); if(document.getElementById("pucastage")) startPucaLoop(); if(document.getElementById("snackCanvas")) startSnack(); if(sheetRender && !($("#sheet").contains(document.activeElement) && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))) sheetRender(); return; }
-  if(kitchen){ const h = new Date().getHours(); if(h >= 21 || h < 7) document.documentElement.dataset.theme = "dark"; document.body.classList.toggle("nospeech", !speechOn()); $("#main").innerHTML = pKitchen(); if(document.getElementById("petstage")) startPetLoop(); if(document.getElementById("pucastage")) startPucaLoop(); if(document.getElementById("snackCanvas")) startSnack(); updateBell(); if(sheetRender && !($("#sheet").contains(document.activeElement) && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))) sheetRender(); return; }
+  if(kitchen){ kApplyTheme(); document.body.classList.toggle("nospeech", !speechOn()); $("#main").innerHTML = pKitchen(); if(document.getElementById("petstage")) startPetLoop(); if(document.getElementById("pucastage")) startPucaLoop(); if(document.getElementById("snackCanvas")) startSnack(); updateBell(); if(sheetRender && !($("#sheet").contains(document.activeElement) && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))) sheetRender(); return; }
   if(familyTab && LOCKED_PAGES.includes(page) && !grownOK()) page = "today";
   const tabs = [["today","Today",ICON.home],["shop","Shop",ICON.cart],["meals","Meals",ICON.meal],["chores","Chores",ICON.chore],["families","Families",ICON.people],["gifts","Gifts",ICON.gift],["meds","Health",ICON.pill]];
   $("#tabs").innerHTML = tabs.map(([k,l,i]) => `<button data-act="go" data-v="${k}" ${page===k?'aria-current="page"':''}>${i}<span>${l}${familyTab && LOCKED_PAGES.includes(k) && !grownOK() ? ' 🔒' : ''}</span></button>`).join("");
@@ -1816,6 +1849,8 @@ function awardStarsMany(c, names){
   log(`gave ${names.join(" and ")} ${pts} ⭐ each for ${c.title}`);
   toast(`⭐ +${pts} each for ${names.join(" and ")}! Great teamwork.`);
 }
+// v18: a job ticked today that's worth gems, where nobody got them and no grown-up said they did it.
+const gemsMissed = c => (Number(c.points)||0) > 0 && kids().length && c.lastDone === today() && c.noGems !== today() && !docs("points").some(p => p.choreId === c.id && p.date === today());
 const bothLabel = names => names.length === 2 ? "Both of them" : `All ${names.length}`;
 function pChores(){
   const list = docs("chores").filter(c => (choreFilter==="all" || choreDue(c)) && (!choreWho || isFor(c, choreWho))).sort((a,b) => String(a.title).localeCompare(b.title));
@@ -1827,7 +1862,7 @@ function pChores(){
   <div class="chips" role="group" aria-label="Whose chores" style="margin-top:10px"><button class="chip" data-act="choreWho" data-v="" aria-pressed="${!choreWho}">Everyone</button>${members().map(m => `<button class="chip" data-act="choreWho" data-v="${esc(m.name)}" aria-pressed="${choreWho===m.name}">${esc(m.name)}<span class="n">${docs("chores").filter(c => choreDue(c) && assignees(c).length && isFor(c, m.name)).length || ''}</span></button>`).join("")}</div>
   <div class="card" style="margin-top:12px">${list.length ? list.map(c => `<div class="item ${choreDue(c)?'':'done'}">
     <button class="check ${choreDue(c)?'':'on'}" data-act="choreDone" data-id="${esc(c.id)}" aria-label="Mark done: ${esc(c.title)}">${choreDue(c)?'':ICON.check}</button>
-    <div class="grow"><div class="name">${esc(c.title)}${Number(c.points) ? ` <span class="pill warn">${I.star} ${Number(c.points)}</span>` : ''}</div><div class="muted small">${esc(whoLine(c))} · ${esc(c.freq)}${c.lastDone?` · last done ${nice(c.lastDone)} by ${esc(who(c.lastBy))}`:''}</div>${extrasLine(c)}</div>
+    <div class="grow"><div class="name">${esc(c.title)}${Number(c.points) ? ` <span class="pill warn">${I.star} ${Number(c.points)}</span>` : ''}</div><div class="muted small">${esc(whoLine(c))} · ${esc(c.freq)}${c.lastDone?` · last done ${nice(c.lastDone)} by ${esc(who(c.lastBy))}`:''}</div>${extrasLine(c)}${gemsMissed(c) ? `<div class="small" style="margin-top:4px"><span class="pill warn">No gems given yet</span> <button class="btn sm" data-act="giveGems" data-id="${esc(c.id)}">${I.star} Give gems</button></div>` : ''}</div>
     <button class="btn sm" data-act="editChore" data-id="${esc(c.id)}">Edit</button></div>`).join("") : `<div class="empty">${choreFilter==='due'?'All done. Nice one!':'No chores here yet.'}</div>`}</div>
   <div class="row"><button class="btn primary" data-act="editChore">Add a chore</button></div>
   <p class="muted small">Chores with nobody picked show for everyone. Tick <b>Take turns</b> and the chore moves to the next person each time it's done. Give a chore gems and the kids earn them when they do it.</p>`;
@@ -1850,7 +1885,7 @@ function whoDidSheet(id, cand){
   openSheet("Who did it?", () => `<p class="kidtxt" style="margin-top:0"><b>${esc(c.title)}</b> earns ${I.star} ${Number(c.points)||0} each.</p>
     ${cand.length > 1 ? `<button class="btn primary" style="width:100%;min-height:52px" data-act="awardStarsAll" data-id="${esc(id)}" data-v="${esc(cand.join("|"))}">${I.people} ${bothLabel(cand)}: ${esc(cand.join(" and "))}</button><p class="muted small" style="margin:10px 0 6px">Or just one:</p>` : ''}
     <div class="row wrap">${cand.map(n => `<button class="btn" data-act="awardStars" data-id="${esc(id)}" data-v="${esc(n)}">${esc(n)}</button>`).join("")}</div>
-    <div class="row wrap" style="margin-top:10px"><button class="btn sm" data-act="close">A grown-up did it (no gems)</button></div>`);
+    <div class="row wrap" style="margin-top:10px"><button class="btn sm" data-act="noGems" data-id="${esc(id)}">A grown-up did it (no gems)</button></div>`);
 }
 // Pixel-art reward pictures in the Púcas look. Stored on a reward as "px:<name>"; older emoji pictures show as their pixel twin.
 const PX_PAL = {K:"#1B1E3A", Y:"#F2B33D", y:"#FFE08A", O:"#EE7F3B", R:"#D9483B", W:"#FAF3E3", B:"#6B3F24", b:"#A86B3C", P:"#E58F8B", G:"#5FAE5B", g:"#2F6B3A", T:"#3FB8A8", U:"#2A4C8C", s:"#5B6070", S:"#9AA0AC"};
@@ -1893,7 +1928,7 @@ function starsSheet(kid){
     <form class="card" data-form="bonus" data-id="${esc(kid)}"><label class="f" for="bR">What for</label><input id="bR" type="text" name="reason" placeholder="e.g. Kind to a brother or sister">
       <div class="row" style="margin-top:8px;align-items:flex-end"><div style="width:120px"><label class="f" for="bA">Gems</label><select id="bA" name="amount"><option>1</option><option selected>2</option><option>3</option><option>5</option></select></div><div class="grow"></div><button class="btn primary" type="submit">Give gems</button></div></form>`}
     <h2>Recent</h2>
-    <div class="card">${hist.length ? hist.map(p => `<div class="item"><div class="grow"><b class="${(Number(p.amount)||0) > 0 ? 'gain' : ''}">${(Number(p.amount)||0) > 0 ? '+' : ''}${esc(p.amount)} ${I.star}</b> ${esc(p.reason||'')}<div class="muted small">${new Date(p.at).toLocaleDateString("en-IE",{weekday:"short",day:"numeric",month:"short"})}${p.by ? ' · ' + esc(who(p.by)) : ''}</div></div>${kitchen ? '' : `<button class="x" data-act="delPoint" data-id="${esc(p.id)}" aria-label="Remove this entry">${ICON.x}</button>`}</div>`).join("") : '<div class="empty">No gems yet.</div>'}</div>`;
+    <div class="card">${hist.length ? hist.map(p => `<div class="item"><div class="grow"><b class="${(Number(p.amount)||0) > 0 ? 'gain' : ''}">${(Number(p.amount)||0) > 0 ? '+' : ''}${esc(p.amount)} ${I.star}</b> ${esc(p.reason||'')}<div class="muted small">${new Date(p.at).toLocaleDateString("en-IE",{weekday:"short",day:"numeric",month:"short"})}${p.by ? ' · ' + esc(who(p.by)) : ''}</div></div>${kitchen ? '' : `<button class="x" data-act="delPointAsk" data-id="${esc(p.id)}" aria-label="Remove this entry">${ICON.x}</button>`}</div>`).join("") : '<div class="empty">No gems yet.</div>'}</div>`;
   }, "pz");
 }
 function redeemSheet(rid, kid){
@@ -2093,8 +2128,8 @@ function famBar(){
     ${grownOK() ? `<button class="btn sm" data-act="grownLock">${I.lock} Lock grown-up areas</button>` : ''}</div>`;
 }
 async function keepAwake(){ try{ if(kitchen && navigator.wakeLock && document.visibilityState === "visible") wakeLock = await navigator.wakeLock.request("screen"); }catch(e){} }
-function setKitchen(on){ kitchen = on; ls.set("donri.kitchen", on); closeSheet(); if(on){ keepAwake(); } else { try{ wakeLock && wakeLock.release(); }catch(e){} wakeLock = null; page = "today"; resetZoom(); } render(); window.scrollTo(0,0); }
-setInterval(() => { if(kitchen && !holdT && !kitchenPlay) render(); }, 30000);
+function setKitchen(on){ kitchen = on; kArr = false; ls.set("donri.kitchen", on); closeSheet(); if(on){ keepAwake(); } else { try{ wakeLock && wakeLock.release(); }catch(e){} wakeLock = null; page = "today"; resetZoom(); } render(); window.scrollTo(0,0); }
+setInterval(() => { if(kitchen && !holdT && !kitchenPlay && !kArr) render(); }, 30000);
 document.addEventListener("visibilitychange", () => { if(kitchen && document.visibilityState === "visible"){ keepAwake(); render(); } });
 function kitchenDone(id, name, team){
   const c = doc("chores", id); if(!c || !choreDue(c)) return; const a = assignees(c); let next = c.turn || "";
@@ -2114,6 +2149,33 @@ function kitchenWhoSheet(id){
     <div class="row wrap">${cand.map(n => `<button class="btn" style="min-height:56px;font-size:18px;padding:0 22px" data-act="kChoreBy" data-id="${esc(id)}" data-v="${esc(n)}">${esc(n)}</button>`).join("")}</div>
     <div class="row wrap" style="margin-top:12px"><button class="btn" data-act="close">Cancel</button></div>`);
 }
+// v18: the kitchen display's look (Auto / Light / Dark) and tile layout are kept on this device only.
+const K_TILES = {today:"Today", dinner:"Dinner tonight", jobs:"Jobs to do", gems:"Gems", pucas:"Púcas Cara", bins:"Bins", tomorrow:"Tomorrow", shop:"Shopping"};
+const K_SIZES = [["", "Normal"], ["kw", "Wide"], ["kf", "Full width"]];
+let kArr = false;
+const kTheme = () => ls.get("donri.kTheme", "auto");
+const kLayout = () => { const l = ls.get("donri.kLayout", null) || {}; const order = (l.order || []).filter(k => K_TILES[k]); Object.keys(K_TILES).forEach(k => { if(!order.includes(k)) order.push(k); }); return {order, size:l.size || {}, big:l.big || {}, hidden:l.hidden || []}; };
+const kSave = l => { ls.set("donri.kLayout", l); render(); };
+function kTile(id, cls, inner){
+  const L = kLayout(), sz = L.size[id] || "", hid = L.hidden.includes(id);
+  const bar = kArr ? `<div class="kedit" role="group" aria-label="Arrange ${esc(K_TILES[id])}">
+    <button data-act="kMove" data-v="${id}|-1" aria-label="Move ${esc(K_TILES[id])} earlier">◀</button><button data-act="kMove" data-v="${id}|1" aria-label="Move ${esc(K_TILES[id])} later">▶</button>
+    ${K_SIZES.map(([c,l]) => `<button data-act="kSize" data-v="${id}|${c}" aria-pressed="${sz===c}">${l}</button>`).join("")}
+    <button data-act="kBig" data-v="${id}" aria-pressed="${!!L.big[id]}">Bigger text</button>
+    <button data-act="kHide" data-v="${id}" aria-pressed="${hid}">${hid ? "Hidden" : "Hide"}</button></div>` : "";
+  return `\u0001${id}\u0002<div class="card kt ${cls} ${sz} ${L.big[id] ? 'kbigtxt' : ''} ${kArr ? 'karr' : ''} ${hid ? 'khid' : ''}" data-k="${id}">${bar}${inner}</div>`;
+}
+function kArrange(all){
+  const L = kLayout(), parts = {};
+  all.split("\u0001").slice(1).forEach(p => { const i = p.indexOf("\u0002"); parts[p.slice(0, i)] = p.slice(i + 1).trim(); });
+  return L.order.filter(k => parts[k] && (kArr || !L.hidden.includes(k))).map(k => parts[k]).join("\n");
+}
+function kFoot(){
+  const t = kTheme(), lab = {auto:"Auto (dark 9pm–7am)", light:"Always light", dark:"Always dark"}[t];
+  return kArr ? `<span class="muted small grow">Move, resize or hide each tile. Only this screen changes.</span><button class="kbtn" data-act="kReset">Reset layout</button><button class="btn primary" data-act="kArrDone">Done</button>`
+    : `<button class="kbtn" data-act="kTheme" aria-label="Screen look: ${lab}. Tap to change">${t === "dark" ? ICON.moon : ICON.sun} Screen: ${lab}</button><button class="kbtn" data-act="kArrOn">Arrange tiles</button>`;
+}
+function kApplyTheme(){ const t = kTheme(), h = new Date().getHours(); document.documentElement.dataset.theme = t === "auto" ? ((h >= 21 || h < 7) ? "dark" : document.documentElement.dataset.theme) : t; }
 function pKitchen(){
   if(kitchenPlay) return gamesView(kitchenPlay, "kitchen");
   const now = new Date(), t = today(), h = now.getHours(), tmr = ymd(addDays(now,1));
@@ -2129,19 +2191,19 @@ function pKitchen(){
   const counts = Object.entries(STORES).map(([k,l]) => [l, docs("shop").filter(x => x.store===k && !x.done).length]).filter(x => x[1]);
   const evRow = (e,i,isNext) => `<div class="ev ${isNext?'next':''}" style="font-size:18px"><div class="t" style="font-size:17px;min-width:60px">${esc(e.start||'All day')}</div><div class="grow"><b>${esc(e.title)}</b>${isNext?' <span class="pill warn">Next up</span>':''}${e.who?`<div class="muted small">${esc(e.who)}</div>`:''}${e.note?`<div class="small" style="margin-top:2px">${I.note} ${esc(e.note)}</div>`:''}</div></div>`;
   return `<div class="ktop"><div class="grow"><div class="kbig">${greet}!</div><div class="muted" style="font-size:18px">${DOW[now.getDay()]} ${now.getDate()} ${MONTHS[now.getMonth()]}</div></div><div class="kclock" aria-label="Time">${nowHM}</div></div>
-  <div class="kgrid">
-    <div class="card kt"><h3><span class="grow">Today</span></h3>${evs.length ? evs.map((e,i) => evRow(e,i,i===nextIdx)).join("") : '<div class="muted">Nothing in the calendar today.</div>'}</div>
-    <div class="card kt"><h3><span class="grow">Dinner tonight</span>${meal.recipeId && doc("recipes", meal.recipeId) ? `<button class="btn sm" data-act="recipeOpen" data-id="${esc(meal.recipeId)}">${I.book} Recipe</button>` : ''}</h3><div class="kbig">${meal.dinner ? esc(meal.dinner) : '<span class="muted" style="font-size:19px;font-weight:500">Not planned yet</span>'}</div>${tMeal ? `<div class="muted" style="margin-top:6px">Tomorrow: ${esc(tMeal)}</div>` : ''}</div>
-    <div class="card kt"><h3><span class="grow">Jobs to do</span></h3>${chores.length ? chores.map(c => `<div class="item"><button class="check" data-act="kChore" data-id="${esc(c.id)}" aria-label="Done: ${esc(c.title)}"></button><div class="grow"><div class="name"><b>${esc(c.title)}</b>${Number(c.points) ? ` <span class="pill warn">${I.star} ${Number(c.points)}</span>` : ''}</div><div class="muted small">${esc(whoLine(c))}</div></div></div>`).join("") : '<div class="kbig" style="font-size:22px">All done! 🎉</div>'}</div>
-    ${ks.length ? `<div class="card kt"><h3><span class="grow">Gems</span></h3><div class="row" style="gap:12px">${ks.map(k => `<button class="card starcard pzt" style="text-align:center" data-act="starsOpen" data-v="${esc(k.name)}"><div class="pzt-name">${esc(k.name)}</div><div class="starbig" style="font-size:44px">${I.star} ${stars(k.name)}</div></button>`).join("")}</div></div>` : ''}
-    ${ks.length ? `<div class="card kt"><h3><span class="grow">Púcas Cara</span></h3>${ks.map(k => { const pc = puca(k.name); return `<div class="row" style="gap:12px;margin-top:6px"><img src="${pucaImg(pc, pc ? pucaPose(pc) : 'idle')}" alt="" style="width:84px;height:84px;object-fit:contain;image-rendering:pixelated;flex:none${pc ? '' : ';opacity:.35'}"><div class="grow"><b>${esc(k.name)}</b>${pc ? `<div class="kbig" style="font-size:22px">${esc(pucaName(pc))} · Level ${pucaLevel(pc)}</div><div style="font-size:15px">🍽️ ${pucaNeed(pc,"food")}% · ⚡ ${pucaNeed(pc,"rest")}% · ✨ ${pucaNeed(pc,"fun")}%</div>` : '<div class="muted">No Púca yet. Pick one in Play!</div>'}</div></div>`; }).join("")}<div style="margin-top:10px"><button class="btn primary" data-act="kPlayWho">Play</button></div></div>` : ''}
-    <div class="card kt ${binsTonight || bT.length ? 'next' : ''}"><h3><span class="grow">Bins</span></h3>${binsTonight ? `<div class="kbig" style="font-size:22px">Out tonight</div>${bTm.map(s => `<div class="row" style="min-height:34px"><span class="bindot" style="width:20px;height:20px;border-radius:10px;background:${BIN_COLOURS[s.colour]||'#999'}"></span><span>${esc(s.name)}</span></div>`).join("")}` : bT.length ? `<div class="kbig" style="font-size:22px">Collection today</div>${bT.map(s => `<div class="row" style="min-height:34px"><span class="bindot" style="width:20px;height:20px;border-radius:10px;background:${BIN_COLOURS[s.colour]||'#999'}"></span><span>${esc(s.name)}</span></div>`).join("")}` : (() => { for(let i = 2; i <= 14; i++){ const d = ymd(addDays(now,i)); if(binsOn(d).length) return `<div>Next: ${DOW[parse(d).getDay()]}</div><div class="muted small">${esc(binsOn(d).map(s => s.name).join(", "))}</div>`; } return '<div class="muted">No collection soon.</div>'; })()}</div>
-    <div class="card kt"><h3><span class="grow">Tomorrow</span></h3>${tEvs.length ? tEvs.map(e => `<div style="padding:4px 0"><b>${esc(e.start||'All day')}</b> ${esc(e.title)}${e.note?`<div class="small">${I.note} ${esc(e.note)}</div>`:''}</div>`).join("") : '<div class="muted">Nothing planned yet.</div>'}</div>
-    <div class="card kt"><h3><span class="grow">Shopping</span></h3>
+  <div class="kgrid">${kArrange(`
+    ${kTile("today", "", `<h3><span class="grow">Today</span></h3>${evs.length ? `<div class="klist">${evs.map((e,i) => evRow(e,i,i===nextIdx)).join("")}</div>` : '<div class="muted">Nothing in the calendar today.</div>'}`)}
+    ${kTile("dinner", "", `<h3><span class="grow">Dinner tonight</span>${meal.recipeId && doc("recipes", meal.recipeId) ? `<button class="btn sm" data-act="recipeOpen" data-id="${esc(meal.recipeId)}">${I.book} Recipe</button>` : ''}</h3><div class="kbig">${meal.dinner ? esc(meal.dinner) : '<span class="muted" style="font-size:19px;font-weight:500">Not planned yet</span>'}</div>${tMeal ? `<div class="muted" style="margin-top:6px">Tomorrow: ${esc(tMeal)}</div>` : ''}`)}
+    ${kTile("jobs", "", `<h3><span class="grow">Jobs to do</span></h3>${chores.length ? `<div class="klist">` + chores.map(c => `<div class="item"><button class="check" data-act="kChore" data-id="${esc(c.id)}" aria-label="Done: ${esc(c.title)}"></button><div class="grow"><div class="name"><b>${esc(c.title)}</b>${Number(c.points) ? ` <span class="pill warn">${I.star} ${Number(c.points)}</span>` : ''}</div><div class="muted small">${esc(whoLine(c))}</div></div></div>`).join("") + `</div>` : '<div class="kbig" style="font-size:22px">All done! 🎉</div>'}`)}
+    ${ks.length ? kTile("gems", "", `<h3><span class="grow">Gems</span></h3><div class="row" style="gap:12px">${ks.map(k => `<button class="card starcard pzt" style="text-align:center" data-act="starsOpen" data-v="${esc(k.name)}"><div class="pzt-name">${esc(k.name)}</div><div class="starbig" style="font-size:44px">${I.star} ${stars(k.name)}</div></button>`).join("")}</div>`) : ''}
+    ${ks.length ? kTile("pucas", "", `<h3><span class="grow">Púcas Cara</span></h3>${ks.map(k => { const pc = puca(k.name); return `<div class="row" style="gap:12px;margin-top:6px"><img src="${pucaImg(pc, pc ? pucaPose(pc) : 'idle')}" alt="" style="width:84px;height:84px;object-fit:contain;image-rendering:pixelated;flex:none${pc ? '' : ';opacity:.35'}"><div class="grow"><b>${esc(k.name)}</b>${pc ? `<div class="kbig" style="font-size:22px">${esc(pucaName(pc))} · Level ${pucaLevel(pc)}</div><div style="font-size:15px">🍽️ ${pucaNeed(pc,"food")}% · ⚡ ${pucaNeed(pc,"rest")}% · ✨ ${pucaNeed(pc,"fun")}%</div>` : '<div class="muted">No Púca yet. Pick one in Play!</div>'}</div></div>`; }).join("")}<div style="margin-top:10px"><button class="btn primary" data-act="kPlayWho">Play</button></div>`) : ''}
+    ${kTile("bins", binsTonight || bT.length ? 'next' : '', `<h3><span class="grow">Bins</span></h3>${binsTonight ? `<div class="kbig" style="font-size:22px">Out tonight</div>${bTm.map(s => `<div class="row" style="min-height:34px"><span class="bindot" style="width:20px;height:20px;border-radius:10px;background:${BIN_COLOURS[s.colour]||'#999'}"></span><span>${esc(s.name)}</span></div>`).join("")}` : bT.length ? `<div class="kbig" style="font-size:22px">Collection today</div>${bT.map(s => `<div class="row" style="min-height:34px"><span class="bindot" style="width:20px;height:20px;border-radius:10px;background:${BIN_COLOURS[s.colour]||'#999'}"></span><span>${esc(s.name)}</span></div>`).join("")}` : (() => { for(let i = 2; i <= 14; i++){ const d = ymd(addDays(now,i)); if(binsOn(d).length) return `<div>Next: ${DOW[parse(d).getDay()]}</div><div class="muted small">${esc(binsOn(d).map(s => s.name).join(", "))}</div>`; } return '<div class="muted">No collection soon.</div>'; })()}`)}
+    ${kTile("tomorrow", "", `<h3><span class="grow">Tomorrow</span></h3>${tEvs.length ? `<div class="klist">` + tEvs.map(e => `<div style="padding:4px 0"><b>${esc(e.start||'All day')}</b> ${esc(e.title)}${e.note?`<div class="small">${I.note} ${esc(e.note)}</div>`:''}</div>`).join("") + `</div>` : '<div class="muted">Nothing planned yet.</div>'}`)}
+    ${kTile("shop", "", `<h3><span class="grow">Shopping</span></h3>
       <form class="row" data-form="kAdd" style="flex-wrap:wrap"><label class="sr" for="kItem">Add to the shopping list</label><input id="kItem" type="text" name="name" placeholder="We need…" autocomplete="off" style="flex:1;min-width:150px;font-size:18px"><select name="store" aria-label="Which shop" style="width:auto">${Object.entries(STORES).map(([k,l]) => `<option value="${k}" ${store===k?'selected':''}>${esc(l)}</option>`).join("")}</select><button class="btn primary" type="submit">Add</button></form>
-      <div class="muted small" style="margin-top:8px">${counts.length ? counts.map(([l,n]) => `${esc(l)}: ${n}`).join(" · ") : 'All lists are empty.'}</div></div>
-  </div>
-  <div class="row" style="margin-top:16px;justify-content:flex-end"><button class="kexit" data-hold-exit aria-label="Press and hold to leave the kitchen display">Press and hold to exit</button></div>`;
+      <div class="muted small" style="margin-top:8px">${counts.length ? counts.map(([l,n]) => `${esc(l)}: ${n}`).join(" · ") : 'All lists are empty.'}</div>`)}
+  `)}</div>
+  <div class="kfoot">${kFoot()}<button class="kexit" data-hold-exit aria-label="Press and hold to leave the kitchen display">Press and hold to exit</button></div>`;
 }
 let holdT = null;
 document.addEventListener("pointerdown", e => { const b = e.target.closest("[data-hold-exit]"); if(!b) return; b.classList.add("holding"); b.textContent = "Keep holding…"; holdT = setTimeout(() => { holdT = null; setKitchen(false); toast("Kitchen display off"); }, 1500); });
@@ -4366,7 +4428,10 @@ function photoSheet(id){
     const mine = (p.reacts||{})[reactKey()]; const own = p.fam === US;
     const who = Object.entries(p.reacts||{}).map(([k,v]) => { const [f, n] = k.split(":"); return `${v === 'love' ? I.heartf : I.thumb} ${esc(n)}${f !== US ? ' (' + esc(fname(f)) + ')' : ''}`; });
     const inAlbums = (p.albums||[]).map(x => doc("c_albums", x)).filter(Boolean);
-    return `<img ${phSrc(p,"large")} alt="${esc(p.caption||'Photo')}" style="width:100%;min-height:200px;border-radius:14px;display:block;background:var(--line)">
+    const seq = (photoAlbum ? photosAll().filter(x => (x.albums||[]).includes(photoAlbum)) : photosAll()).map(x => x.id); const at = seq.indexOf(id);
+    const nav = seq.length > 1 && at >= 0;
+    return `<div class="pview" data-pswipe="${esc(id)}"><img ${phSrc(p,"large")} alt="${esc(p.caption||'Photo')}" draggable="false" style="min-height:200px;background:var(--line)">${nav && at > 0 ? `<button class="pnav l" data-act="photoOpen" data-id="${esc(seq[at-1])}" aria-label="Previous photo">‹</button>` : ''}${nav && at < seq.length - 1 ? `<button class="pnav r" data-act="photoOpen" data-id="${esc(seq[at+1])}" aria-label="Next photo">›</button>` : ''}</div>
+      ${nav ? `<div class="muted small pcount">${at + 1} of ${seq.length} · swipe for the next one</div>` : ''}
       <div class="card" style="margin-top:10px">${p.caption ? `<b>${esc(p.caption)}</b>` : ''}<div class="muted small">${own ? 'Shared by ' + esc(p.by||'us') + ' · ' + esc(shareScope(p)) : 'From ' + esc(fname(p.fam))} · ${new Date(p.at).toLocaleDateString("en-IE",{day:"numeric", month:"short"})}</div>
         <div class="row" style="gap:8px;margin-top:10px"><button class="btn ${mine==='like'?'primary':''}" data-act="photoReact" data-id="${esc(id)}" data-v="like" aria-pressed="${mine==='like'}">${I.thumb} ${reactCount(p,'like')}</button><button class="btn ${mine==='love'?'primary':''}" data-act="photoReact" data-id="${esc(id)}" data-v="love" aria-pressed="${mine==='love'}">${mine==='love' ? I.heartf : I.heart} ${reactCount(p,'love')}</button></div>
         ${who.length ? `<div class="muted small" style="margin-top:6px">${who.join(" · ")}</div>` : ''}
@@ -4375,6 +4440,12 @@ function photoSheet(id){
       ${own ? (CIRCLE_READY ? `<form class="card" data-form="photoShare" data-id="${esc(id)}"><b class="small">Who can see it</b>${sharePicker("ps", p.sharedWith)}<div class="row wrap" style="margin-top:8px"><button class="btn sm" type="submit">Save</button><button class="btn sm danger" type="button" data-act="photoDelAsk" data-id="${esc(id)}">Remove photo</button></div></form>` : `<div class="row wrap"><button class="btn sm danger" type="button" data-act="photoDelAsk" data-id="${esc(id)}">Remove photo</button></div>`) : ''}`;
   });
 }
+// v18: swipe left or right on an open photo to go to the next or previous one.
+let pSw = null;
+document.addEventListener("touchstart", e => { const v = e.target.closest && e.target.closest("[data-pswipe]"); if(!v || e.target.closest("button")) return; pSw = {x:e.touches[0].clientX, y:e.touches[0].clientY}; }, {passive:true});
+document.addEventListener("touchend", e => { if(!pSw) return; const t = e.changedTouches[0], dx = t.clientX - pSw.x, dy = t.clientY - pSw.y; pSw = null;
+  if(Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.3) return;
+  const b = document.querySelector(dx < 0 ? ".pview .pnav.r" : ".pview .pnav.l"); if(b) b.click(); }, {passive:true});
 function albumForm(id){
   const a = doc("c_albums", id) || {sharedWith:"all"};
   openSheet(id ? "Edit collection" : "New collection", () => `<form class="card" data-form="saveAlbum" data-id="${esc(id||'')}">
@@ -5079,15 +5150,25 @@ function inviteSheet(name, email, link, viaLink){
     ${viaLink ? '<p class="muted small" style="margin-bottom:0">This invite works like a key to your family file, so send it only to ' + esc(first) + '.</p>' : ''}</div>`);
 }
 
+// v18: each Settings section folds away; open ones stay open while the sheet refreshes.
+const setOpen = new Set();
+function foldSettings(html){
+  const parts = html.split(/<h2[^>]*>([\s\S]*?)<\/h2>/);
+  let out = parts[0];
+  for(let i = 1; i < parts.length; i += 2){ const t = parts[i], key = t.replace(/<[^>]+>|&amp;/g, "").trim();
+    out += `<details class="sset" data-sset="${esc(key)}" ${setOpen.has(key) ? 'open' : ''}><summary>${t}</summary><div class="sbody">${parts[i+1]}</div></details>`; }
+  return out;
+}
+document.addEventListener("toggle", e => { const d = e.target; if(!d.dataset || !d.dataset.sset) return; if(d.open) setOpen.add(d.dataset.sset); else setOpen.delete(d.dataset.sset); }, true);
 function settingsSheet(){
-  openSheet("Settings", () => {
+  openSheet("Settings", () => foldSettings((() => {
     const ms = settings().members || []; const mine = meMember();
     const rows = [...ms, {}].slice(0, Math.max(ms.length + 1, 4));
     return `<h2 style="margin-top:4px">Your notifications</h2>
     <div class="card">${mine && mine.topic ? `<p class="small" style="margin-top:0">In the <b>ntfy</b> app on your phone, tap <b>+</b> and subscribe to this topic (keep it private, it works like a password):</p>
       <div class="code" id="myTopic">${esc(mine.topic)}</div>
       <div class="row wrap" style="margin-top:8px"><button class="btn sm" data-act="copy" data-v="${esc(mine.topic)}">Copy topic</button><button class="btn sm" data-act="testNotify">Send me a test</button></div>
-      <h2>Notify me about</h2>${Object.entries(NOTIFY_KINDS).map(([k,l]) => `<label class="toggle"><input type="checkbox" data-notify="${k}" ${wants(mine,k)?'checked':''}> <span>${l}</span></label>`).join("")}`
+      <h3 class="f" style="margin:14px 0 6px">Notify me about</h3>${Object.entries(NOTIFY_KINDS).map(([k,l]) => `<label class="toggle"><input type="checkbox" data-notify="${k}" ${wants(mine,k)?'checked':''}> <span>${l}</span></label>`).join("")}`
       : `<p class="muted small" style="margin:0">Notifications are set up for the grown-ups. Tick "Gets notifications" next to your name below.</p>`}</div>
     <h2>Family</h2>
     <form class="card" data-form="saveMembers"><label class="f" for="fmN" style="margin-top:0">Our family name (other families see this)</label><input id="fmN" type="text" name="familyName" value="${esc(famName())}" placeholder="e.g. The Murphys">
@@ -5120,7 +5201,7 @@ function settingsSheet(){
     <p class="muted small" style="margin:-4px 0 8px">Family tablet: for a tablet everyone uses. It opens on everyone's chores, with a name button for each person. Health, Gifts, Renewals, Settings, the activity list and your own Outlook events need the grown-up PIN, then lock again after 10 minutes.</p>
     <div class="card small">Signed in as <b>${esc(me ? me.name + (me.email ? " (" + me.email + ")" : "") : "?")}</b>, using Donrí as <b>${esc(myName())}</b>.<br>Sync: ${syncState === "off" ? "not synced, check your connection" : "up to date"}.
       <div class="row wrap" style="margin-top:10px"><button class="btn sm" data-act="syncNow">Sync now</button><button class="btn sm" data-act="kitchenOn">Use as kitchen display</button>${familyTab ? '<button class="btn sm" data-act="familyTabOff">Stop using as family tablet</button>' : '<button class="btn sm" data-act="familyTabOn">Use as family tablet</button>'}<button class="btn sm" data-act="switchWho">I'm not ${esc(myName())}</button><button class="btn sm danger" data-act="signout">Sign out</button></div></div>`;
-  });
+  })()));
 }
 function activitySheet(){
   ls.set("donri.seen", Date.now()); updateBell();
@@ -5236,8 +5317,9 @@ document.addEventListener("click", async e => {
         patch("chores", id, {lastDone:today(), lastBy:myName(), prevDone:c.lastDone||"", prevTurn:c.turn||"", turn:next, pendingBy:"", pendingTeam:[], pendingAt:0}); log("did: " + c.title);
         notify("chores", "Chore done", `${myName()} did: ${c.title}${c.rotate && a.length > 1 ? ` (${next}'s turn next)` : ""}`, {tags:["white_check_mark"]});
         if(c.rotate && a.length > 1) notifyAssigned([next], `It's your turn next: ${c.title}`);
-        if((Number(c.points)||0) > 0 && kids().length){ const ck = choreKids(c); const cand = ck.length ? ck : (a.length ? [] : kids().map(k => k.name));
-          if(cand.length === 1) awardStars(c, cand[0]); else if(cand.length > 1) whoDidSheet(id, cand); } }
+        if((Number(c.points)||0) > 0 && kids().length){ const ck = choreKids(c); const cand = ck.length ? ck : (a.length ? [] : kids().map(k => k.name)); const said = pendTeam(c).filter(isKid);
+          if(said.length) awardStarsMany(c, said); // a kid already said they did it: they get the gems, no need to ask
+          else if(cand.length === 1) awardStars(c, cand[0]); else if(cand.length > 1) whoDidSheet(id, cand); } }
       else { patch("chores", id, {lastDone:c.prevDone||"", lastBy:"", prevDone:"", turn:c.prevTurn||c.turn||""});
         const undo = docs("points").filter(p => p.choreId === id && p.date === today()); undo.forEach(p => del("points", p.id));
         if(undo.length) toast("Gems taken back for " + c.title); } break; }
@@ -5258,7 +5340,10 @@ document.addEventListener("click", async e => {
       log(`swapped ${cost} of ${v}'s gems for ${r.title}`);
       notify("stars", "Gems", `${v} swapped ${cost} gems for ${r.title}`, {tags:["star"]});
       starsSheet(v); toast(`🎉 Enjoy, ${v}!`); break; }
-    case "delPoint": del("points", id); toast("Removed"); break;
+    case "delPointAsk": { const p = doc("points", id); if(!p) break; openSheet("Remove this entry?", () => `<div class="card"><p style="margin-top:0"><b>${(Number(p.amount)||0) > 0 ? '+' : ''}${esc(p.amount)} gems</b> for ${esc(p.kid)}: ${esc(p.reason||'')}</p><p class="muted small">${esc(p.kid)}'s total goes ${(Number(p.amount)||0) > 0 ? 'down' : 'up'} by ${Math.abs(Number(p.amount)||0)}.</p><div class="row wrap"><button class="btn danger" data-act="delPoint" data-id="${esc(id)}" data-v="${esc(p.kid)}">Yes, remove it</button><button class="btn" data-act="starsOpen" data-v="${esc(p.kid)}">Keep it</button></div></div>`); break; }
+    case "delPoint": { const p = doc("points", id); del("points", id); if(p) log(`removed ${p.amount} gems (${p.reason||'entry'}) from ${p.kid}`); toast("Removed"); if(v) starsSheet(v); break; }
+    case "noGems": { const c = doc("chores", id); if(c) patch("chores", id, {noGems:today()}); closeSheet(); break; }
+    case "giveGems": { const c = doc("chores", id); if(!c) break; const ck = choreKids(c); whoDidSheet(id, ck.length ? ck : kids().map(k => k.name)); break; }
     case "kidOn": if(!kidSettings().pin){ pinSetSheet(v); break; } setKid(v); toast(`Kid mode for ${v}. Tap Grown-ups and enter the PIN to leave.`, 4500); break;
     case "kidPinSet": pinSetSheet(""); break;
     case "kidExitAsk": pinSheet("Grown-ups only", () => { setKid(""); toast("Kid mode off"); }); break;
@@ -5304,6 +5389,14 @@ document.addEventListener("click", async e => {
       put("settings", id, {...back, treatsUsed:petJobs() + (Number(back.bonusTreats)||0) - (petCarry || carry), care:{...(back.care||{}), food:agoAwake(5), clean:agoAwake(5), special:agoAwake(5), fun:agoAwake(4), rest:agoAwake(3)}});
       put("settings", id + "-farm", {list}); petCarry = 0; log(`${f.name} came back from the Pet Farm`); render(); toast(`${f.name} is home! 🎉`); say(`Welcome back, ${f.name}!`); break; }
     case "kitchenOn": setKitchen(true); toast("Kitchen display on. Press and hold Exit at the bottom to leave.", 4500); break;
+    case "kTheme": { const nx = {auto:"light", light:"dark", dark:"auto"}[kTheme()]; ls.set("donri.kTheme", nx); render(); toast({auto:"Auto: light by day, dark from 9pm to 7am", light:"Always light", dark:"Always dark"}[nx]); break; }
+    case "kArrOn": { const go = () => { kArr = true; closeSheet(); render(); window.scrollTo(0,0); }; if(kidSettings().pin) pinSheet("Grown-ups only", go); else go(); break; }
+    case "kArrDone": kArr = false; render(); toast("Layout saved on this screen"); break;
+    case "kReset": ls.set("donri.kLayout", null); render(); toast("Back to the usual layout"); break;
+    case "kMove": { const [k, d] = String(v).split("|"); const L = kLayout(); const i = L.order.indexOf(k), j = i + Number(d); if(i < 0 || j < 0 || j >= L.order.length) break; L.order.splice(i, 1); L.order.splice(j, 0, k); kSave(L); break; }
+    case "kSize": { const [k, c] = String(v).split("|"); const L = kLayout(); L.size[k] = c; kSave(L); break; }
+    case "kBig": { const L = kLayout(); L.big[v] = !L.big[v]; kSave(L); break; }
+    case "kHide": { const L = kLayout(); L.hidden = L.hidden.includes(v) ? L.hidden.filter(x => x !== v) : [...L.hidden, v]; kSave(L); break; }
     case "kChore": kitchenWhoSheet(id); break;
     case "kChoreBy": kitchenDone(id, v); closeSheet(); break;
     case "kChoreAll": { const team = String(v).split("|"); kitchenDone(id, team.join(" & "), team); closeSheet(); break; }
