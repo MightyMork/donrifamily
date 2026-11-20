@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#121B33">
+<meta name="theme-color" content="#FFFFFF">
 <title>Donrí</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/favicon-64.png">
 <link rel="apple-touch-icon" href="icons/apple-180.png">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600&family=Andika:wght@400;700&family=Lilita+One&family=Patrick+Hand&family=Press+Start+2P&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600&family=Andika:wght@400;700&family=Lilita+One&family=Patrick+Hand&family=Press+Start+2P&family=Poppins:wght@500;600;700&family=Open+Sans:wght@400;600&display=swap">
 <style>
 :root{
   --bg:#FAF8F2; --card:#FFFFFF; --ink:#121B33; --muted:#575E70; --line:#E4E1D6;
@@ -226,13 +226,6 @@ body.kiosk .fab,body.gamefull .fab{display:none!important}
 .aname{padding:8px 10px;display:flex;flex-direction:column;gap:2px}
 main{padding-bottom:90px}
 
-[data-palette="green"]{--accent:#1F6B3A;--blue:#1F6B3A;--blue-soft:#E3F0E6}
-[data-theme="dark"][data-palette="green"]{--accent:#7FC79A;--on-accent:#0C1222;--blue:#7FC79A;--blue-soft:#17301F}
-[data-palette="blue"]{--accent:#2A4C8C}
-[data-theme="dark"][data-palette="blue"]{--accent:#9DB8F2;--on-accent:#0C1222}
-[data-palette="gold"]{--accent:#8A5F0B;--blue:#8A5F0B;--blue-soft:#FBF0D6}
-[data-theme="dark"][data-palette="gold"]{--accent:#F0C25A;--on-accent:#121B33;--blue:#F0C25A;--blue-soft:#3A2F14}
-[data-palette="primrose"]{--bg:#FBF6DC;--card:#FFFEF7;--line:#E6DDB2}
 .iplaybadge{width:44px;height:44px;border-radius:22px;background:var(--accent);color:var(--on-accent);display:flex;align-items:center;justify-content:center;font-size:16px;flex:none}
 .palgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
 .palbtn{display:flex;align-items:center;gap:10px;min-height:52px;padding:8px 10px;border:2px solid var(--line);border-radius:14px;background:var(--card);font-weight:600;text-align:left}
@@ -587,6 +580,185 @@ body.bookopen{overflow:hidden}
 .arc-btn.a[aria-disabled="true"] b{background:#575E70;color:#C9CEDB}
 @media (min-width:600px){.arc{--cw:230px}.cart{height:270px}}
 @media (prefers-reduced-motion:reduce){.cart.on{animation:none}.arc-track{transition:none}}
+/* ==========================================================================
+   BENTO LOOK (20 Nov 2026): the grown-ups' app in the Bento UI Kit style.
+   One accent (Donrí fada gold) marks the one thing that matters; calm ruled
+   surfaces; Poppins headings, Open Sans body. The Púcas look (kid mode, the
+   gem pages, Play) and the stories keep their own signed-off styles: their
+   rules come after this block and win.
+   ========================================================================== */
+:root{
+  --accent:#E3B23C; --accent-ink:#8A5F0B; --on-accent:#121B33; --soft:#FBF0D6;
+  --ink:#121B33; --muted:#5B616C; --bg:#F2F3F5; --surface:#FFFFFF; --card:#FFFFFF; --line:#D7DAE0;
+  --ok:#24704F; --ok-soft:#E7F4EC; --crit:#B4361C; --crit-soft:#FCE9E4; --warn:#9A5B00; --warn-soft:#FFF3D6;
+  --focus:#2463D1;
+  --green:#24704F; --green-soft:#E7F4EC; --red:#B4361C; --red-soft:#FCE9E4;
+  --gold:#8A5F0B; --gold-soft:#FBF0D6; --blue:#8A5F0B; --blue-soft:#FBF0D6;
+  --shadow:0 1px 2px rgba(31,30,33,.08); --shadow-hover:0 8px 22px rgba(0,0,0,.08);
+  --shadow-pop:0 6px 24px rgba(0,0,0,.18); --shadow-modal:0 20px 60px rgba(0,0,0,.3);
+  --head:"Poppins","Segoe UI",Arial,sans-serif; --body:"Open Sans","Segoe UI",Arial,sans-serif;
+}
+[data-theme="dark"]{
+  --accent:#E3B23C; --accent-ink:#F0C25A; --on-accent:#121B33; --soft:#3A2F14;
+  --ink:#ECECEF; --muted:#A4A8B1; --bg:#161618; --surface:#212125; --card:#212125; --line:#36363D;
+  --ok:#5CC796; --ok-soft:#18302A; --crit:#F08467; --crit-soft:#3A1F1A; --warn:#F2B45A; --warn-soft:#3A2E14;
+  --focus:#7AA7FF;
+  --green:#5CC796; --green-soft:#18302A; --red:#F08467; --red-soft:#3A1F1A;
+  --gold:#F0C25A; --gold-soft:#3A2F14; --blue:#F0C25A; --blue-soft:#3A2F14; --shadow:none;
+}
+/* Colours (Settings → Colours): each palette only swaps the accent */
+[data-palette="green"]{--accent:#5DBB7E;--accent-ink:#1F6B3A;--soft:#E3F0E6;--blue:#1F6B3A;--blue-soft:#E3F0E6}
+[data-theme="dark"][data-palette="green"]{--accent:#5DBB7E;--accent-ink:#7FC79A;--soft:#17301F;--blue:#7FC79A;--blue-soft:#17301F}
+[data-palette="blue"]{--accent:#8DB0F0;--accent-ink:#2A4C8C;--soft:#E4EAF6;--blue:#2A4C8C;--blue-soft:#E4EAF6}
+[data-theme="dark"][data-palette="blue"]{--accent:#8DB0F0;--accent-ink:#9DB8F2;--soft:#1A2644;--blue:#9DB8F2;--blue-soft:#1A2644}
+[data-palette="gold"]{--bg:#F6F2E8;--line:#DDD6C4}
+[data-theme="dark"][data-palette="gold"]{--bg:#18160F;--line:#3A362A}
+[data-palette="primrose"]{--accent:#F2E28B;--accent-ink:#7A5A0A;--soft:#FBF6DC;--bg:#FBF6DC;--card:#FFFEF7;--surface:#FFFEF7;--line:#E6DDB2;--blue:#7A5A0A;--blue-soft:#FBF6DC}
+[data-theme="dark"][data-palette="primrose"]{--accent:#F2E28B;--accent-ink:#F2E28B;--soft:#35311A;--bg:#161618;--card:#212125;--surface:#212125;--line:#36363D;--blue:#F2E28B;--blue-soft:#35311A}
+/* The Púcas screens keep their own colours; give them the new helper names too */
+body.pucas,.sheet.pz{--soft:#2E2A1E;--accent-ink:#F2B33D;--surface:#232848;--focus:#7AA7FF;--shadow-pop:0 6px 24px rgba(0,0,0,.4)}
+body.pucas{font-family:Inter,system-ui,sans-serif}
+
+/* Base */
+html,body{font-family:var(--body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+a{color:var(--accent-ink)}
+h1{font-family:var(--head);font-weight:600;font-size:1.7rem;line-height:1.2;letter-spacing:0;margin:6px 0 14px}
+h2{font-family:var(--head);font-weight:600;font-size:1.15rem;line-height:1.2;text-transform:none;letter-spacing:0;color:var(--ink);margin:24px 0 10px}
+.muted{color:var(--muted);font-size:.93rem}
+.small{font-size:.82rem}
+
+/* Header and tab bar */
+header.top{background:var(--surface);border-bottom:1px solid var(--line);gap:8px}
+.iconbtn{width:44px;height:44px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);transition:border-color .15s ease,background .15s ease}
+.iconbtn:hover{border-color:var(--accent)}
+.badge{background:var(--accent);color:#121B33;font-family:var(--head);font-weight:600}
+[data-theme="dark"] .badge{color:#121B33}
+.sync{background:var(--ok)}
+.sync.busy{background:var(--accent)}
+.sync.off{background:var(--crit)}
+nav.tabs{background:var(--surface);border-top:1px solid var(--line)}
+nav.tabs button{position:relative;color:var(--muted);font-family:var(--head);font-weight:500;transition:color .15s ease}
+nav.tabs button[aria-current="page"]{color:var(--ink);font-weight:600}
+nav.tabs button[aria-current="page"] svg{color:var(--ink)}
+nav.tabs button[aria-current="page"]::before{content:"";position:absolute;top:0;left:22%;right:22%;height:3px;border-radius:0 0 3px 3px;background:var(--accent)}
+
+/* Panels and cards */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;box-shadow:var(--shadow);margin-bottom:12px}
+.tcard h3{font-family:var(--head);font-weight:600;font-size:1rem;text-transform:none;letter-spacing:0;color:var(--ink);margin:0 0 10px}
+.tcard h3 a,.tcard h3 button{font-family:var(--body);font-size:.85rem;font-weight:600;color:var(--accent-ink);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+.next{border-left:3px solid var(--accent)}
+.hello{font-family:var(--head);font-weight:600;font-size:1.7rem;letter-spacing:0;line-height:1.2}
+.stat,.starbig,.kbig{font-family:var(--head);font-weight:700}
+.stat{font-size:1.4rem}
+.empty{color:var(--muted);font-size:.9rem}
+.banner{background:var(--warn-soft);color:var(--ink);border-radius:10px;border:1px solid var(--line)}
+.note{background:var(--soft);border-radius:8px}
+.code{background:var(--bg);border-radius:7px}
+
+/* Buttons */
+.btn{min-height:44px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:0 16px;font-family:var(--head);font-weight:600;font-size:.93rem;transition:border-color .15s ease,box-shadow .15s ease}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#121B33}
+.btn.primary:hover{box-shadow:var(--shadow-hover)}
+.btn.primary .ac{stroke:#121B33}
+.btn.danger{color:var(--crit)}
+.btn.danger:hover{border-color:var(--crit)}
+.btn.sm{min-height:36px;padding:0 12px;font-size:.85rem}
+.x{border-radius:8px}
+.x:hover{background:var(--bg);color:var(--ink)}
+.fab{background:var(--accent);color:#121B33;border-radius:16px;box-shadow:var(--shadow-pop)}
+.linkish{color:inherit}
+
+/* Chips, segmented control, pills */
+.chip{min-height:40px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font-family:var(--body);font-weight:600;font-size:.9rem;transition:border-color .15s ease}
+.chip:hover{border-color:var(--accent)}
+.chip[aria-pressed="true"]{background:var(--soft);color:var(--ink);border-color:var(--accent)}
+.chip .n{font-family:var(--head);font-weight:600;opacity:1;color:var(--muted)}
+.seg{display:inline-flex;gap:2px;padding:3px;background:var(--bg);border:1px solid var(--line);border-radius:999px;overflow:visible}
+.seg button{background:transparent;border-radius:999px;min-height:38px;padding:0 16px;color:var(--muted);font-family:var(--body);font-weight:600}
+.seg button[aria-pressed="true"]{background:var(--soft);color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--accent)}
+.pill{border-radius:999px;font-family:var(--body);font-weight:600;font-size:.75rem;padding:2px 10px}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.bad{background:var(--crit-soft);color:var(--crit)}
+.pill.info{background:var(--bg);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+
+/* Lists, ticks, progress */
+.item{border-bottom:1px solid var(--line)}
+.check{width:30px;height:30px;border-radius:7px;border:2px solid var(--muted);transition:background .15s ease,border-color .15s ease}
+.check:hover{border-color:var(--accent)}
+.check.on{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.item.done .name{color:var(--muted)}
+.bar{height:10px;background:var(--bg);border:1px solid var(--line);border-radius:999px}
+.bar i{background:var(--accent);border-radius:999px}
+.gain{color:var(--ok)}
+
+/* Forms */
+label.f{font-size:.88rem;font-weight:600;color:var(--ink)}
+input[type=text],input[type=number],input[type=date],input[type=time],input[type=email],input[type=password],input[type=search],select,textarea{border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);padding:9px 11px;transition:border-color .15s ease,box-shadow .15s ease}
+input[type=text]:focus,input[type=number]:focus,input[type=date]:focus,input[type=time]:focus,input[type=email]:focus,input[type=password]:focus,input[type=search]:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 25%,transparent)}
+.toggle input{accent-color:var(--accent)}
+
+/* Calendar and meals */
+.day{border-top:1px solid var(--line)}
+.dayh{font-family:var(--head);font-weight:600}
+.dayh.today{color:var(--accent-ink)}
+.ev{background:var(--bg);border:1px solid var(--line);border-radius:8px}
+.ev.next{border-left:3px solid var(--accent)}
+.ev.ol{background:transparent;border:1px dashed var(--line)}
+.ev .t{color:var(--ink);font-family:var(--head);font-weight:600}
+.meal{border-bottom:1px solid var(--line)}
+
+/* Bottom sheets, toast, palette picker */
+.scrim{background:rgba(20,20,24,.45)}
+.sheet{background:var(--bg);border-radius:16px 16px 0 0;box-shadow:var(--shadow-modal)}
+.sheet::before{content:"";display:block;width:40px;height:4px;border-radius:2px;background:var(--line);margin:-6px auto 10px}
+.sheet .head h3{font-family:var(--head);font-weight:600;font-size:1.25rem;letter-spacing:0}
+.toast{top:auto;bottom:calc(150px + env(safe-area-inset-bottom));background:var(--surface);color:var(--ink);border:1.5px solid var(--accent);border-radius:10px;box-shadow:var(--shadow-pop);font-weight:600}
+.toast.show{animation:bnToast .2s ease-out}
+@keyframes bnToast{from{opacity:0;transform:translate(-50%,8px)}}
+.scrim.open ~ .toast{bottom:auto;top:calc(var(--protoH,44px) + 12px + env(safe-area-inset-top))}
+.palbtn{border:1.5px solid var(--line);border-radius:10px;background:var(--surface)}
+.palbtn[aria-checked="true"]{border-color:var(--accent);background:var(--soft)}
+.kexit{border-radius:8px}
+.kexit.holding{background:var(--soft)}
+.saybtn{border-radius:8px;background:var(--surface)}
+.saybtn .bi{color:var(--accent-ink)}
+.remoji .bi{color:var(--accent-ink)}
+.qbtn{border-radius:14px}
+.qbtn:hover{border-color:var(--accent);box-shadow:var(--shadow-hover)}
+.acard{border-radius:10px;background:var(--surface)}
+
+/* Kitchen display: big clock, calm cards */
+.kclock{font-family:var(--head);font-weight:700;letter-spacing:-1px}
+.kt h3{font-family:var(--head);font-weight:600;font-size:1.05rem;text-transform:none;letter-spacing:0;color:var(--ink)}
+.kt .check{border-radius:8px}
+
+/* ---------- Today as a bento grid ---------- */
+.bento{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;grid-auto-flow:row dense}
+.bento>.bt{min-width:0;display:flex;animation:bnIn .6s cubic-bezier(.2,.7,.2,1) both}
+.bento>.bt.w{grid-column:1/-1}
+.bento>.bt>.card{flex:1;margin:0;border-radius:14px;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease}
+.bento>.bt>.card:hover{transform:translateY(-2px);box-shadow:var(--shadow-hover);border-color:var(--accent)}
+.bento>.bt:nth-child(2){animation-delay:.04s}.bento>.bt:nth-child(3){animation-delay:.08s}.bento>.bt:nth-child(4){animation-delay:.12s}.bento>.bt:nth-child(n+5){animation-delay:.16s}
+@keyframes bnIn{from{opacity:0;transform:translateY(8px)}}
+.bento .bt:not(.w) .tcard h3{flex-wrap:wrap;row-gap:0}
+.bento .bt:not(.w) .chip{min-height:36px;padding:0 10px}
+.bento .bt:not(.w) .btn{max-width:100%;white-space:normal;text-align:center}
+.bstats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0 0 12px}
+.bstat{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;box-shadow:var(--shadow);color:var(--ink);font:inherit;min-height:84px;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease}
+.bstat:hover{transform:translateY(-2px);box-shadow:var(--shadow-hover);border-color:var(--accent)}
+.bstat .bi{width:22px;height:22px;padding:6px;box-sizing:content-box;border-radius:8px;background:var(--soft);color:var(--accent-ink)}
+.bstat .bi .ac{stroke:var(--accent-ink)}
+.bstat b{font-family:var(--head);font-weight:700;font-size:1.4rem;line-height:1.1;margin-top:4px}
+.bstat span{font-size:.78rem;color:var(--muted);line-height:1.25}
+.bstat.hot{background:var(--soft);border-color:var(--accent)}
+.homeedit{display:flex;justify-content:center;margin-top:14px}
+@media (prefers-reduced-motion:reduce){.bento>.bt,.toast.show{animation:none}.bento>.bt>.card:hover,.bstat:hover{transform:none}}
+#phone,#toast{touch-action:none;user-select:none;-webkit-user-select:none}
+.kidtogether{width:100%;min-height:52px;font-size:18px;margin-top:4px}
+/* ---------- end BENTO LOOK ---------- */
 </style>
 </head>
 <body>
@@ -692,6 +864,21 @@ const ICON = {
 };
 const I = ICON;
 let toastT = null;
+// Swipe a pop-up away (left, right or up). A tap still works as a tap.
+function swipeAway(el, onGone){
+  let sx = 0, sy = 0, dx = 0, dy = 0, on = false, moved = false;
+  const put = (x, y, o) => { el.style.transform = `translate(calc(-50% + ${x}px), ${y}px)`; el.style.opacity = o; };
+  const reset = () => { el.style.transition = ""; el.style.transform = ""; el.style.opacity = ""; };
+  el.addEventListener("pointerdown", e => { on = true; moved = false; sx = e.clientX; sy = e.clientY; dx = dy = 0; el.style.transition = "none"; try{ el.setPointerCapture(e.pointerId); }catch(_){} });
+  el.addEventListener("pointermove", e => { if(!on) return; dx = e.clientX - sx; dy = Math.min(0, e.clientY - sy); if(Math.abs(dx) > 8 || dy < -8) moved = true; if(moved) put(dx, dy, Math.max(.2, 1 - Math.max(Math.abs(dx), -dy * 2) / 260)); });
+  const up = () => { if(!on) return; on = false;
+    if(Math.abs(dx) > 70 || dy < -36){ el.style.transition = "transform .18s ease-out, opacity .18s ease-out"; put(Math.abs(dx) > 70 ? Math.sign(dx) * window.innerWidth : dx, Math.abs(dx) > 70 ? dy : -160, 0);
+      setTimeout(() => { reset(); onGone(); }, 190); }
+    else { el.style.transition = "transform .15s ease"; el.style.transform = ""; el.style.opacity = ""; setTimeout(reset, 160); } };
+  el.addEventListener("pointerup", up); el.addEventListener("pointercancel", up);
+  el.addEventListener("click", e => { if(moved){ e.stopImmediatePropagation(); e.preventDefault(); moved = false; } }, true);
+}
+document.addEventListener("DOMContentLoaded", () => { const t = document.getElementById("toast"); if(t) swipeAway(t, () => { clearTimeout(toastT); t.classList.remove("show"); }); });
 function toast(msg, ms){ const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("show"), ms || 3500); }
 
 // =====================================================================
@@ -1115,7 +1302,16 @@ function pToday(){
   S.photos = CIRCLE_READY ? photosTodayCard() : "";
   if(!grownOK()){ S.health = ""; S.renewals = ""; } // family tablet: private health and household costs stay behind the PIN
   const {order, hidden} = homePrefs();
-  return S.head + order.filter(k => !hidden.includes(k)).map(k => S[k] || "").join("\n") + `<div class="row" style="justify-content:center;margin-top:6px"><button class="btn sm" data-act="homeOpen">Change my home screen</button></div>`;
+  // Bento look: a stat strip, then the sections as tiles (wide ones span the row; half tiles pair up)
+  const shopN = docs("shop").filter(x => !x.done).length;
+  const stats = `<div class="bstats">
+    <button class="bstat" data-act="cal">${ICON.cal}<b>${evs.length}</b><span>${evs.length === 1 ? "event" : "events"} today</span></button>
+    <button class="bstat" data-act="go" data-v="chores">${ICON.chore}<b>${myChores.length}</b><span>${myChores.length === 1 ? "job" : "jobs"} due</span></button>
+    <button class="bstat" data-act="go" data-v="shop">${ICON.cart}<b>${shopN}</b><span>on the lists</span></button></div>`;
+  const HALF = new Set(["bins","dinner","stars","shopping","comingup","tomorrow"]);
+  const tiles = order.filter(k => !hidden.includes(k) && (S[k] || "").trim());
+  const halves = tiles.filter(k => HALF.has(k)); const lone = halves.length % 2 ? halves[halves.length - 1] : null;
+  return S.head + stats + `<div class="bento">${tiles.map(k => `<div class="bt ${HALF.has(k) && k !== lone ? '' : 'w'}" data-tile="${k}">${S[k]}</div>`).join("\n")}</div>` + `<div class="homeedit"><button class="btn sm" data-act="homeOpen">Change my home screen</button></div>`;
 }
 function binsForm(){
   const b = doc("settings","bins") || {streams:[{name:"General waste", colour:"black", every:2, offset:0},{name:"Recycling", colour:"green", every:2, offset:1},{name:"Compost", colour:"brown", every:1, offset:0}]};
@@ -1203,6 +1399,8 @@ function whoLine(c){
 const kids = () => members().filter(m => !m.topic);
 const isKid = n => kids().some(k => k.name === n);
 const stars = n => docs("points").filter(p => p.kid === n).reduce((s,p) => s + (Number(p.amount)||0), 0);
+const pendTeam = c => (c.pendingTeam && c.pendingTeam.length ? c.pendingTeam : (c.pendingBy ? [c.pendingBy] : []));
+const byIncludes = (by, n) => String(by||"").split(" & ").includes(n);
 const choreKids = c => { const a = assignees(c).filter(isKid); if(c.rotate && assignees(c).length > 1) return isKid(turnOf(c)) ? [turnOf(c)] : []; return a; };
 const REWARD_ICONS = ["🎮","🍦","🍫","🍕","🌙","🎬","⚽","📚","🎨","🎁"];
 function awardStars(c, kid){
@@ -1211,6 +1409,14 @@ function awardStars(c, kid){
   log(`gave ${kid} ${pts} ⭐ for ${c.title}`);
   toast(`⭐ +${pts} for ${kid}! That's ${stars(kid)} stars.`);
 }
+function awardStarsMany(c, names){
+  const pts = Number(c.points)||0; names = (names||[]).filter(Boolean); if(!pts || !names.length) return;
+  if(names.length === 1) return awardStars(c, names[0]);
+  names.forEach(kid => put("points", uid(), {kid, amount:pts, reason:c.title, choreId:c.id, joint:true, date:today(), by:myName(), at:Date.now()}));
+  log(`gave ${names.join(" and ")} ${pts} ⭐ each for ${c.title}`);
+  toast(`⭐ +${pts} each for ${names.join(" and ")}! Great teamwork.`);
+}
+const bothLabel = names => names.length === 2 ? "Both of them" : `All ${names.length}`;
 function pChores(){
   const list = docs("chores").filter(c => (choreFilter==="all" || choreDue(c)) && (!choreWho || isFor(c, choreWho))).sort((a,b) => String(a.title).localeCompare(b.title));
   const ks = kids();
@@ -1224,7 +1430,7 @@ function pChores(){
     <div class="grow"><div class="name">${esc(c.title)}${Number(c.points) ? ` <span class="pill warn">${I.star} ${Number(c.points)}</span>` : ''}</div><div class="muted small">${esc(whoLine(c))} · ${esc(c.freq)}${c.lastDone?` · last done ${nice(c.lastDone)} by ${esc(who(c.lastBy))}`:''}</div>${extrasLine(c)}</div>
     <button class="btn sm" data-act="editChore" data-id="${esc(c.id)}">Edit</button></div>`).join("") : `<div class="empty">${choreFilter==='due'?'All done. Nice one!':'No chores here yet.'}</div>`}</div>
   <div class="row"><button class="btn primary" data-act="editChore">Add a chore</button></div>
-  <p class="muted small">Chores with nobody picked show for everyone. Tick <b>Take turns</b> and the chore moves to the next person each time it's done. Give a chore stars and the boys earn them when they do it.</p>`;
+  <p class="muted small">Chores with nobody picked show for everyone. Tick <b>Take turns</b> and the chore moves to the next person each time it's done. Give a chore stars and the kids earn them when they do it.</p>`;
 }
 function choreForm(id){
   const c = doc("chores", id) || {freq:"weekly", assignees: choreWho ? [choreWho] : []}; const a = assignees(c);
@@ -1236,13 +1442,14 @@ function choreForm(id){
     <label class="f" for="chF">How often</label><select id="chF" name="freq">${["daily","weekly","fortnightly","monthly","once"].map(f => `<option ${c.freq===f?'selected':''}>${f}</option>`).join("")}</select>
     <label class="f" for="chN">Note (optional)</label><input id="chN" type="text" name="note" value="${esc(c.note||'')}" placeholder="e.g. The blue bin is round the side">
     <label class="f" for="chL">Link (optional)</label><input id="chL" type="text" inputmode="url" autocapitalize="off" name="link" value="${esc(c.link||'')}" placeholder="https://…">
-    <label class="f" for="chP">Stars when one of the boys does it</label><select id="chP" name="points">${[0,1,2,3,4,5].map(n => `<option value="${n}" ${(Number(c.points)||0)===n?'selected':''}>${n===0?'No stars':'⭐ '+n}</option>`).join("")}</select>
+    <label class="f" for="chP">Stars for each kid who does it</label><select id="chP" name="points">${[0,1,2,3,4,5].map(n => `<option value="${n}" ${(Number(c.points)||0)===n?'selected':''}>${n===0?'No stars':'⭐ '+n}</option>`).join("")}</select>
     <div class="row wrap" style="margin-top:12px"><button class="btn primary" type="submit">Save</button>${id?`<button class="btn danger" type="button" data-act="delChore" data-id="${esc(id)}">Delete</button>`:''}</div></form>`);
 }
 function whoDidSheet(id, cand){
   const c = doc("chores", id); if(!c) return;
-  openSheet("Who did it?", () => `<p class="kidtxt" style="margin-top:0"><b>${esc(c.title)}</b> earns ${I.star} ${Number(c.points)||0}.</p>
-    <div class="row wrap">${cand.map(n => `<button class="btn primary" data-act="awardStars" data-id="${esc(id)}" data-v="${esc(n)}">${esc(n)}</button>`).join("")}</div>
+  openSheet("Who did it?", () => `<p class="kidtxt" style="margin-top:0"><b>${esc(c.title)}</b> earns ${I.star} ${Number(c.points)||0} each.</p>
+    ${cand.length > 1 ? `<button class="btn primary" style="width:100%;min-height:52px" data-act="awardStarsAll" data-id="${esc(id)}" data-v="${esc(cand.join("|"))}">${I.people} ${bothLabel(cand)}: ${esc(cand.join(" and "))}</button><p class="muted small" style="margin:10px 0 6px">Or just one:</p>` : ''}
+    <div class="row wrap">${cand.map(n => `<button class="btn" data-act="awardStars" data-id="${esc(id)}" data-v="${esc(n)}">${esc(n)}</button>`).join("")}</div>
     <div class="row wrap" style="margin-top:10px"><button class="btn sm" data-act="close">A grown-up did it (no stars)</button></div>`);
 }
 function starsSheet(kid){
@@ -1257,9 +1464,9 @@ function starsSheet(kid){
       return `<div class="card"><div class="row"><span class="remoji" aria-hidden="true">${esc(r.icon||'🎁')}</span><div class="grow"><div class="kidtxt"><b>${esc(r.title)}</b></div><div class="muted small">${I.star} ${cost}</div></div>
         ${ok && !kitchen ? `<button class="btn primary" data-act="redeemAsk" data-id="${esc(r.id)}" data-v="${esc(kid)}">Swap</button>` : ok ? '<span class="pill ok">You can have this!</span>' : `<span class="muted small">${cost - Math.max(0,n)} to go</span>`}</div>
         <div class="bar" style="margin-top:10px" role="progressbar" aria-valuemin="0" aria-valuemax="${cost}" aria-valuenow="${Math.max(0, Math.min(n,cost))}" aria-label="Stars towards ${esc(r.title)}"><i style="width:${pct}%"></i></div></div>`; }).join("") : '<div class="card empty">No rewards yet. Add some below.</div>'}
-    ${kitchen ? '<p class="muted small">Ask Mam or Dad to swap your stars for a reward.</p>' : `<div class="row wrap"><button class="btn sm" data-act="rewardsEdit" data-v="${esc(kid)}">Change rewards</button><button class="btn sm" data-act="kidOn" data-v="${esc(kid)}">Hand the phone to ${esc(kid)}</button></div>
+    ${kitchen ? '<p class="muted small">Ask a grown-up to swap your stars for a reward.</p>' : `<div class="row wrap"><button class="btn sm" data-act="rewardsEdit" data-v="${esc(kid)}">Change rewards</button><button class="btn sm" data-act="kidOn" data-v="${esc(kid)}">Hand the phone to ${esc(kid)}</button></div>
     <h2>Give bonus stars</h2>
-    <form class="card" data-form="bonus" data-id="${esc(kid)}"><label class="f" for="bR">What for</label><input id="bR" type="text" name="reason" placeholder="e.g. Kind to his brother">
+    <form class="card" data-form="bonus" data-id="${esc(kid)}"><label class="f" for="bR">What for</label><input id="bR" type="text" name="reason" placeholder="e.g. Kind to a brother or sister">
       <div class="row" style="margin-top:8px;align-items:flex-end"><div style="width:120px"><label class="f" for="bA">Stars</label><select id="bA" name="amount"><option>1</option><option selected>2</option><option>3</option><option>5</option></select></div><div class="grow"></div><button class="btn primary" type="submit">Give stars</button></div></form>`}
     <h2>Recent</h2>
     <div class="card">${hist.length ? hist.map(p => `<div class="item"><div class="grow"><b class="${(Number(p.amount)||0) > 0 ? 'gain' : ''}">${(Number(p.amount)||0) > 0 ? '+' : ''}${esc(p.amount)} ${I.star}</b> ${esc(p.reason||'')}<div class="muted small">${new Date(p.at).toLocaleDateString("en-IE",{weekday:"short",day:"numeric",month:"short"})}${p.by ? ' · ' + esc(who(p.by)) : ''}</div></div>${kitchen ? '' : `<button class="x" data-act="delPoint" data-id="${esc(p.id)}" aria-label="Remove this entry">${ICON.x}</button>`}</div>`).join("") : '<div class="empty">No stars yet.</div>'}</div>`;
@@ -1274,7 +1481,7 @@ function redeemSheet(rid, kid){
 let rewardsBack = "";
 function rewardsSheet(){
   openSheet("Rewards", () => { const rw = docs("rewards").sort((a,b) => (Number(a.cost)||0) - (Number(b.cost)||0));
-    return `<p class="muted small" style="margin-top:0">The treats the boys can swap their stars for, and how many stars each one costs.</p>
+    return `<p class="muted small" style="margin-top:0">The treats the kids can swap their stars for, and how many stars each one costs.</p>
     <div class="card">${rw.length ? rw.map(r => `<div class="item"><span class="remoji" style="font-size:26px" aria-hidden="true">${esc(r.icon||'🎁')}</span><div class="grow"><b>${esc(r.title)}</b><div class="muted small">${I.star} ${Number(r.cost)||0}</div></div><button class="btn sm" data-act="editReward" data-id="${esc(r.id)}">Edit</button></div>`).join("") : '<div class="empty">No rewards yet.</div>'}</div>
     <div class="row wrap"><button class="btn primary" data-act="editReward">Add a reward</button>${rewardsBack ? `<button class="btn" data-act="starsOpen" data-v="${esc(rewardsBack)}">Back to ${esc(rewardsBack)}'s stars</button>` : ''}</div>`; });
 }
@@ -1376,7 +1583,7 @@ function renewedSheet(id){
 let recipeTag = "", recipeHave = new Set(), recipeHaveFor = "";
 const recipeTags = () => [...new Set(docs("recipes").flatMap(r => r.tags||[]))].sort();
 // Tag picker in the recipe form: pick from a list, or add a new tag. Chosen tags live in the hidden "tags" field.
-const RTAG_DEFAULTS = ["Quick","Boys love it","Freezer","Lower salt","Batch cook","Veggie","Sunday dinner","Lunchbox"];
+const RTAG_DEFAULTS = ["Quick","Kids love it","Freezer","Lower salt","Batch cook","Veggie","Sunday dinner","Lunchbox"];
 let rtagExtra = [];
 function rtagChosen(){ const h = document.querySelector('#sheet form[data-form=saveRecipe] input[name=tags]'); return h ? h.value.split(",").map(x => x.trim()).filter(Boolean) : []; }
 function rtagSet(list){ const h = document.querySelector('#sheet form[data-form=saveRecipe] input[name=tags]'); if(h){ h.value = [...new Set(list)].join(", "); rtagDraw(); } }
@@ -1395,7 +1602,7 @@ function pRecipes(){
   <div style="margin-top:12px">${list.length ? list.map(r => `<button class="card row" style="width:100%;text-align:left" data-act="recipeOpen" data-id="${esc(r.id)}" data-find="${esc((r.title + ' ' + (r.tags||[]).join(' ') + ' ' + (r.ingredients||[]).map(i => i.name).join(' ')).toLowerCase())}">
     <span class="remoji" style="font-size:28px" aria-hidden="true">${esc(r.icon||'🍲')}</span><div class="grow"><b>${esc(r.title)}</b><div class="muted small">${r.time ? esc(r.time) + ' min · ' : ''}serves ${esc(r.serves||4)} · ${(r.ingredients||[]).length} ingredients</div>${(r.tags||[]).length ? `<div style="margin-top:4px">${r.tags.map(t => `<span class="pill info" style="margin-right:4px">${esc(t)}</span>`).join("")}</div>` : ''}</div></button>`).join("") : '<div class="card empty">No recipes yet. Add your family favourites below.</div>'}</div>
   <div class="row wrap"><button class="btn primary" data-act="recipeEdit">Add a recipe</button></div>
-  <div class="card small" style="margin-top:12px"><b>Want new ideas?</b> Ask Claude in your chat, for example "add a quick lower-salt fish recipe the boys would eat to Donrí". It'll appear here.</div>`;
+  <div class="card small" style="margin-top:12px"><b>Want new ideas?</b> Ask Claude in your chat, for example "add a quick lower-salt fish recipe the kids would eat to Donrí". It'll appear here.</div>`;
 }
 function recipeSheet(id){
   if(recipeHaveFor !== id){ recipeHave = new Set(); recipeHaveFor = id; }
@@ -1463,20 +1670,22 @@ async function keepAwake(){ try{ if(kitchen && navigator.wakeLock && document.vi
 function setKitchen(on){ kitchen = on; ls.set("donri.kitchen", on); closeSheet(); if(on){ keepAwake(); } else { try{ wakeLock && wakeLock.release(); }catch(e){} wakeLock = null; page = "today"; resetZoom(); } render(); window.scrollTo(0,0); }
 setInterval(() => { if(kitchen && !holdT && !kitchenPlay) render(); }, 30000);
 document.addEventListener("visibilitychange", () => { if(kitchen && document.visibilityState === "visible"){ keepAwake(); render(); } });
-function kitchenDone(id, name){
+function kitchenDone(id, name, team){
   const c = doc("chores", id); if(!c || !choreDue(c)) return; const a = assignees(c); let next = c.turn || "";
   if(c.rotate && a.length > 1){ next = a[(a.indexOf(turnOf(c)) + 1) % a.length]; }
-  patch("chores", id, {lastDone:today(), lastBy:name, prevDone:c.lastDone||"", prevTurn:c.turn||"", turn:next, pendingBy:"", pendingAt:0});
+  patch("chores", id, {lastDone:today(), lastBy:name, prevDone:c.lastDone||"", prevTurn:c.turn||"", turn:next, pendingBy:"", pendingTeam:[], pendingAt:0});
   log(`ticked off "${c.title}" for ${name} on the kitchen display`);
   notify("chores", "Chore done", `${name} did: ${c.title}${c.rotate && a.length > 1 ? ` (${next}'s turn next)` : ""}`, {includeMe:true, tags:["white_check_mark"]});
   if(c.rotate && a.length > 1) notifyAssigned([next], `It's your turn next: ${c.title}`);
-  if((Number(c.points)||0) > 0 && isKid(name)) awardStars(c, name); else toast(`Well done, ${name}!`);
+  if((Number(c.points)||0) > 0 && team && team.length) awardStarsMany(c, team);
+  else if((Number(c.points)||0) > 0 && isKid(name)) awardStars(c, name); else toast(`Well done, ${name}!`);
 }
 function kitchenWhoSheet(id){
   const c = doc("chores", id); if(!c) return; const a = assignees(c);
   const cand = c.rotate && a.length > 1 ? [turnOf(c), ...a.filter(n => n !== turnOf(c))] : (a.length ? a : [...kids().map(k => k.name), ...adults().map(m => m.name)]);
   openSheet("Who did it?", () => `<p class="kidtxt" style="margin-top:0"><b>${esc(c.title)}</b>${Number(c.points) ? ` earns ${I.star} ${Number(c.points)}` : ''}</p>
-    <div class="row wrap">${cand.map(n => `<button class="btn primary" style="min-height:56px;font-size:18px;padding:0 22px" data-act="kChoreBy" data-id="${esc(id)}" data-v="${esc(n)}">${esc(n)}</button>`).join("")}</div>
+    ${(() => { const ck = cand.filter(isKid); return Number(c.points) && ck.length > 1 ? `<button class="btn primary" style="width:100%;min-height:60px;font-size:18px;margin-bottom:12px" data-act="kChoreAll" data-id="${esc(id)}" data-v="${esc(ck.join("|"))}">${I.people} ${bothLabel(ck)}: ${esc(ck.join(" and "))}</button>` : ''; })()}
+    <div class="row wrap">${cand.map(n => `<button class="btn" style="min-height:56px;font-size:18px;padding:0 22px" data-act="kChoreBy" data-id="${esc(id)}" data-v="${esc(n)}">${esc(n)}</button>`).join("")}</div>
     <div class="row wrap" style="margin-top:12px"><button class="btn" data-act="close">Cancel</button></div>`);
 }
 function pKitchen(){
@@ -1552,13 +1761,13 @@ const SFX = {
 let lastSfx = {};
 function sfx(name, arg){ if(!soundOn()) return; const now = Date.now(); if(name === "heart" && now - (lastSfx.heart || 0) < 160) return; lastSfx[name] = now; try{ SFX[name] && SFX[name](arg); }catch(e){} }
 function say(text){ if(!speechOn()) return; try{ speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = "en-IE"; u.rate = 0.9; speechSynthesis.speak(u); }catch(e){ toast("Reading aloud isn't available on this device"); } }
-const forKid = (e, name) => !e.who || new RegExp("(" + name + "|boys|everyone|all of us|family)", "i").test(e.who);
+const forKid = (e, name) => !e.who || new RegExp("(" + name + "|kids|boys|everyone|all of us|family)", "i").test(e.who);
 function pKid(name){
   if(kidView === "pet") return gamesView(name, "kid");
   const now = new Date(), t = today(), tmr = ymd(addDays(now,1)), h = now.getHours();
   const greet = h < 12 ? "Maidin mhaith" : h < 18 ? "Dia duit" : "Oíche mhaith";
   const jobs = docs("chores").filter(c => choreDue(c) && assignees(c).length && isFor(c, name)).sort((a,b) => String(a.title).localeCompare(b.title));
-  const doneToday = docs("chores").filter(c => c.lastDone === t && c.lastBy === name);
+  const doneToday = docs("chores").filter(c => c.lastDone === t && byIncludes(c.lastBy, name));
   const n = stars(name); const rw = docs("rewards").sort((a,b) => (Number(a.cost)||0) - (Number(b.cost)||0)); const next = rw.find(r => (Number(r.cost)||0) > n);
   const starMsg = !n ? "Do a job to get your first star!" : next ? `${(Number(next.cost)||0) - n} more stars for ${next.title}` : "You can pick any reward!";
   const evs = docs("events").filter(e => e.date === t && forKid(e, name)).sort((a,b) => String(a.start||"").localeCompare(String(b.start||"")));
@@ -1570,9 +1779,10 @@ function pKid(name){
   <div class="card" style="text-align:center;margin-top:14px"><div class="starbig">${I.star} ${n}</div><div>${esc(starMsg)}</div><div style="margin-top:8px"><button class="saybtn" data-act="say" data-v="${esc('You have ' + n + ' stars. ' + starMsg)}" aria-label="Read it to me">${I.speak}</button></div></div>
   <h2>Play</h2>${playCard(name)}
   <div class="row"><h2 class="grow">My jobs</h2><button class="saybtn" data-act="say" data-v="${esc(jobsSay)}" aria-label="Read my jobs to me">${I.speak}</button></div>
-  ${jobs.length ? jobs.map(c => c.pendingBy === name
-      ? `<div class="card kidjob"><span class="kcheck on" aria-hidden="true">⏳</span><div class="grow"><b>${esc(c.title)}</b><div class="muted" style="font-size:17px">Waiting for Mam or Dad to check</div></div></div>`
-      : `<div class="card kidjob"><button class="kcheck" data-act="kidTick" data-id="${esc(c.id)}" aria-label="I did it: ${esc(c.title)}"></button><div class="grow"><b>${esc(c.title)}</b>${Number(c.points) ? ` <span class="pill warn" style="font-size:15px">${I.star} ${Number(c.points)}</span>` : ''}</div><button class="saybtn" data-act="say" data-v="${esc(c.title)}" aria-label="Read it to me">${I.speak}</button></div>`).join("")
+  ${jobs.length ? jobs.map(c => { const mates = choreKids(c).filter(n => n !== name);
+      return pendTeam(c).includes(name)
+      ? `<div class="card kidjob"><span class="kcheck on" aria-hidden="true">⏳</span><div class="grow"><b>${esc(c.title)}</b><div class="muted" style="font-size:17px">${pendTeam(c).length > 1 ? 'You did it together! ' : ''}Waiting for a grown-up to check</div></div></div>`
+      : `<div class="card kidjob" style="flex-wrap:wrap"><button class="kcheck" data-act="kidTick" data-id="${esc(c.id)}" aria-label="I did it: ${esc(c.title)}"></button><div class="grow"><b>${esc(c.title)}</b>${Number(c.points) ? ` <span class="pill warn" style="font-size:15px">${I.star} ${Number(c.points)}</span>` : ''}</div><button class="saybtn" data-act="say" data-v="${esc(c.title)}" aria-label="Read it to me">${I.speak}</button>${mates.length ? `<button class="btn kidtogether" data-act="kidTogether" data-id="${esc(c.id)}" aria-label="We did it together: ${esc(c.title)}, with ${esc(mates.join(" and "))}">${I.people} We did it together</button>` : ''}</div>`; }).join("")
     : '<div class="card" style="font-size:22px">No jobs right now. Nice one! 🎉</div>'}
   ${doneToday.length ? `<div class="muted" style="font-size:18px">${I.chore} Done today: ${esc(doneToday.map(c => c.title).join(", "))}</div>` : ''}
   <h2>Today</h2>
@@ -1581,7 +1791,7 @@ function pKid(name){
   <h2>My rewards</h2>
   ${rw.map(r => { const cost = Number(r.cost)||0; const ok = n >= cost; const pct = cost ? Math.max(0, Math.min(100, Math.round(n*100/cost))) : 100;
     return `<div class="card"><div class="row"><span class="remoji" aria-hidden="true">${esc(r.icon||'🎁')}</span><div class="grow"><b>${esc(r.title)}</b><div style="font-size:16px"><span class="muted">${I.star} ${cost}</span> · ${ok ? '<b class="gain">You can have this!</b>' : `<span class="muted">${cost - Math.max(0,n)} more to go</span>`}</div></div></div><div class="bar" style="margin-top:10px;height:14px" role="progressbar" aria-valuemin="0" aria-valuemax="${cost}" aria-valuenow="${Math.max(0, Math.min(n,cost))}" aria-label="Stars towards ${esc(r.title)}"><i style="width:${pct}%"></i></div></div>`; }).join("")}
-  <p class="muted" style="font-size:17px">Ask Mam or Dad when you want to swap your stars for a reward.</p></div>`;
+  <p class="muted" style="font-size:17px">Ask a grown-up when you want to swap your stars for a reward.</p></div>`;
 }
 function pinSheet(title, onOk){
   pinEntry = ""; pinNext = onOk;
@@ -1589,29 +1799,29 @@ function pinSheet(title, onOk){
     <div class="pinpad">${[1,2,3,4,5,6,7,8,9].map(d => `<button data-act="pinKey" data-v="${d}">${d}</button>`).join("")}<button data-act="pinKey" data-v="back" aria-label="Delete">⌫</button><button data-act="pinKey" data-v="0">0</button><button data-act="pinKey" data-v="ok" aria-label="OK" style="background:var(--accent);color:var(--on-accent)">OK</button></div>`);
 }
 function pinSetSheet(then){
-  openSheet("Set a grown-up PIN", () => `<form class="card" data-form="kidPin" data-v="${esc(then||'')}"><p style="margin-top:0">This PIN gets a grown-up out of kid mode. Use 4 to 6 numbers the boys don't know.</p>
+  openSheet("Set a grown-up PIN", () => `<form class="card" data-form="kidPin" data-v="${esc(then||'')}"><p style="margin-top:0">This PIN gets a grown-up out of kid mode. Use 4 to 6 numbers the kids don't know.</p>
     <label class="f" for="kpA">New PIN</label><input id="kpA" type="password" inputmode="numeric" autocomplete="off" name="a" maxlength="6">
     <label class="f" for="kpB">Type it again</label><input id="kpB" type="password" inputmode="numeric" autocomplete="off" name="b" maxlength="6">
     <div class="row wrap" style="margin-top:12px"><button class="btn primary" type="submit">Save PIN</button><button class="btn" type="button" data-act="close">Cancel</button></div></form>`);
 }
 function kidModeSettings(){
   const ks = kidSettings();
-  return `<div class="card"><p class="muted small" style="margin-top:0">Hand your phone to one of the boys, or set up a tablet just for him. He sees only his jobs, stars, rewards and what's on, in big friendly text with 🔊 read-aloud buttons. The grown-up PIN gets you back out.</p>
+  return `<div class="card"><p class="muted small" style="margin-top:0">Hand your phone to one of the kids, or set up a tablet just for them. They see only their jobs, stars, rewards and what's on, in big friendly text with 🔊 read-aloud buttons. The grown-up PIN gets you back out.</p>
     <div class="row wrap">${kids().map(k => `<button class="btn primary" data-act="kidOn" data-v="${esc(k.name)}">Hand to ${esc(k.name)}</button>`).join("")}</div>
     <div class="row wrap" style="margin-top:10px"><button class="btn sm" data-act="kidPinSet">${ks.pin ? 'Change the grown-up PIN' : 'Set a grown-up PIN'}</button></div>
-    <div class="row" style="margin-top:8px"><label class="f grow" for="kpm" style="margin:0">Playtime each day, for each boy</label><select id="kpm" data-playmins style="width:auto">${[5,10,15,20,30,45,60].map(n => `<option value="${n}" ${playLimitMins()===n?'selected':''}>${n} min</option>`).join("")}</select></div>
-    <p class="muted small" style="margin:4px 0 0">Playtime unlocks once he's finished a job that day. A grown-up can unlock it, or add more time, with the PIN.</p>
+    <div class="row" style="margin-top:8px"><label class="f grow" for="kpm" style="margin:0">Playtime each day, for each kid</label><select id="kpm" data-playmins style="width:auto">${[5,10,15,20,30,45,60].map(n => `<option value="${n}" ${playLimitMins()===n?'selected':''}>${n} min</option>`).join("")}</select></div>
+    <p class="muted small" style="margin:4px 0 0">Playtime unlocks once they've finished a job that day. A grown-up can unlock it, or add more time, with the PIN.</p>
     <div class="row" style="margin-top:8px"><label class="f grow" for="kpet" style="margin:0">Pets</label><select id="kpet" data-petmode style="width:auto"><option value="shared" ${petMode()==="shared"?'selected':''}>One pet they share</option><option value="own" ${petMode()==="own"?'selected':''}>A pet each</option></select></div>
-    <p class="muted small" style="margin:4px 0 0">Switching keeps every pet safe: switch back and they're all still there. The boys can change pet themselves; old pets go to the Pet Farm and can come back.</p>
+    <p class="muted small" style="margin:4px 0 0">Switching keeps every pet safe: switch back and they're all still there. The kids can change pet themselves; old pets go to the Pet Farm and can come back.</p>
     ${(petMode() === "own" ? kids().some(k => pet(k.name)) : pet("")) ? `<div class="row wrap" style="margin-top:8px"><button class="btn sm danger" data-act="petNew">Start again with ${petMode() === "own" ? "new pets" : "a new pet"}</button></div>` : ''}
-    <div style="margin-top:10px"><b class="small">For each boy</b>${kids().map(k => `<div class="row wrap" style="gap:14px;margin-top:4px"><span style="min-width:80px;font-weight:600">${esc(k.name)}</span><label class="toggle small"><input type="checkbox" data-kidpref="speech" data-v="${esc(k.name)}" ${kidPref("speech", k.name) ? "checked" : ""}> 🔊 Read aloud</label><label class="toggle small"><input type="checkbox" data-kidpref="sound" data-v="${esc(k.name)}" ${kidPref("sound", k.name) ? "checked" : ""}> 🎵 Sounds</label></div>`).join("")}</div>
-    <label class="toggle small"><input type="checkbox" data-kidapprove ${ks.approval !== false ? 'checked' : ''}> <span>When a boy ticks a job, a grown-up says OK before the stars go on</span></label>
-    <p class="muted small" style="margin-bottom:0">For a boy's own tablet: sign in on it, then tap his name above. It stays in kid mode, even after it's switched off, until the PIN is entered.</p></div>`;
+    <div style="margin-top:10px"><b class="small">For each kid</b>${kids().map(k => `<div class="row wrap" style="gap:14px;margin-top:4px"><span style="min-width:80px;font-weight:600">${esc(k.name)}</span><label class="toggle small"><input type="checkbox" data-kidpref="speech" data-v="${esc(k.name)}" ${kidPref("speech", k.name) ? "checked" : ""}> 🔊 Read aloud</label><label class="toggle small"><input type="checkbox" data-kidpref="sound" data-v="${esc(k.name)}" ${kidPref("sound", k.name) ? "checked" : ""}> 🎵 Sounds</label></div>`).join("")}</div>
+    <label class="toggle small"><input type="checkbox" data-kidapprove ${ks.approval !== false ? 'checked' : ''}> <span>When a kid ticks a job, a grown-up says OK before the stars go on</span></label>
+    <p class="muted small" style="margin-bottom:0">For a kid's own tablet: sign in on it, then tap their name above. It stays in kid mode, even after it's switched off, until the PIN is entered.</p></div>`;
 }
 function pendingCard(){
   const pend = docs("chores").filter(c => c.pendingBy && choreDue(c));
   if(!pend.length) return "";
-  return `<div class="card tcard next"><h3><span class="grow">Waiting for your OK</span></h3>${pend.map(c => `<div class="item"><div class="grow"><b>${esc(c.pendingBy)}</b> says he did: ${esc(c.title)}${Number(c.points) ? ` <span class="pill warn">${I.star} ${Number(c.points)}</span>` : ''}</div><button class="btn sm primary" data-act="kidApprove" data-id="${esc(c.id)}">Yes</button><button class="btn sm" data-act="kidReject" data-id="${esc(c.id)}">Not yet</button></div>`).join("")}</div>`;
+  return `<div class="card tcard next"><h3><span class="grow">Waiting for your OK</span></h3>${pend.map(c => `<div class="item"><div class="grow">${pendTeam(c).length > 1 ? `<b>${esc(pendTeam(c).join(" and "))}</b> say they did it together: ${esc(c.title)}` : `<b>${esc(c.pendingBy)}</b> says they did: ${esc(c.title)}`}${Number(c.points) ? ` <span class="pill warn">${I.star} ${Number(c.points)}${pendTeam(c).length > 1 ? ' each' : ''}</span>` : ''}</div><button class="btn sm primary" data-act="kidApprove" data-id="${esc(c.id)}">Yes</button><button class="btn sm" data-act="kidReject" data-id="${esc(c.id)}">Not yet</button></div>`).join("")}</div>`;
 }
 
 // ---------- GAMES: Ár bPeata (our pet) ----------
@@ -2562,7 +2772,7 @@ const localSecs = kid => Number(ls.get("donri.play." + playId(kid), 0)) || 0;
 const usedSecs = kid => Math.max(localSecs(kid), Number(playDoc(kid).secs)||0);
 const timeLeftSecs = kid => Math.max(0, (playLimitMins() + (Number(playDoc(kid).extraMins)||0)) * 60 - usedSecs(kid));
 const fmtLeft = s => s >= 60 ? Math.ceil(s/60) + " min" : s + " sec";
-const jobToday = kid => docs("chores").some(c => (c.lastDone === today() && c.lastBy === kid) || c.pendingBy === kid);
+const jobToday = kid => docs("chores").some(c => (c.lastDone === today() && byIncludes(c.lastBy, kid)) || pendTeam(c).includes(kid));
 const canPlay = kid => (jobToday(kid) || playDoc(kid).unlocked) && timeLeftSecs(kid) > 0;
 function startPlay(kid, ctx){
   playKid = kid; playCtx = ctx; clearInterval(playTimer);
@@ -2650,7 +2860,7 @@ function allergyForm(id){
     <label class="f" for="alA">Allergic to</label><input id="alA" type="text" name="allergen" value="${esc(a.allergen||'')}" placeholder="e.g. Peanuts, egg, penicillin">
     <label class="f" for="alR">What happens (optional)</label><input id="alR" type="text" name="reaction" value="${esc(a.reaction||'')}" placeholder="In your own words">
     <label class="f" for="alPl">Your plan, as your GP or consultant gave it (optional)</label><textarea id="alPl" name="plan" style="min-height:80px">${esc(a.plan||'')}</textarea>
-    <label class="f" for="alM">Where any prescribed medicine is kept (optional)</label><input id="alM" type="text" name="medicineWhere" value="${esc(a.medicineWhere||'')}" placeholder="e.g. Front pocket of his school bag">
+    <label class="f" for="alM">Where any prescribed medicine is kept (optional)</label><input id="alM" type="text" name="medicineWhere" value="${esc(a.medicineWhere||'')}" placeholder="e.g. Front pocket of the school bag">
     ${CIRCLE_READY ? '' : '<input type="hidden" name="share" value="none">'}<fieldset style="border:0;padding:0;margin:12px 0 0" ${CIRCLE_READY ? '' : 'hidden'}><legend style="font-size:13px;font-weight:600;color:var(--muted)">Share with other families</legend>
       <label class="toggle"><input type="radio" name="share" value="none" ${a.share==='none' || !a.share ? 'checked' : ''}> <span>Only our family</span></label>
       <label class="toggle"><input type="radio" name="share" value="all" ${a.share==='all' ? 'checked' : ''}> <span>All families in our circle</span></label>
@@ -2797,7 +3007,7 @@ function packForm(id){
       <label class="f" for="pc${i}">Can eat</label><input id="pc${i}" type="text" name="can${i}" value="${esc(k.canEat)}" placeholder="e.g. Pasta, toast, fruit">
       <label class="f" for="pn${i}">Can't eat</label><input id="pn${i}" type="text" name="cant${i}" value="${esc(k.cannotEat)}" placeholder="e.g. No sweets after 6pm">
       <label class="f" for="px${i}">Anything else</label><input id="px${i}" type="text" name="kn${i}" value="${esc(k.notes)}">
-      <div class="muted small" style="margin-top:6px">Jobs he can do for stars: ${jobs.length ? esc(jobs.map(c => c.title + (Number(c.points) ? ' (⭐ ' + c.points + ')' : '')).join(", ")) : 'none set'}</div>
+      <div class="muted small" style="margin-top:6px">Jobs to do for stars: ${jobs.length ? esc(jobs.map(c => c.title + (Number(c.points) ? ' (⭐ ' + c.points + ')' : '')).join(", ")) : 'none set'}</div>
       ${al.length ? `<div class="muted small">Allergies on record: ${esc(al.map(a => a.allergen + ' (' + (a.severity||'Not sure') + ')').join(", "))}</div>` : ''}</div>`; }).join("")}
     <label class="toggle" style="margin-top:10px"><input type="checkbox" name="allergies" ${p.allergies ? 'checked' : ''}> <span>Include their allergies in the pack</span></label>
     <label class="f" for="pkC">Emergency contacts</label><textarea id="pkC" name="contacts" style="min-height:70px" placeholder="e.g. Mark 087 000 0000, Helen 086 000 0000, Granny next door">${esc(p.contacts)}</textarea>
@@ -3432,7 +3642,7 @@ function pGifts(){
     <div class="grow"><b>${esc(p.name)}</b> <span class="muted small">${esc(p.relation||'')}</span><div class="muted small">${gs.filter(g=>g.status==='given').length} given · ${gs.filter(g=>g.status==='bought').length} bought · ${gs.filter(g=>g.status==='idea').length} ideas</div></div>
     ${nb!=null ? `<span class="pill ${nb<=14?'warn':'info'}">Birthday ${nb===0?'today':'in '+nb+'d'}</span>`:''}</button>`; }).join("") : `<div class="card empty">Add the people you buy for. Donrí keeps track of what you've given them.</div>`}
   <div class="row"><button class="btn primary" data-act="newPerson">Add a person</button></div>
-  <div class="card small" style="margin-top:12px"><b>Want ideas?</b> Ask Claude in your chat, for example "gift ideas for Donnacha's birthday in Donrí". Claude checks what he's already had and saves fresh ideas here.</div>
+  <div class="card small" style="margin-top:12px"><b>Want ideas?</b> Ask Claude in your chat, for example "gift ideas for Donnacha's birthday in Donrí". Claude checks what they've already had and saves fresh ideas here.</div>
   <p class="muted small">Gift changes never send notifications, so surprises stay surprises.</p>`;
 }
 
@@ -3604,7 +3814,7 @@ function calSheet(){
         <label class="f" for="evT">What</label><input id="evT" type="text" name="title" placeholder="e.g. Rían's swimming">
         <label class="f" for="evD">Date</label><input id="evD" type="date" name="date" value="${esc(calDate)}">
         <div class="row"><div class="grow"><label class="f" for="evS">Start (leave empty for all day)</label><input id="evS" type="time" name="start" value="10:00"></div><div class="grow"><label class="f" for="evE">End</label><input id="evE" type="time" name="end" value="11:00"></div></div>
-        <label class="f" for="evW">Who's going (optional)</label><input id="evW" type="text" name="who" placeholder="e.g. Helen &amp; the boys">
+        <label class="f" for="evW">Who's going (optional)</label><input id="evW" type="text" name="who" placeholder="e.g. Helen &amp; the kids">
         <label class="toggle"><input type="checkbox" name="outlook" checked> <span>Add to our Outlook calendars${famEmails.length ? ` (invites ${esc(famEmails.map(m=>m.name).join(", "))})` : ' <span class="muted small">(add emails in Settings to invite the others)</span>'}</span></label>
         <div style="margin-top:12px"><button class="btn primary" type="submit">Add event</button></div>
       </form>`;
@@ -3696,7 +3906,7 @@ const HELP = {
     <li>The next event coming up is marked <b>Next up</b>. Dashed events come from your own Outlook and only you see them.</li>
     <li><b>Dinner tonight</b> spots ingredients that aren't on a shopping list yet and adds them in one tap.</li>
     <li><b>Your chores</b> shows chores due for you, plus chores for anyone. Tick them off here.</li>
-    <li><b>Stars</b> shows how many stars each of the boys has. Tap a name to open his rewards.</li>
+    <li><b>Stars</b> shows how many stars each of the kids has. Tap a name to open their rewards.</li>
     <li><b>From school emails</b> appears when Claude has found dates in emails from school or the crèche. Tap <b>Review</b> to add them to the calendar, change them first, or skip them.</li>
     <li><b>Renewals</b> shows car tax, NCT, insurance, passports and so on that are coming due. Tap <b>All renewals</b> to see them all.</li>
     <li><b>Bins:</b> set your collection day and which bins go out when. From midday the day before, it shows "Out tonight".</li>
@@ -3721,14 +3931,14 @@ const HELP = {
     <li><b>Add ingredients</b> sends a day's ingredients to the shop selected on the Shop page.</li></ul>`,
   chores:`<ul><li><b>To do</b> shows what's due. A weekly chore comes back 7 days after it was last done.</li>
     <li>Tap a name at the top to see just that person's chores. Chores with nobody picked show for everyone.</li>
-    <li><b>Edit</b> a chore to give it to one or more people. Tick <b>Take turns</b> and it moves to the next person each time it's done, as with the boys feeding the fish.</li>
+    <li><b>Edit</b> a chore to give it to one or more people. Tick <b>Take turns</b> and it moves to the next person each time it's done, as with the kids feeding the fish.</li>
     <li>When you give someone a chore, or it becomes their turn, they get a notification (if they have one set up).</li>
     <li>Tap the box when it's done. Donrí records who did it and when.</li>
-    <li><b>Kid mode:</b> in Settings, tap <b>Hand to Donnacha</b> (or Rían). He sees only his jobs, stars and rewards, in big text with 🔊 buttons that read things aloud. When he ticks a job, you get a notification and a <b>Waiting for your OK</b> card. Tap <b>Yes</b> and the stars go on. To leave kid mode, tap <b>Grown-ups</b> and enter the PIN. A boy's own tablet can stay in kid mode all the time.</li>
-    <li><b>Our pet (game):</b> the boys pick an axolotl, puppy or dragon together, name it, and look after it in kid mode or on the kitchen display. Every care choice teaches real animal care, and wrong ones get a kind tip. It never gets sick, it sleeps at night, and every job that earns stars also earns it a treat. Playtime unlocks once he's done a job that day, and lasts 10 minutes (change it in Settings). A grown-up can unlock it, or add time, with the PIN. Read-aloud and sounds can be switched on or off for each boy in Settings → Kid mode.</li>
-    <li><b>Snack Drop (game):</b> swipe across ropes to cut them so the treat falls into your pet's mouth. Each level teaches one idea: gravity, swinging, bouncing, bubbles and wind. After each level, "Why did that happen?" explains it simply. The boys share the progress, and each new level they finish gives the pet a heart. It uses the same playtime.</li>
-    <li><b>Stars:</b> in <b>Edit</b>, give a chore some stars. When one of the boys does it, he gets them. If Donrí can't tell which boy did it, it asks. Untick by mistake and the stars come off again.</li>
-    <li>Tap a boy's star count to open his page: big star total, rewards with how close he is, <b>Swap</b> when he has enough, and <b>bonus stars</b> for anything you want to praise. It's made to show him on your phone.</li>
+    <li><b>Kid mode:</b> in Settings, tap <b>Hand to Donnacha</b> (or Rían). They see only their jobs, stars and rewards, in big text with 🔊 buttons that read things aloud. When they tick a job, you get a notification and a <b>Waiting for your OK</b> card. Tap <b>Yes</b> and the stars go on. To leave kid mode, tap <b>Grown-ups</b> and enter the PIN. A kid's own tablet can stay in kid mode all the time.</li>
+    <li><b>Our pet (game):</b> the kids pick an axolotl, puppy or dragon together, name it, and look after it in kid mode or on the kitchen display. Every care choice teaches real animal care, and wrong ones get a kind tip. It never gets sick, it sleeps at night, and every job that earns stars also earns it a treat. Playtime unlocks once they've done a job that day, and lasts 10 minutes (change it in Settings). A grown-up can unlock it, or add time, with the PIN. Read-aloud and sounds can be switched on or off for each kid in Settings → Kid mode.</li>
+    <li><b>Snack Drop (game):</b> swipe across ropes to cut them so the treat falls into your pet's mouth. Each level teaches one idea: gravity, swinging, bouncing, bubbles and wind. After each level, "Why did that happen?" explains it simply. The kids share the progress, and each new level they finish gives the pet a heart. It uses the same playtime.</li>
+    <li><b>Stars:</b> in <b>Edit</b>, give a chore some stars. Each kid who does it gets them. If Donrí can't tell who did it, it asks, and you can pick <b>Both of them</b> for a joint job. In kid mode, a shared job has a <b>We did it together</b> button. Untick by mistake and the stars come off again.</li>
+    <li>Tap a kid's star count to open their page: big star total, rewards with how close they are, <b>Swap</b> when they have enough, and <b>bonus stars</b> for anything you want to praise. It's made to show them on your phone.</li>
     <li><b>Change rewards</b> to add treats (Xbox time, a trip for a treat, picking dinner) and set how many stars each costs. When stars are swapped, the other parent gets a notification.</li></ul>`,
   gifts:`<ul><li>Add each person you buy for, with their birthday and interests.</li>
     <li>Log gifts as <b>Idea</b>, <b>Bought</b> or <b>Given</b> so you never give the same thing twice.</li>
@@ -3737,11 +3947,11 @@ const HELP = {
   meds:`<ul><li>Pick a person at the top to see their <b>medicines</b>, <b>conditions</b> and <b>family history</b>.</li>
     <li><b>Medicines:</b> <b>Log today's dose</b> takes the day's amount off the stock, once a day. <b>Add refill</b> when you collect from the pharmacy, and <b>Add to pharmacy list</b> puts it on the shopping list. "Order soon" shows when you're within the warning days.</li>
     <li><b>Conditions</b> are each person's own diagnoses, with an optional year and notes.</li>
-    <li><b>Family history</b> is recorded against Mark's or Helen's side of the family. The boys' pages show both sides, because they inherit from both.</li>
+    <li><b>Family history</b> is recorded against Mark's or Helen's side of the family. The kids' pages show both sides, because they inherit from both.</li>
     <li><b>Appointments &amp; visits:</b> note each GP, nurse, dentist, optician or clinic visit, what it was for and any follow-up date. A follow-up can go in the family calendar simply as "Appointment (name)", with no other details.</li>
-    <li><b>Vaccinations</b> (the boys' pages): copy them in from the immunisation passport, with the next due date if you were told one. The HSE link explains the schedule. Your GP or the school team decide what's due.</li>
-    <li><b>Growth</b> (the boys' pages): add height and weight whenever you measure. Donrí shows the change since last time, nothing more.</li>
-    <li><b>Summary for the GP</b> puts the selected person's medicines, conditions, family history, recent visits and (for the boys) vaccinations and latest measurements into text you can copy.</li>
+    <li><b>Vaccinations</b> (the kids' pages): copy them in from the immunisation passport, with the next due date if you were told one. The HSE link explains the schedule. Your GP or the school team decide what's due.</li>
+    <li><b>Growth</b> (the kids' pages): add height and weight whenever you measure. Donrí shows the change since last time, nothing more.</li>
+    <li><b>Summary for the GP</b> puts the selected person's medicines, conditions, family history, recent visits and (for the kids) vaccinations and latest measurements into text you can copy.</li>
     <li>Tick <b>Just me</b> on a medicine, condition or family history entry and only you will see it. Anything you put on the shared pharmacy list from a "Just me" medicine shows only as "Prescription to collect".</li>
     <li>Health details never appear in notifications. Donrí is for keeping track only: ask your GP or pharmacist about anything medical.</li></ul>`,
   renew:`<ul><li>Keep track of <b>car tax, NCT, insurance, TV licence, passports, driving licences</b> and anything else that needs renewing, plus <b>subscriptions</b>.</li>
@@ -3820,9 +4030,9 @@ function histForm(id){
     <label class="f" for="hS">Whose side of the family</label><select id="hS" name="side">${ad.map(n => `<option value="${esc(n)}" ${h.side===n?'selected':''}>${esc(n)}'s family</option>`).join("")}</select>
     <label class="f" for="hC">Condition</label><input id="hC" type="text" name="condition" value="${esc(h.condition||'')}" placeholder="e.g. High blood pressure, depression, heart disease">
     <label class="f" for="hR">Which relative (as related to that parent)</label><input id="hR" type="text" name="relative" value="${esc(h.relative||'')}" placeholder="e.g. Father, mother's sister">
-    <label class="f" for="hN">Notes (optional)</label><input id="hN" type="text" name="notes" value="${esc(h.notes||'')}" placeholder="e.g. Diagnosed in his 40s">
+    <label class="f" for="hN">Notes (optional)</label><input id="hN" type="text" name="notes" value="${esc(h.notes||'')}" placeholder="e.g. Diagnosed in their 40s">
     <label class="toggle" style="margin-top:8px"><input type="checkbox" name="private" ${h.private?'checked':''}> <span><b>Just me</b>: only I can see this</span></label>
-    <p class="muted small">For example, Mark's father goes on Mark's family as "Father". On the boys' pages he shows as "Mark's father".</p>
+    <p class="muted small">For example, Mark's father goes on Mark's family as "Father". On the kids' pages they show as "Mark's father".</p>
     <div class="row wrap" style="margin-top:12px"><button class="btn primary" type="submit">Save</button>${id?`<button class="btn danger" type="button" data-act="delHist" data-id="${esc(id)}">Delete</button>`:''}</div></form>`);
 }
 function gpSummary(){
@@ -4048,7 +4258,7 @@ document.addEventListener("click", async e => {
     case "choreDone": { const c = doc("chores", id); if(!c) break;
       if(choreDue(c)){ const a = assignees(c); let next = c.turn || "";
         if(c.rotate && a.length > 1){ const cur = turnOf(c); next = a[(a.indexOf(cur) + 1) % a.length]; }
-        patch("chores", id, {lastDone:today(), lastBy:myName(), prevDone:c.lastDone||"", prevTurn:c.turn||"", turn:next, pendingBy:"", pendingAt:0}); log("did: " + c.title);
+        patch("chores", id, {lastDone:today(), lastBy:myName(), prevDone:c.lastDone||"", prevTurn:c.turn||"", turn:next, pendingBy:"", pendingTeam:[], pendingAt:0}); log("did: " + c.title);
         notify("chores", "Chore done", `${myName()} did: ${c.title}${c.rotate && a.length > 1 ? ` (${next}'s turn next)` : ""}`, {tags:["white_check_mark"]});
         if(c.rotate && a.length > 1) notifyAssigned([next], `It's your turn next: ${c.title}`);
         if((Number(c.points)||0) > 0 && kids().length){ const ck = choreKids(c); const cand = ck.length ? ck : (a.length ? [] : kids().map(k => k.name));
@@ -4058,6 +4268,7 @@ document.addEventListener("click", async e => {
         if(undo.length) toast("Stars taken back for " + c.title); } break; }
     case "delChore": del("chores", id); closeSheet(); break;
     case "awardStars": { const c = doc("chores", id); if(c) awardStars(c, v); closeSheet(); break; }
+    case "awardStarsAll": { const c = doc("chores", id); if(c) awardStarsMany(c, String(v).split("|")); closeSheet(); break; }
     case "starsOpen": starsSheet(v); break;
     case "rewardsEdit": if(v) rewardsBack = v; rewardsSheet(); break;
     case "editReward": rewardForm(id); break;
@@ -4076,11 +4287,16 @@ document.addEventListener("click", async e => {
     case "pinKey": { if(v === "back") pinEntry = pinEntry.slice(0,-1); else if(v === "ok"){ if(pinHash(pinEntry) === kidSettings().pin){ const f = pinNext; pinEntry = ""; pinNext = null; f && f(); } else { pinEntry = ""; toast("That's not the PIN"); } } else if(pinEntry.length < 6) pinEntry += v; if(sheetRender) sheetRender(); break; }
     case "say": say(v); break;
     case "kidTick": { const c = doc("chores", id); if(!c || !choreDue(c) || !kidMode) break;
-      if(kidSettings().approval !== false){ patch("chores", id, {pendingBy:kidMode, pendingAt:Date.now()}); log(`${kidMode} says he did: ${c.title}`);
-        notify("stars", "Job to check", `${kidMode} says he did: ${c.title}. Check Donrí.`, {includeMe:true, tags:["white_check_mark"]}); sfx("right"); toast(`Great job, ${kidMode}! Mam or Dad will check it.`); }
+      if(kidSettings().approval !== false){ patch("chores", id, {pendingBy:kidMode, pendingTeam:[], pendingAt:Date.now()}); log(`${kidMode} says they did: ${c.title}`);
+        notify("stars", "Job to check", `${kidMode} says they did: ${c.title}. Check Donrí.`, {includeMe:true, tags:["white_check_mark"]}); sfx("right"); toast(`Great job, ${kidMode}! A grown-up will check it.`); }
       else kitchenDone(id, kidMode); break; }
-    case "kidApprove": { const c = doc("chores", id); if(!c || !c.pendingBy) break; kitchenDone(id, c.pendingBy); break; }
-    case "kidReject": { const c = doc("chores", id); if(!c) break; patch("chores", id, {pendingBy:"", pendingAt:0}); log(`said "not yet" to ${c.pendingBy}'s ${c.title}`); toast("OK. It's back on his list."); break; }
+    case "kidTogether": { const c = doc("chores", id); if(!c || !choreDue(c) || !kidMode) break;
+      const team = [kidMode, ...choreKids(c).filter(n => n !== kidMode)]; const names = team.join(" and ");
+      if(kidSettings().approval !== false){ patch("chores", id, {pendingBy:kidMode, pendingTeam:team, pendingAt:Date.now()}); log(`${names} say they did it together: ${c.title}`);
+        notify("stars", "Job to check", `${names} say they did it together: ${c.title}. Check Donrí.`, {includeMe:true, tags:["white_check_mark"]}); sfx("right"); toast(`Great teamwork, ${names}! A grown-up will check it.`); }
+      else kitchenDone(id, team.join(" & "), team); break; }
+    case "kidApprove": { const c = doc("chores", id); if(!c || !c.pendingBy) break; const team = pendTeam(c); if(team.length > 1) kitchenDone(id, team.join(" & "), team); else kitchenDone(id, c.pendingBy); break; }
+    case "kidReject": { const c = doc("chores", id); if(!c) break; patch("chores", id, {pendingBy:"", pendingTeam:[], pendingAt:0}); log(`said "not yet" to ${pendTeam(c).join(" and ")} for ${c.title}`); toast("OK. It's back on their list."); break; }
     case "playGo": { if(!canPlay(v)) { toast("Finish a job first, or ask a grown-up"); break; } closeSheet(); gameView = "hub"; setTimeout(() => sfx("unlock"), 50); if(kidMode) kidView = "pet"; else kitchenPlay = v; startPlay(v, kidMode ? "kid" : "kitchen"); render(); window.scrollTo(0,0); break; }
     case "petBack": if(gameView !== "hub"){ if(gameView === "story"){ storyStop(); storyId = ""; storyMode = ""; storyPage = -1; kdGame = null; } gameView = "hub"; snackLoopId++; closeSheet(); render(); window.scrollTo(0,0); break; } stopPlay(); closeSheet(); render(); window.scrollTo(0,0); break;
     case "gameOpen": gameView = v; closeSheet(); render(); window.scrollTo(0,0); break;
@@ -4099,7 +4315,7 @@ document.addEventListener("click", async e => {
     case "petNap": { const p = pet(); if(!p) break; if(needLevel(p,"rest") > 80){ petAfter = {hearts:0, say:"I'm not sleepy yet! Let's play!"}; render(); break; }
       napUntil = Date.now() + 20000; render(); sfx("lullaby"); say(`Night night, ${p.name}`);
       setTimeout(() => { napUntil = 0; const q = pet(); if(!q) return; petAfter = {hearts:3, say:PET_TALK[q.kind].nap, sound:"wake"}; patch("settings",petDocId(petKid),{care:{...(q.care||{}), rest:Date.now()}, hearts:(Number(q.hearts)||0) + (needLevel(q,"rest") < 60 ? 1 : 0)}); }, 20000); break; }
-    case "petNew": closeSheet(); if(petMode() === "own") kids().forEach(k => { if(pet(k.name)) del("settings", petDocId(k.name)); }); else del("settings","pet"); toast(petMode() === "own" ? "Each boy can pick a new pet next time he plays" : "The boys can pick a new pet next time they play"); break;
+    case "petNew": closeSheet(); if(petMode() === "own") kids().forEach(k => { if(pet(k.name)) del("settings", petDocId(k.name)); }); else del("settings","pet"); toast(petMode() === "own" ? "Each kid can pick a new pet next time they play" : "The kids can pick a new pet next time they play"); break;
     case "petSwap": { const p = pet(); if(!p) break; openSheet("Change pet?", () => `<div style="text-align:center">${petSvg(p.kind,"happy",120)}</div>
       <p class="kidtxt" style="text-align:center">${esc(p.name)} will go to stay at the <b>Pet Farm</b>, with lots of friends to play with. You can bring ${esc(p.name)} back any time.</p>
       <div class="row wrap" style="justify-content:center"><button class="btn primary" style="min-height:56px;font-size:18px" data-act="petSwapYes">Pick a new pet</button><button class="btn" style="min-height:56px;font-size:18px" data-act="closeSheet">Keep ${esc(p.name)}</button></div>`); say(`${p.name} will go to stay at the Pet Farm. You can bring ${p.name} back any time.`); break; }
@@ -4112,6 +4328,7 @@ document.addEventListener("click", async e => {
     case "kitchenOn": setKitchen(true); toast("Kitchen display on. Press and hold Exit at the bottom to leave.", 4500); break;
     case "kChore": kitchenWhoSheet(id); break;
     case "kChoreBy": kitchenDone(id, v); closeSheet(); break;
+    case "kChoreAll": { const team = String(v).split("|"); kitchenDone(id, team.join(" & "), team); closeSheet(); break; }
     case "mealView": mealView = v; render(); break;
     case "recipeTag": recipeTag = v; render(); break;
     case "recipeOpen": recipeSheet(id); break;
@@ -4277,7 +4494,7 @@ document.addEventListener("change", e => {
   if(el.dataset.rtag){ const v = el.value; if(v === "__new"){ const row = document.getElementById("reTagNewRow"); if(row){ row.hidden = false; document.getElementById("reTagNew").focus(); } el.value = ""; } else if(v){ rtagSet([...rtagChosen(), v]); } }
   if("sugol" in el.dataset){ sugOutlook = el.checked; }
   if(el.dataset.kidpref){ const key = el.dataset.kidpref, ks = kidSettings(); put("settings","kids",{...ks, [key]:{...(ks[key] || {}), [el.dataset.v]:el.checked}}); }
-  if("petmode" in el.dataset){ put("settings","kids",{...kidSettings(), petMode:el.value === "own" ? "own" : "shared"}); toast(el.value === "own" ? "Each boy can now have his own pet" : "The boys now share one pet"); }
+  if("petmode" in el.dataset){ put("settings","kids",{...kidSettings(), petMode:el.value === "own" ? "own" : "shared"}); toast(el.value === "own" ? "Each kid can now have their own pet" : "The kids now share one pet"); }
   if("playmins" in el.dataset){ put("settings","kids",{...kidSettings(), playMins:Number(el.value)||10}); }
   if("kidapprove" in el.dataset){ put("settings","kids",{...kidSettings(), approval:el.checked}); }
   if("rkind" in el.dataset){ const k = RENEW_KINDS[el.value]; const f = el.form; if(k && f){ f.every.value = String(k.every); f.remindDays.value = String(k.remind); f.autoRenews.checked = !!k.auto; } }
