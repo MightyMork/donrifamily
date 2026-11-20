@@ -1518,7 +1518,7 @@ function sync(force){
     setSync("busy");
     try{ const got = await pull(force); if(dirty) await push();
       let pgot = false; try{ pgot = await syncPrivate(force); }catch(pe){ if(pe.code === "signed_out") throw pe; toast("Couldn't reach your private (Just me) file. It'll try again shortly.", 5000); }
-      lastSyncErr = null; setSync("ok"); if(got || pgot) { render(); } if(got) sendOutbox(); ensurePhotoFolder(); if(myName()) checkRenewalReminders(); }
+      lastSyncErr = null; setSync("ok"); if(got || pgot) { render(); } if(got) sendOutbox(); ensurePhotoFolder(); if(myName()) checkRenewalReminders(); reqTriageOnce(); }
     catch(e){ lastSyncErr = e; setSync("off"); if(e.code === "signed_out"){ render(); } else if(e.status === 404 || e.status === 403){ toast("Can't reach the family file. Check it's still shared with you.", 6000); } }
   });
 }
@@ -1573,6 +1573,7 @@ function goLink(link, force){
   if(page === "families" && extra && FAM_VIEWS.some(x => x[0] === extra)) famView = extra;
   history.replaceState(null, "", "#" + page); window.scrollTo(0,0); render();
   if(extra === "cal") calSheet(); else if(extra === "school") schoolSheet();
+  else if(pg === "requests") reqSheet();
   else if(extra === "pending") setTimeout(() => { const t = document.querySelector('[data-tile="pending"]'); if(t){ t.scrollIntoView({behavior:"smooth", block:"center"}); t.classList.remove("flash"); void t.offsetWidth; t.classList.add("flash"); } else toast("Nothing waiting for your OK now"); }, 80);
 }
 // Group bursts (e.g. ticking five items) into one notification
@@ -4255,16 +4256,95 @@ function homeSheet(){
     <div class="row wrap"><button class="btn" data-act="homeReset">Back to the usual order</button><button class="btn primary" data-act="close">Done</button></div>`; });
 }
 
-// ---------- ideas and feature requests ----------
+// ---------- ideas and feature requests: the tracker ----------
+// requests/<id>: title, details, by, fam, at, status (new|planned|working|done|no|cancelled), app (donri|pucas|games|centre|""), note (what's next, or the reason it's not happening), votes {name:true}, statusAt, statusBy
+// Only the app's owner (the first family member, Mark) can change a status. The person who asked can cancel their own while it's New or Planned.
+const REQ_ST = {new:["New","info"], planned:["Planned","warn"], working:["Working on it","warn"], done:["Rolled out","ok"], no:["Not doing","bad"], cancelled:["Cancelled","info"]};
+const REQ_APP = {donri:"Donrí", pucas:"Púcas app", games:"A game", centre:"Control centre"};
+const REQ_OPEN = ["new","planned","working"];
+let reqFilter = "open", reqMine = false, reqSort = "new";
+const reqBoss = () => !!myName() && (members()[0]||{}).name === myName();
+const reqSt = r => REQ_ST[r.status] ? r.status : "new";
+const reqVotes = r => Object.keys(r.votes||{}).filter(k => r.votes[k]).length;
+function reqCounts(){ const n = {}; docs("requests").forEach(r => { const s = reqSt(r); n[s] = (n[s]||0) + 1; }); return n; }
 function requestsBlock(){
-  const rq = docs("requests").sort((a,b) => (b.at||0) - (a.at||0)).slice(0,8);
-  return `<form class="card" data-form="saveRequest"><p class="muted small" style="margin-top:0">Something you'd love Donrí to do? Tell us here. Mark sees every request.</p>
+  const n = reqCounts(), open = REQ_OPEN.reduce((a,s) => a + (n[s]||0), 0);
+  return `<form class="card" data-form="saveRequest"><p class="muted small" style="margin-top:0">Something you'd love Donrí to do? Tell us here. Mark sees every request, and you can follow it below.</p>
     <label class="f" for="rqT">Your idea</label><input id="rqT" type="text" name="title" placeholder="e.g. A packing list for holidays">
     <label class="f" for="rqD">Tell us more (optional)</label><textarea id="rqD" name="details" style="min-height:70px"></textarea>
-    <div style="margin-top:12px"><button class="btn primary" type="submit">Send the request</button></div></form>
-    ${rq.length ? `<div class="card">${rq.map(r => `<div class="item"><div class="grow"><b>${esc(r.title)}</b>${r.details ? `<div class="muted small">${esc(r.details)}</div>` : ''}<div class="muted small">${esc(r.by||'')} · ${new Date(r.at).toLocaleDateString("en-IE",{day:"numeric", month:"short"})}</div></div><span class="pill ${r.status === 'done' ? 'ok' : r.status === 'planned' ? 'warn' : 'info'}">${r.status === 'done' ? 'Done' : r.status === 'planned' ? 'Planned' : 'Sent'}</span></div>`).join("")}</div>` : ''}`;
+    <label class="f" for="rqA">Where should it go?</label><select id="rqA" name="app"><option value="">Not sure</option>${Object.entries(REQ_APP).filter(([k]) => k !== "centre").map(([k,l]) => `<option value="${k}">${esc(l)}</option>`).join("")}</select>
+    <div class="row wrap" style="margin-top:12px"><button class="btn primary" type="submit">Send the request</button><button class="btn" type="reset">Cancel</button></div></form>
+    <div class="card"><div class="row wrap" style="gap:6px">${Object.entries(REQ_ST).filter(([s]) => n[s]).map(([s,[l,c]]) => `<span class="pill ${c}">${esc(l)} ${n[s]}</span>`).join("")}</div>
+      <div class="row wrap" style="margin-top:10px"><span class="grow small">${open} open request${open === 1 ? '' : 's'}.</span><button class="btn sm primary" data-act="reqOpen">See all requests</button></div></div>`;
 }
+function reqCard(r){
+  const s = reqSt(r), [label, cls] = REQ_ST[s], v = reqVotes(r), mine = r.by === myName(), voted = !!(r.votes||{})[myName()];
+  const noteLabel = s === "no" ? "Why not" : s === "done" ? "Done" : s === "cancelled" ? "" : "Next";
+  return `<div class="card" style="margin-bottom:8px"><div class="row" style="align-items:flex-start"><div class="grow"><b>${esc(r.title)}</b>${r.details ? `<div class="muted small" style="white-space:pre-line">${esc(r.details)}</div>` : ''}</div><span class="pill ${cls}" style="flex:none">${esc(label)}</span></div>
+    <div class="muted small" style="margin-top:4px">${esc(r.by||'')} · ${new Date(r.at).toLocaleDateString("en-IE",{day:"numeric", month:"short"})}${REQ_APP[r.app] ? ` · ${esc(REQ_APP[r.app])}` : ''}${v ? ` · 👍 ${v}` : ''}</div>
+    ${r.note && noteLabel ? `<div class="small" style="margin-top:8px;padding:8px 10px;border-radius:10px;background:var(--soft)"><b>${noteLabel}:</b> ${esc(r.note)}</div>` : ''}
+    <div class="row wrap" style="margin-top:8px;gap:6px">${!mine && REQ_OPEN.includes(s) ? `<button class="btn sm" data-act="reqVote" data-id="${esc(r.id)}" aria-pressed="${voted}">${voted ? '👍 You want this too' : '👍 Me too'}</button>` : ''}
+      ${mine && ["new","planned"].includes(s) ? `<button class="btn sm" data-act="reqCancel" data-id="${esc(r.id)}">Cancel my request</button>` : ''}
+      ${reqBoss() ? `<button class="btn sm" data-act="reqEdit" data-id="${esc(r.id)}">Set status</button>` : ''}</div></div>`;
+}
+function reqSheet(){
+  openSheet("Ideas and requests", () => {
+    const n = reqCounts(); let rq = docs("requests");
+    if(reqMine) rq = rq.filter(r => r.by === myName());
+    rq = rq.filter(r => reqFilter === "all" ? true : reqFilter === "open" ? REQ_OPEN.includes(reqSt(r)) : reqSt(r) === reqFilter);
+    rq.sort(reqSort === "votes" ? (a,b) => reqVotes(b) - reqVotes(a) || (b.at||0) - (a.at||0) : (a,b) => (b.at||0) - (a.at||0));
+    const open = REQ_OPEN.reduce((a,s) => a + (n[s]||0), 0);
+    const chip = (k, l, c) => `<button class="chip" data-act="reqFilter" data-v="${k}" aria-pressed="${reqFilter === k}">${esc(l)}${c != null ? ` <span class="n">${c}</span>` : ''}</button>`;
+    return `<p class="muted small" style="margin-top:0">${reqBoss() ? "Set a status on each one. The person who asked gets a notification when it changes." : "Mark sets the status. You'll get a notification when one of yours changes."} Tap 👍 Me too on ideas you'd like most.</p>
+    <div class="row wrap" style="gap:6px">${chip("open","Open",open)}${Object.entries(REQ_ST).map(([s,[l]]) => chip(s, l, n[s]||0)).join("")}${chip("all","All",docs("requests").length)}</div>
+    <div class="row wrap" style="margin:10px 0;gap:8px"><div class="seg"><button data-act="reqSort" data-v="new" aria-pressed="${reqSort === 'new'}">Newest</button><button data-act="reqSort" data-v="votes" aria-pressed="${reqSort === 'votes'}">Most wanted</button></div>
+      <label class="toggle small"><input type="checkbox" data-act="reqMine" ${reqMine ? 'checked' : ''}> Only mine</label></div>
+    ${rq.length ? rq.map(reqCard).join("") : '<div class="card empty">Nothing here.</div>'}`;
+  });
+}
+let reqPick = "";
+function reqEditSheet(id){
+  const r = doc("requests", id); if(!r || !reqBoss()) return; reqPick = reqSt(r);
+  openSheet("Set status", () => { const cur = doc("requests", id) || r;
+    return `<p style="margin-top:0"><b>${esc(cur.title)}</b><br><span class="muted small">Asked by ${esc(cur.by||'')}</span></p>
+    <form data-form="reqStatus" data-id="${esc(id)}"><div class="row wrap" style="gap:6px">${Object.entries(REQ_ST).map(([s,[l]]) => `<button type="button" class="chip" data-act="reqPick" data-v="${s}" aria-pressed="${reqPick === s}">${esc(l)}</button>`).join("")}</div>
+      <label class="f" for="rqWa">Where it goes</label><select id="rqWa" name="app"><option value="">Not sure yet</option>${Object.entries(REQ_APP).map(([k,l]) => `<option value="${k}" ${cur.app === k ? 'selected' : ''}>${esc(l)}</option>`).join("")}</select>
+      <label class="f" for="rqN">${reqPick === "no" ? "Why not? (they'll see this)" : reqPick === "done" ? "What changed (optional)" : "What's next (optional)"}</label><textarea id="rqN" name="note" style="min-height:70px" placeholder="${reqPick === 'no' ? 'e.g. We already have this in Meals' : 'e.g. After the card game'}">${esc(cur.note||'')}</textarea>
+      <div class="row wrap" style="margin-top:12px"><button class="btn primary" type="submit">Save</button><button class="btn" type="button" data-act="reqOpen">Cancel</button></div></form>`; });
+}
+function reqTell(r, text){ // tell the person who asked (never yourself)
+  if(!r.by || r.by === myName()) return; const m = members().find(x => x.name === r.by); if(m && m.topic) ntfy(m.topic, "Your Donrí idea", text, ["bulb"], "requests");
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-act^='req']"); if(!b) return;
+  const act = b.dataset.act, id = b.dataset.id, v = b.dataset.v;
+  if(act === "reqOpen") reqSheet();
+  else if(act === "reqFilter"){ reqFilter = v; sheetRender && sheetRender(); }
+  else if(act === "reqSort"){ reqSort = v; sheetRender && sheetRender(); }
+  else if(act === "reqMine"){ reqMine = b.checked; sheetRender && sheetRender(); }
+  else if(act === "reqVote"){ const r = doc("requests", id); if(!r) return; const votes = {...(r.votes||{})}; if(votes[myName()]) delete votes[myName()]; else votes[myName()] = true; patch("requests", id, {votes}); }
+  else if(act === "reqCancel"){ const r = doc("requests", id); if(!r || r.by !== myName()) return; patch("requests", id, {status:"cancelled", statusAt:Date.now(), statusBy:myName()}); toast("Request cancelled"); }
+  else if(act === "reqEdit") reqEditSheet(id);
+  else if(act === "reqPick"){ const f = b.closest("form"); const note = f ? f.querySelector("[name=note]").value : ""; const app = f ? f.querySelector("[name=app]").value : ""; reqPick = v; sheetRender && sheetRender(); const f2 = $("#sheet form"); if(f2){ f2.querySelector("[name=note]").value = note; f2.querySelector("[name=app]").value = app; } }
+});
+document.addEventListener("submit", e => {
+  const f = e.target.closest("form[data-form='reqStatus']"); if(!f) return; e.preventDefault();
+  const r = doc("requests", f.dataset.id); if(!r || !reqBoss()) return; const fd = Object.fromEntries(new FormData(f)); const note = (fd.note||"").trim();
+  if(reqPick === "no" && !note){ toast("Say why, so they know"); return; }
+  const was = reqSt(r); patch("requests", r.id, {status:reqPick, app:fd.app||"", note, statusAt:Date.now(), statusBy:myName()});
+  if(was !== reqPick) reqTell(r, `"${r.title}" is now ${REQ_ST[reqPick][0]}${note ? ". " + note : ""}`);
+  toast("Saved"); reqSheet();
+});
 
+// One-off (20 Nov 2026): the request statuses Mark signed off. Applied once from Mark's phone, then never again.
+const REQ_TRIAGE = {"mwfdzhxj65dzy": ["planned", "donri", "Goes with Monthly housekeeping ideas: one \"This month\" card on Today."], "mwfe0h27tg8e9": ["planned", "donri", "A seasonal recipe on Today. Sharing written recipes comes with the circle (after Cloudflare)."], "mwfe3ibfu8jnq": ["planned", "donri", "Goes with Gardening jobs: one \"This month\" card on Today."], "mwfe5m3mg4gey": ["planned", "donri", "Ask for a dinner or snack for next week, from the Meals page."], "mwfe8s5jsj3xa": ["planned", "donri", "A holiday plan with agenda and links. A bigger one, so after Cloudflare."], "mwfeb2ygx985s": ["planned", "donri", "A \"Pick me up…\" request with an \"I got it\" button."], "mwfed6xhxtksd": ["planned", "donri", "Part of \"Anyone going to town?\": a Not needed button. (Check: was that what you meant?)"], "mwfee7slg8atd": ["planned", "donri", "Same as Scan lists: photo of a note turned into a list."], "mwfefnvvpq49n": ["new", "donri", "Needs a bit more: books at home, or the town library?"], "mwfenqfiyyn4g": ["planned", "donri", "A quick invite pushed to the top. Comes with the circle on Cloudflare."], "mwfer44er5paj": ["working", "donri", "School emails are set up. Next: link Teacher Niamh and Hollyhocks, then the weekday check (PE day, money needed)."], "mwfet1orf5gna": ["planned", "donri", "A guest page: Eircode, Wi-Fi, how-tos and the meal plan."], "mwfhkm2m5w2zh": ["planned", "donri", "An Ideas tab in Meals, with your own categories."], "mwfibru0vpayr": ["planned", "donri", "Goes with hold-to-delete for calendar events."], "mwfif279uierb": ["done", "donri", "Settings fold open and shut (v18)."], "mwfij72xpi2uk": ["planned", "donri", "Save and Cancel on every form."], "mwfilhqvctk5f": ["planned", "donri", "A shop picker the first time you open Shop. For the public version."], "mwfimn344kw4h": ["working", "donri", "This tracker: statuses, Me too votes and Cancel my request."], "mwfis4cqftg53": ["working", "donri", "Arrange tiles is live on the kitchen display (v18). Next: the same on the phone's Today."], "mwfisawmndgpi": ["planned", "centre", "Part of the control centre, after Cloudflare."], "mwfiutinynh95": ["planned", "donri", "A quicker way into the kitchen display or family tablet."], "mwfivhwtm56tz": ["planned", "donri", "Restyle the PIN lock in the Donrí look."], "mwfiwk9w3wdpf": ["new", "donri", "Check: still happening since v18?"], "mwfiya8wi25rp": ["new", "donri", "Needs a bit more: what's missing from the calendar?"], "mwfiz4u1nh6vr": ["working", "donri", "Fortnightly is in. Next: a custom repeat (every N days or weeks)."], "mwfj25w5vy6qr": ["planned", "donri", "Save, edit and clear, quick add, and pick from recipes or shopping lists."], "mwfj4176xbgx7": ["planned", "donri", "Later: online recipe search, calories, and photos or barcodes."], "mwfj5rs1cfjsw": ["new", "donri", "Needs a bit more: which tags?"], "mwfj78mv8ypyv": ["planned", "donri", "Photos, reviews and a dinner poll in the recipe box."], "mwfljk0xg4atf": ["done", "pucas", "Gems and the Gemini Setanta told by Gigi are live (20 Nov). Gem and Legend cards are in the card game plan."], "mwflsizrmvewu": ["done", "donri", "Gigi's book opening is live (20 Nov)."], "mwflsvbdz2ufh": ["done", "donri", "Recording works (Family voices, 20 Nov)."], "mwfmc8ypf4i88": ["planned", "games", "Same game as Púcas Cócaire."], "mwfmfb10evjk6": ["new", "donri", "Needs a bit more: which list? (Ticked items staying with a \"Got it\".)"], "mwfmiylhwgydp": ["planned", "games", "A Púcas game. After the card game and the Setanta sliotar game."], "mwfmwz588kt7t": ["planned", "donri", "Photo of a list turned into chores, recipes or shopping."], "mwfnbkjvehkp7": ["planned", "donri", "Better page flips, all inside Gigi's book."], "mwgtm38cgcgfh": ["working", "donri", "Picking more than one kid is live (v13). Next: take a gem back the same day."], "mwhrz5dbefthq": ["planned", "pucas", "Later: needs a plant database. General region only, never exact location."], "mwhs1q7nw4zbz": ["planned", "pucas", "Seasonal outfits for Púcas."], "mwhs2wjui4dfz": ["working", "donri", "This tracker: \"Where should it go?\" when you send an idea."], "mwhuia0cxk6jt": ["planned", "pucas", "Card boxes and a starter kit (physical cards)."], "mwhuix8y2nhfw": ["planned", "pucas", "In the Púcas rulebook: collabs to explore."], "mwhuwjou659va": ["planned", "pucas", "Marble Arch Caves, Aillwee Cave and the NPWS."], "mwp443j12e23b": ["planned", "donri", "Hold to delete for calendar events (and shopping)."]};
+const REQ_ADD = {"rq-photos-tile": {"title": "Photos tile on Today", "details": "A bento with a carousel of the newest photos and like/love on each. Tap a photo to open it; tap the tile to open Photos.", "app": "donri", "status": "planned", "note": "Next, with the tile sizes."}, "rq-photos-swipe": {"title": "Photo swipe jumps and goes blank", "details": "Flicking through photos, the whole section resizes each time and goes blank in between.", "app": "donri", "status": "planned", "note": "Fix with the Photos tile."}, "rq-tile-sizes": {"title": "Three tile sizes on Today", "details": "Small (square), medium (rectangle, same height) and large (1.5 times the height), chosen when editing the home page. Large shows more, e.g. more photos or a list.", "app": "donri", "status": "planned", "note": "Next, together with the Photos tile."}};
+function reqTriageOnce(){
+  if(!reqBoss() || !docs("requests").length || (doc("settings","reqTriage")||{}).done) return; const t = Date.now();
+  Object.entries(REQ_TRIAGE).forEach(([id,[status,app,note]]) => { const r = doc("requests", id); if(r && !r.statusAt) patch("requests", id, {status, app, note, votes:r.votes||{}, statusAt:t, statusBy:myName()}); });
+  Object.entries(REQ_ADD).forEach(([id,r],i) => { if(!doc("requests", id)) put("requests", id, {...r, by:"Mark", fam:famName(), votes:{}, at:t + i, statusAt:t, statusBy:"Mark"}); });
+  put("settings", "reqTriage", {done:true, at:t});
+}
 // ---------- FAMILIES, SHOPS, HOME SCREEN, REQUESTS: taps, forms and switches ----------
 const famFormRedo = () => { if(page === "families") render(); };
 document.addEventListener("click", e => {
@@ -4369,7 +4449,7 @@ document.addEventListener("submit", e => {
     if(id) put("settings","stores",{list:list.map(s => s.id === id ? {...s, name, url} : s)}); else { const sid = "s-" + uid(); store = sid; ls.set("donri.store", sid); put("settings","stores",{list:[...list, {id:sid, name, url}]}); }
     closeSheet(); toast(id ? "Shop saved" : `${name} added`); return; }
   if(kind === "saveItem"){ const name = (fd.name||"").trim(); if(!name) return; patch("shop", id, {name, qty:(fd.qty||"1").trim() || "1", store:STORES[fd.store] ? fd.store : store, note:(fd.note||"").trim(), link:safeUrl(fd.link), photo:fd.photo||""}); closeSheet(); toast("Saved"); return; }
-  if(kind === "saveRequest"){ const title = (fd.title||"").trim(); if(!title){ toast("Say what you'd like"); return; } put("requests", uid(), {title, details:(fd.details||"").trim(), by:myName(), fam:famName(), status:"new", at:Date.now()}); f.reset(); toast("Thanks! Your request has been sent."); return; }
+  if(kind === "saveRequest"){ const title = (fd.title||"").trim(); if(!title){ toast("Say what you'd like"); return; } put("requests", uid(), {title, details:(fd.details||"").trim(), app:REQ_APP[fd.app] ? fd.app : "", by:myName(), fam:famName(), status:"new", votes:{}, at:Date.now()}); f.reset(); toast("Thanks! Your request has been sent. Follow it in See all requests."); return; }
 });
 
 // ---------- SHARED PHOTOS and COLLECTIONS ----------
