@@ -514,6 +514,7 @@ body.bookopen{overflow:hidden}
 
 /* ---------- Family voices: the recording studio, the voice picker and Listen ---------- */
 body.fvopen{overflow:hidden}
+body.fvopen .scrim{z-index:8900}body.fvopen .toast{z-index:8950}
 #fv{position:fixed;inset:0;z-index:8800;overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--bg);color:var(--ink);padding:calc(14px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom))}
 body.pucas #fv{background:linear-gradient(180deg,#1C2045 0%,#2A2552 55%,#3B2A4C 100%)}
 .fv-wrap .bi,.kd-ghost .bi{width:22px;height:22px}
@@ -3132,7 +3133,7 @@ function fvListView(st){
         <span class="fv-bar"><i style="width:${Math.round(c.done / c.total * 100)}%"></i></span><span>${ready ? '✓ Ready for the kids' : `${c.done} of ${c.total} lines`}</span></div>
         <div class="fv-vbtns"><button class="fv-btn pri" data-act="fvGo" data-v="${v.id}">${ready ? 'Redo a line' : c.done ? 'Carry on' : 'Start'}</button>
         ${c.done ? `<button class="fv-btn" data-act="fvHearAll" data-v="${v.id}">Listen</button>` : ''}
-        <button class="fv-btn ${fvS.del === v.id ? 'warn' : 'ghost'}" data-act="fvDel" data-v="${v.id}">${fvS.del === v.id ? 'Tap again to remove' : 'Remove'}</button></div></div>`; }).join("")
+        <button class="fv-btn ghost" data-act="fvDel" data-v="${v.id}" aria-label="Remove ${esc(v.name)}’s voice (grown-up PIN)">🔒 Remove</button></div></div>`; }).join("")
       || `<div class="kd-card"><p>No voices yet. Be the first!</p></div>`}
     <button class="kd-go" data-act="fvNew">Record a new voice<span aria-hidden="true">›</span></button>
     <p class="kd-small fv-note">${I.lock}<span>For now, recordings stay on this phone. Sending a link to family far away (so they can record on their own phone) comes once the Cloudflare circle is built.</span></p>`;
@@ -3271,7 +3272,10 @@ function fvAct(act, v){
     if(fvS.i < S.length - 1){ fvS.i++; return fvView("rec"); }
     if(fvReady(vo, st)) return fvView("done");
     fvS.i = S.findIndex(x => !x.hello && !fvHas(vo.id, st.id, x.k)); toast("Nearly there! A few lines still to do."); return fvView("rec"); }
-  if(act === "fvDel"){ if(fvS.del !== v){ fvS.del = v; return fvDraw(); } fvS.del = ""; fvDelVoice(v); toast("That voice is removed from this phone"); return fvDraw(); }
+  if(act === "fvDel"){ // anyone can record a voice, but removing one needs the grown-up PIN
+    const vo = fvVoices.find(x => x.id === v); if(!vo) return; fvS.del = "";
+    if(!kidSettings().pin){ toast("Set a grown-up PIN first, then tap Remove again"); return pinSetSheet(""); }
+    return pinSheet("Remove " + vo.name + "’s voice?", () => { closeSheet(); fvDelVoice(v); toast("That voice is removed from this phone"); if(fvS) fvDraw(); }); }
 }
 document.addEventListener("input", e => { if(fvS && e.target && e.target.id === "fvName") fvS.name = e.target.value; });
 
