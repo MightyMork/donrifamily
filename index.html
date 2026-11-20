@@ -827,7 +827,7 @@ body.pucas .kd-btitle{font-family:'Pixelify Sans',sans-serif;font-weight:700;col
 .pc-grow{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:rgba(16,18,42,.82);text-align:center;padding:12px}
 .pc-grow img{height:46%;image-rendering:pixelated;animation:pcHop .6s ease-out 3}
 .pc-gt{font-family:'Pixelify Sans',sans-serif;font-size:26px;color:#F2B33D;margin:0}.pc-gn{font-size:20px;margin:0;color:#FFF6DE}
-.pc-foods{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.pc-foods{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
 .pc-say{position:absolute;left:10px;right:10px;top:10px;z-index:2;background:rgba(16,18,42,.78);color:#FFF6DE;font-family:'Andika',sans-serif;font-size:18px;padding:8px 12px;border:2px solid #4A5190}
 .pc-spr{position:absolute;bottom:4%;height:52%;transform:translateX(-50%);z-index:1;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
 .pc-bob{height:100%;transform-origin:50% 100%;animation:pkBob 2.4s ease-in-out infinite}
@@ -854,13 +854,23 @@ body.pucas .kd-btitle{font-family:'Pixelify Sans',sans-serif;font-weight:700;col
 .pc-heart{position:absolute;font-size:26px;animation:pcUp 1.4s ease-out forwards}
 @keyframes pcUp{0%{opacity:0;transform:translateY(0) scale(.6)}20%{opacity:1}100%{opacity:0;transform:translateY(-140px) scale(1.15)}}
 .pc-wisp{position:absolute;width:52px;height:52px;border:0;border-radius:50%;background:radial-gradient(circle,#FFFFFF 0 18%,#BFF6EC 30%,rgba(95,208,192,.55) 55%,rgba(95,208,192,0) 72%);z-index:2;cursor:pointer;animation:pcFloat 1.9s ease-in-out forwards}
+.pc-wisp{background:url('pucas/help-wisp.png') center/contain no-repeat;border-radius:0;width:58px;height:58px;filter:drop-shadow(0 0 8px rgba(127,224,207,.8))}
+img.gemi{object-fit:contain;image-rendering:auto}
+.pc-spr.pc-inden{height:30%;bottom:8%}
+.pc-den{position:absolute;bottom:1%;height:66%;transform:translateX(-50%);z-index:0;pointer-events:none;animation:pcIn .6s ease-out}
+.pc-mist{position:absolute;left:-45%;width:60%;opacity:0;pointer-events:none;z-index:2;animation:pcMist 16s linear infinite}
+.pc-whistle{position:absolute;bottom:30%;width:120px;z-index:2;pointer-events:none;transform:translateX(-50%) rotate(-8deg);animation:pcIn .3s ease-out}
+.pc-food.pc-drink{border-color:#5fb7e8}
+.pc-act span img{height:30px;width:auto;image-rendering:auto}
+@keyframes pcMist{0%{transform:translateX(0);opacity:0}15%{opacity:.38}85%{opacity:.38}100%{transform:translateX(260%);opacity:0}}
+@keyframes pcIn{from{opacity:0}to{opacity:1}}
 .pc-wisp.got{animation:pcPop .25s ease-out forwards}
 @keyframes pcFloat{0%{opacity:0;transform:translateY(10px) scale(.6)}20%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-50px) scale(.9)}}
 @keyframes pcPop{to{opacity:0;transform:scale(1.8)}}
 .pc-panel{margin-top:10px;display:flex;flex-direction:column;gap:8px}
 .pc-need{display:flex;align-items:center;gap:10px}.pc-nl{width:104px;flex:none;font-size:17px;font-weight:700}.pc-need .bar{flex:1}
 .pc-xp{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding-top:6px;border-top:2px solid #3B4070}.pc-xp .bar{flex:1;min-width:120px}.pc-xp b{font-family:'Pixelify Sans',sans-serif;font-size:18px;color:#F2B33D}.pc-xp .muted{width:100%;font-size:15px}
-.pc-acts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+.pc-acts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
 .pc-act{min-height:84px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:19px}
 .pc-act span{font-size:26px;line-height:1}.pc-act small{font-family:'Andika',sans-serif;font-weight:400;font-size:13px;opacity:.85}
 .pc-tip{font-size:15px;margin:10px 2px 0}
@@ -1285,7 +1295,7 @@ const ICON = {
   clock:'<svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path class="ac" d="M12 9v4l3 2M9.5 2.5h5"/></svg>',
   lock:'<svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="3"/><path class="ac" d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>',
   refresh:'<svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path class="ac" d="M20 4v5h-5"/></svg>',
-  star:'<svg class="bi" viewBox="0 0 12 10" shape-rendering="crispEdges" aria-hidden="true"><rect x="3" y="1" width="6" height="1" fill="#0B4F33"/><rect x="2" y="2" width="8" height="1" fill="#0B4F33"/><rect x="1" y="3" width="10" height="1" fill="#0B4F33"/><rect x="1" y="4" width="10" height="1" fill="#0B4F33"/><rect x="2" y="5" width="8" height="1" fill="#0B4F33"/><rect x="3" y="6" width="6" height="1" fill="#0B4F33"/><rect x="4" y="7" width="4" height="1" fill="#0B4F33"/><rect x="5" y="8" width="2" height="1" fill="#0B4F33"/><rect x="3" y="2" width="6" height="1" fill="#22B36B"/><rect x="2" y="3" width="8" height="1" fill="#22B36B"/><rect x="2" y="4" width="8" height="1" fill="#22B36B"/><rect x="3" y="5" width="6" height="1" fill="#22B36B"/><rect x="4" y="6" width="4" height="1" fill="#22B36B"/><rect x="5" y="7" width="2" height="1" fill="#22B36B"/><rect x="6" y="4" width="4" height="1" fill="#138A50"/><rect x="6" y="5" width="3" height="1" fill="#138A50"/><rect x="6" y="6" width="2" height="1" fill="#138A50"/><rect x="6" y="7" width="1" height="1" fill="#138A50"/><rect x="3" y="2" width="3" height="1" fill="#8EF0BC"/><rect x="2" y="3" width="3" height="1" fill="#8EF0BC"/><rect x="3" y="2" width="1" height="1" fill="#F2FFF7"/></svg>',
+  gem:'<img class="bi gemi" src="pucas/gem-emerald.png" alt="" aria-hidden="true">',star:'<svg class="bi" viewBox="0 0 12 10" shape-rendering="crispEdges" aria-hidden="true"><rect x="3" y="1" width="6" height="1" fill="#0B4F33"/><rect x="2" y="2" width="8" height="1" fill="#0B4F33"/><rect x="1" y="3" width="10" height="1" fill="#0B4F33"/><rect x="1" y="4" width="10" height="1" fill="#0B4F33"/><rect x="2" y="5" width="8" height="1" fill="#0B4F33"/><rect x="3" y="6" width="6" height="1" fill="#0B4F33"/><rect x="4" y="7" width="4" height="1" fill="#0B4F33"/><rect x="5" y="8" width="2" height="1" fill="#0B4F33"/><rect x="3" y="2" width="6" height="1" fill="#22B36B"/><rect x="2" y="3" width="8" height="1" fill="#22B36B"/><rect x="2" y="4" width="8" height="1" fill="#22B36B"/><rect x="3" y="5" width="6" height="1" fill="#22B36B"/><rect x="4" y="6" width="4" height="1" fill="#22B36B"/><rect x="5" y="7" width="2" height="1" fill="#22B36B"/><rect x="6" y="4" width="4" height="1" fill="#138A50"/><rect x="6" y="5" width="3" height="1" fill="#138A50"/><rect x="6" y="6" width="2" height="1" fill="#138A50"/><rect x="6" y="7" width="1" height="1" fill="#138A50"/><rect x="3" y="2" width="3" height="1" fill="#8EF0BC"/><rect x="2" y="3" width="3" height="1" fill="#8EF0BC"/><rect x="3" y="2" width="1" height="1" fill="#F2FFF7"/></svg>',
   heart:'<svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>',
   heartf:'<svg class="bi" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="#D9485F" stroke="#B3261E" stroke-width="1.4" stroke-linejoin="round"/></svg>',
   thumb:'<svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 11l3.5-7c1.4 0 2.5 1.1 2.5 2.5V10h4.5a2 2 0 0 1 2 2.3l-1.2 6.4A2 2 0 0 1 17.3 20H8z"/><path class="ac" d="M3.5 11H8v9H3.5z"/></svg>',
@@ -1727,7 +1737,7 @@ function pToday(){
   S.chores = `<div class="card tcard"><h3><span class="grow">${familyTab ? (famWho ? esc(famWho) + "'s chores" : "Everyone's chores") : "Your chores"}</span><button data-act="go" data-v="chores">All chores</button></h3>
     ${myChores.length ? myChores.map(c => `<div class="item"><button class="check" data-act="choreDone" data-id="${esc(c.id)}" aria-label="Mark done: ${esc(c.title)}"></button><div class="grow"><div class="name">${esc(c.title)}</div><div class="muted small">${esc(whoLine(c))}</div></div></div>`).join("") : '<div class="muted small">Nothing due. Nice one!</div>'}</div>`;
   S.pending = `${pendingCard()}`;
-  S.stars = `${showStars ? `<div class="card tcard"><h3><span class="grow">Gems</span><button data-act="go" data-v="chores">Chores</button></h3><div class="row wrap">${ks.map(k => `<button class="chip" data-act="starsOpen" data-v="${esc(k.name)}">${esc(k.name)} <span>${I.star} ${stars(k.name)}</span></button>`).join("")}</div></div>` : ''}`;
+  S.stars = `${showStars ? `<div class="card tcard"><h3><span class="grow">Gems</span><button data-act="go" data-v="chores">Chores</button></h3><div class="row wrap">${ks.map(k => `<button class="chip" data-act="starsOpen" data-v="${esc(k.name)}">${esc(k.name)} <span>${I.gem} ${stars(k.name)}</span></button>`).join("")}</div></div>` : ''}`;
   S.health = `${meds.length || medLow.length || hDue.length ? `<div class="card tcard"><h3><span class="grow">Health</span><button data-act="go" data-v="meds">Open</button></h3>
     ${medDue.map(m => `<div class="item"><div class="grow"><b>${esc(m.name)}</b> <span class="muted small">${esc(m.strength||'')}</span><div class="muted small">Today's dose not logged</div></div><button class="btn sm primary" data-act="medLog" data-id="${esc(m.id)}">Log</button></div>`).join("")}
     ${meds.length && !medDue.length ? '<div class="muted small">Today\'s doses are logged.</div>' : ''}
@@ -1867,13 +1877,13 @@ function pChores(){
   const list = docs("chores").filter(c => (choreFilter==="all" || choreDue(c)) && (!choreWho || isFor(c, choreWho))).sort((a,b) => String(a.title).localeCompare(b.title));
   const ks = kids();
   return `<h1>Chores</h1>
-  ${ks.length ? `<div class="row" style="gap:10px;margin-bottom:14px;align-items:stretch">${ks.map(k => `<button class="card starcard" data-act="starsOpen" data-v="${esc(k.name)}" aria-label="${esc(k.name)}: ${stars(k.name)} gems. Open rewards"><div class="muted small">${esc(k.name)}</div><div class="stat" style="margin:4px 0">${I.star} ${stars(k.name)}</div><div class="muted small">Gems and rewards ›</div></button>`).join("")}</div>` : ''}
+  ${ks.length ? `<div class="row" style="gap:10px;margin-bottom:14px;align-items:stretch">${ks.map(k => `<button class="card starcard" data-act="starsOpen" data-v="${esc(k.name)}" aria-label="${esc(k.name)}: ${stars(k.name)} gems. Open rewards"><div class="muted small">${esc(k.name)}</div><div class="stat" style="margin:4px 0">${I.gem} ${stars(k.name)}</div><div class="muted small">Gems and rewards ›</div></button>`).join("")}</div>` : ''}
   ${pendingCard()}
   <div class="seg" role="group" aria-label="Filter"><button data-act="choreFilter" data-v="due" aria-pressed="${choreFilter==='due'}">To do</button><button data-act="choreFilter" data-v="all" aria-pressed="${choreFilter==='all'}">All chores</button></div>
   <div class="chips" role="group" aria-label="Whose chores" style="margin-top:10px"><button class="chip" data-act="choreWho" data-v="" aria-pressed="${!choreWho}">Everyone</button>${members().map(m => `<button class="chip" data-act="choreWho" data-v="${esc(m.name)}" aria-pressed="${choreWho===m.name}">${esc(m.name)}<span class="n">${docs("chores").filter(c => choreDue(c) && assignees(c).length && isFor(c, m.name)).length || ''}</span></button>`).join("")}</div>
   <div class="card" style="margin-top:12px">${list.length ? list.map(c => `<div class="item ${choreDue(c)?'':'done'}">
     <button class="check ${choreDue(c)?'':'on'}" data-act="choreDone" data-id="${esc(c.id)}" aria-label="Mark done: ${esc(c.title)}">${choreDue(c)?'':ICON.check}</button>
-    <div class="grow"><div class="name">${esc(c.title)}${Number(c.points) ? ` <span class="pill warn">${I.star} ${Number(c.points)}</span>` : ''}</div><div class="muted small">${esc(whoLine(c))} · ${esc(c.freq)}${c.lastDone?` · last done ${nice(c.lastDone)} by ${esc(who(c.lastBy))}`:''}</div>${extrasLine(c)}${gemsMissed(c) ? `<div class="small" style="margin-top:4px"><span class="pill warn">No gems given yet</span> <button class="btn sm" data-act="giveGems" data-id="${esc(c.id)}">${I.star} Give gems</button></div>` : ''}</div>
+    <div class="grow"><div class="name">${esc(c.title)}${Number(c.points) ? ` <span class="pill warn">${I.gem} ${Number(c.points)}</span>` : ''}</div><div class="muted small">${esc(whoLine(c))} · ${esc(c.freq)}${c.lastDone?` · last done ${nice(c.lastDone)} by ${esc(who(c.lastBy))}`:''}</div>${extrasLine(c)}${gemsMissed(c) ? `<div class="small" style="margin-top:4px"><span class="pill warn">No gems given yet</span> <button class="btn sm" data-act="giveGems" data-id="${esc(c.id)}">${I.gem} Give gems</button></div>` : ''}</div>
     <button class="btn sm" data-act="editChore" data-id="${esc(c.id)}">Edit</button></div>`).join("") : `<div class="empty">${choreFilter==='due'?'All done. Nice one!':'No chores here yet.'}</div>`}</div>
   <div class="row"><button class="btn primary" data-act="editChore">Add a chore</button></div>
   <p class="muted small">Chores with nobody picked show for everyone. Tick <b>Take turns</b> and the chore moves to the next person each time it's done. Give a chore gems and the kids earn them when they do it.</p>`;
@@ -1893,7 +1903,7 @@ function choreForm(id){
 }
 function whoDidSheet(id, cand){
   const c = doc("chores", id); if(!c) return;
-  openSheet("Who did it?", () => `<p class="kidtxt" style="margin-top:0"><b>${esc(c.title)}</b> earns ${I.star} ${Number(c.points)||0} each.</p>
+  openSheet("Who did it?", () => `<p class="kidtxt" style="margin-top:0"><b>${esc(c.title)}</b> earns ${I.gem} ${Number(c.points)||0} each.</p>
     ${cand.length > 1 ? `<button class="btn primary" style="width:100%;min-height:52px" data-act="awardStarsAll" data-id="${esc(id)}" data-v="${esc(cand.join("|"))}">${I.people} ${bothLabel(cand)}: ${esc(cand.join(" and "))}</button><p class="muted small" style="margin:10px 0 6px">Or just one:</p>` : ''}
     <div class="row wrap">${cand.map(n => `<button class="btn" data-act="awardStars" data-id="${esc(id)}" data-v="${esc(n)}">${esc(n)}</button>`).join("")}</div>
     <div class="row wrap" style="margin-top:10px"><button class="btn sm" data-act="noGems" data-id="${esc(id)}">A grown-up did it (no gems)</button></div>`);
@@ -1928,10 +1938,10 @@ function starsSheet(kid){
     const hist = docs("points").filter(p => p.kid === kid).sort((a,b) => (b.at||0) - (a.at||0)).slice(0,12);
     const next = rw.find(r => (Number(r.cost)||0) > n);
     const msg = !n ? "Do a job to get your first gem!" : next ? `${(Number(next.cost)||0) - n} more for ${next.title}` : "You can pick any reward!";
-    return `<div class="card pz-hero"><img class="pk-buddy ${next ? '' : 'pk-hop'}" src="pucas/dabbit-${next || !n ? 'idle' : 'happy'}.png" alt=""><div class="grow"><div class="starbig" aria-label="${n} gems">${I.star} ${n}</div><div class="kidtxt">${esc(msg)}</div></div></div>
+    return `<div class="card pz-hero"><img class="pk-buddy ${next ? '' : 'pk-hop'}" src="pucas/dabbit-${next || !n ? 'idle' : 'happy'}.png" alt=""><div class="grow"><div class="starbig" aria-label="${n} gems">${I.gem} ${n}</div><div class="kidtxt">${esc(msg)}</div></div></div>
     <h2>Rewards</h2>
     ${rw.length ? rw.map(r => { const cost = Number(r.cost)||0; const ok = n >= cost; const pct = cost ? Math.max(0, Math.min(100, Math.round(n*100/cost))) : 100;
-      return `<div class="card"><div class="row"><span class="rpx" aria-hidden="true">${rIcon(r)}</span><div class="grow"><div class="kidtxt"><b>${esc(r.title)}</b></div><div class="muted small">${I.star} ${cost}</div></div>
+      return `<div class="card"><div class="row"><span class="rpx" aria-hidden="true">${rIcon(r)}</span><div class="grow"><div class="kidtxt"><b>${esc(r.title)}</b></div><div class="muted small">${I.gem} ${cost}</div></div>
         ${ok && !kitchen ? `<button class="btn primary" data-act="redeemAsk" data-id="${esc(r.id)}" data-v="${esc(kid)}">Swap</button>` : ok ? '<span class="pill ok">You can have this!</span>' : `<span class="muted small">${cost - Math.max(0,n)} to go</span>`}</div>
         <div class="bar" style="margin-top:10px" role="progressbar" aria-valuemin="0" aria-valuemax="${cost}" aria-valuenow="${Math.max(0, Math.min(n,cost))}" aria-label="Gems towards ${esc(r.title)}"><i style="width:${pct}%"></i></div></div>`; }).join("") : '<div class="card empty">No rewards yet. Add some below.</div>'}
     ${kitchen ? '<p class="muted small">Ask a grown-up to swap your gems for a reward.</p>' : `<div class="row wrap"><button class="btn sm" data-act="rewardsEdit" data-v="${esc(kid)}">Change rewards</button><button class="btn sm" data-act="kidOn" data-v="${esc(kid)}">Hand the phone to ${esc(kid)}</button></div>
@@ -1939,20 +1949,20 @@ function starsSheet(kid){
     <form class="card" data-form="bonus" data-id="${esc(kid)}"><label class="f" for="bR">What for</label><input id="bR" type="text" name="reason" placeholder="e.g. Kind to a brother or sister">
       <div class="row" style="margin-top:8px;align-items:flex-end"><div style="width:120px"><label class="f" for="bA">Gems</label><select id="bA" name="amount"><option>1</option><option selected>2</option><option>3</option><option>5</option></select></div><div class="grow"></div><button class="btn primary" type="submit">Give gems</button></div></form>`}
     <h2>Recent</h2>
-    <div class="card">${hist.length ? hist.map(p => `<div class="item"><div class="grow"><b class="${(Number(p.amount)||0) > 0 ? 'gain' : ''}">${(Number(p.amount)||0) > 0 ? '+' : ''}${esc(p.amount)} ${I.star}</b> ${esc(p.reason||'')}<div class="muted small">${new Date(p.at).toLocaleDateString("en-IE",{weekday:"short",day:"numeric",month:"short"})}${p.by ? ' · ' + esc(who(p.by)) : ''}</div></div>${kitchen ? '' : `<button class="x" data-act="delPointAsk" data-id="${esc(p.id)}" aria-label="Remove this entry">${ICON.x}</button>`}</div>`).join("") : '<div class="empty">No gems yet.</div>'}</div>`;
+    <div class="card">${hist.length ? hist.map(p => `<div class="item"><div class="grow"><b class="${(Number(p.amount)||0) > 0 ? 'gain' : ''}">${(Number(p.amount)||0) > 0 ? '+' : ''}${esc(p.amount)} ${I.gem}</b> ${esc(p.reason||'')}<div class="muted small">${new Date(p.at).toLocaleDateString("en-IE",{weekday:"short",day:"numeric",month:"short"})}${p.by ? ' · ' + esc(who(p.by)) : ''}</div></div>${kitchen ? '' : `<button class="x" data-act="delPointAsk" data-id="${esc(p.id)}" aria-label="Remove this entry">${ICON.x}</button>`}</div>`).join("") : '<div class="empty">No gems yet.</div>'}</div>`;
   }, "pz");
 }
 function redeemSheet(rid, kid){
   const r = doc("rewards", rid); if(!r) return;
   openSheet("Swap gems?", () => `<div class="card" style="text-align:center"><div class="rpx big" aria-hidden="true">${rIcon(r)}</div>
-    <p class="kidtxt"><b>${esc(kid)}</b> swaps <b>${I.star} ${Number(r.cost)||0}</b> for <b>${esc(r.title)}</b>.</p>
+    <p class="kidtxt"><b>${esc(kid)}</b> swaps <b>${I.gem} ${Number(r.cost)||0}</b> for <b>${esc(r.title)}</b>.</p>
     <div class="row wrap" style="justify-content:center"><button class="btn primary" data-act="redeem" data-id="${esc(rid)}" data-v="${esc(kid)}">Yes, swap</button><button class="btn" data-act="starsOpen" data-v="${esc(kid)}">Not now</button></div></div>`, "pz");
 }
 let rewardsBack = "";
 function rewardsSheet(){
   openSheet("Rewards", () => { const rw = docs("rewards").sort((a,b) => (Number(a.cost)||0) - (Number(b.cost)||0));
     return `<p class="muted small" style="margin-top:0">The treats the kids can swap their gems for, and how many gems each one costs.</p>
-    <div class="card">${rw.length ? rw.map(r => `<div class="item"><span class="rpx sm" aria-hidden="true">${rIcon(r)}</span><div class="grow"><b>${esc(r.title)}</b><div class="muted small">${I.star} ${Number(r.cost)||0}</div></div><button class="btn sm" data-act="editReward" data-id="${esc(r.id)}">Edit</button></div>`).join("") : '<div class="empty">No rewards yet.</div>'}</div>
+    <div class="card">${rw.length ? rw.map(r => `<div class="item"><span class="rpx sm" aria-hidden="true">${rIcon(r)}</span><div class="grow"><b>${esc(r.title)}</b><div class="muted small">${I.gem} ${Number(r.cost)||0}</div></div><button class="btn sm" data-act="editReward" data-id="${esc(r.id)}">Edit</button></div>`).join("") : '<div class="empty">No rewards yet.</div>'}</div>
     <div class="row wrap"><button class="btn primary" data-act="editReward">Add a reward</button>${rewardsBack ? `<button class="btn" data-act="starsOpen" data-v="${esc(rewardsBack)}">Back to ${esc(rewardsBack)}'s gems</button>` : ''}</div>`; }, "pz");
 }
 function rewardForm(id){
@@ -2155,7 +2165,7 @@ function kitchenDone(id, name, team){
 function kitchenWhoSheet(id){
   const c = doc("chores", id); if(!c) return; const a = assignees(c);
   const cand = c.rotate && a.length > 1 ? [turnOf(c), ...a.filter(n => n !== turnOf(c))] : (a.length ? a : [...kids().map(k => k.name), ...adults().map(m => m.name)]);
-  openSheet("Who did it?", () => `<p class="kidtxt" style="margin-top:0"><b>${esc(c.title)}</b>${Number(c.points) ? ` earns ${I.star} ${Number(c.points)}` : ''}</p>
+  openSheet("Who did it?", () => `<p class="kidtxt" style="margin-top:0"><b>${esc(c.title)}</b>${Number(c.points) ? ` earns ${I.gem} ${Number(c.points)}` : ''}</p>
     ${(() => { const ck = cand.filter(isKid); return Number(c.points) && ck.length > 1 ? `<button class="btn primary" style="width:100%;min-height:60px;font-size:18px;margin-bottom:12px" data-act="kChoreAll" data-id="${esc(id)}" data-v="${esc(ck.join("|"))}">${I.people} ${bothLabel(ck)}: ${esc(ck.join(" and "))}</button>` : ''; })()}
     <div class="row wrap">${cand.map(n => `<button class="btn" style="min-height:56px;font-size:18px;padding:0 22px" data-act="kChoreBy" data-id="${esc(id)}" data-v="${esc(n)}">${esc(n)}</button>`).join("")}</div>
     <div class="row wrap" style="margin-top:12px"><button class="btn" data-act="close">Cancel</button></div>`);
@@ -2205,8 +2215,8 @@ function pKitchen(){
   <div class="kgrid">${kArrange(`
     ${kTile("today", "", `<h3><span class="grow">Today</span></h3>${evs.length ? `<div class="klist">${evs.map((e,i) => evRow(e,i,i===nextIdx)).join("")}</div>` : '<div class="muted">Nothing in the calendar today.</div>'}`)}
     ${kTile("dinner", "", `<h3><span class="grow">Dinner tonight</span>${meal.recipeId && doc("recipes", meal.recipeId) ? `<button class="btn sm" data-act="recipeOpen" data-id="${esc(meal.recipeId)}">${I.book} Recipe</button>` : ''}</h3><div class="kbig">${meal.dinner ? esc(meal.dinner) : '<span class="muted" style="font-size:19px;font-weight:500">Not planned yet</span>'}</div>${tMeal ? `<div class="muted" style="margin-top:6px">Tomorrow: ${esc(tMeal)}</div>` : ''}`)}
-    ${kTile("jobs", "", `<h3><span class="grow">Jobs to do</span></h3>${chores.length ? `<div class="klist">` + chores.map(c => `<div class="item"><button class="check" data-act="kChore" data-id="${esc(c.id)}" aria-label="Done: ${esc(c.title)}"></button><div class="grow"><div class="name"><b>${esc(c.title)}</b>${Number(c.points) ? ` <span class="pill warn">${I.star} ${Number(c.points)}</span>` : ''}</div><div class="muted small">${esc(whoLine(c))}</div></div></div>`).join("") + `</div>` : '<div class="kbig" style="font-size:22px">All done! 🎉</div>'}`)}
-    ${ks.length ? kTile("gems", "", `<h3><span class="grow">Gems</span></h3><div class="row" style="gap:12px">${ks.map(k => `<button class="card starcard pzt" style="text-align:center" data-act="starsOpen" data-v="${esc(k.name)}"><div class="pzt-name">${esc(k.name)}</div><div class="starbig" style="font-size:44px">${I.star} ${stars(k.name)}</div></button>`).join("")}</div>`) : ''}
+    ${kTile("jobs", "", `<h3><span class="grow">Jobs to do</span></h3>${chores.length ? `<div class="klist">` + chores.map(c => `<div class="item"><button class="check" data-act="kChore" data-id="${esc(c.id)}" aria-label="Done: ${esc(c.title)}"></button><div class="grow"><div class="name"><b>${esc(c.title)}</b>${Number(c.points) ? ` <span class="pill warn">${I.gem} ${Number(c.points)}</span>` : ''}</div><div class="muted small">${esc(whoLine(c))}</div></div></div>`).join("") + `</div>` : '<div class="kbig" style="font-size:22px">All done! 🎉</div>'}`)}
+    ${ks.length ? kTile("gems", "", `<h3><span class="grow">Gems</span></h3><div class="row" style="gap:12px">${ks.map(k => `<button class="card starcard pzt" style="text-align:center" data-act="starsOpen" data-v="${esc(k.name)}"><div class="pzt-name">${esc(k.name)}</div><div class="starbig" style="font-size:44px">${I.gem} ${stars(k.name)}</div></button>`).join("")}</div>`) : ''}
     ${ks.length ? kTile("pucas", "", `<h3><span class="grow">Púcas Cara</span></h3>${ks.map(k => { const pc = puca(k.name); return `<div class="row" style="gap:12px;margin-top:6px"><img src="${pucaImg(pc, pc ? pucaPose(pc) : 'idle')}" alt="" style="width:84px;height:84px;object-fit:contain;image-rendering:pixelated;flex:none${pc ? '' : ';opacity:.35'}"><div class="grow"><b>${esc(k.name)}</b>${pc ? `<div class="kbig" style="font-size:22px">${esc(pucaName(pc))} · Level ${pucaLevel(pc)}</div><div style="font-size:15px">🍽️ ${pucaNeed(pc,"food")}% · ⚡ ${pucaNeed(pc,"rest")}% · ✨ ${pucaNeed(pc,"fun")}%</div>` : '<div class="muted">No Púca yet. Pick one in Play!</div>'}</div></div>`; }).join("")}<div style="margin-top:10px"><button class="btn primary" data-act="kPlayWho">Play</button></div>`) : ''}
     ${kTile("bins", binsTonight || bT.length ? 'next' : '', `<h3><span class="grow">Bins</span></h3>${binsTonight ? `<div class="kbig" style="font-size:22px">Out tonight</div>${bTm.map(s => `<div class="row" style="min-height:34px"><span class="bindot" style="width:20px;height:20px;border-radius:10px;background:${BIN_COLOURS[s.colour]||'#999'}"></span><span>${esc(s.name)}</span></div>`).join("")}` : bT.length ? `<div class="kbig" style="font-size:22px">Collection today</div>${bT.map(s => `<div class="row" style="min-height:34px"><span class="bindot" style="width:20px;height:20px;border-radius:10px;background:${BIN_COLOURS[s.colour]||'#999'}"></span><span>${esc(s.name)}</span></div>`).join("")}` : (() => { for(let i = 2; i <= 14; i++){ const d = ymd(addDays(now,i)); if(binsOn(d).length) return `<div>Next: ${DOW[parse(d).getDay()]}</div><div class="muted small">${esc(binsOn(d).map(s => s.name).join(", "))}</div>`; } return '<div class="muted">No collection soon.</div>'; })()}`)}
     ${kTile("tomorrow", "", `<h3><span class="grow">Tomorrow</span></h3>${tEvs.length ? `<div class="klist">` + tEvs.map(e => `<div style="padding:4px 0"><b>${esc(e.start||'All day')}</b> ${esc(e.title)}${e.note?`<div class="small">${I.note} ${esc(e.note)}</div>`:''}</div>`).join("") + `</div>` : '<div class="muted">Nothing planned yet.</div>'}`)}
@@ -2283,13 +2293,13 @@ function pKid(name){
   const jobsSay = jobs.length ? "Your jobs: " + jobs.map(c => c.title).join(". ") : "No jobs right now. Nice one!";
   return `<div class="kid">
   <div class="pk-hero" style="background-image:url(pucas/scene-${h < 12 ? 'mossnub' : h < 17 ? 'sparkit' : 'dabbit'}.jpg)"><div class="pk-top"><span class="pk-date">${DOW[now.getDay()]} ${now.getDate()} ${MONTHS[now.getMonth()]}</span><button class="kexit" data-act="kidExitAsk">Grown-ups</button></div><div class="kidhi pk-hi">${greet},<br>${esc(name)}!</div></div>
-  <div class="card pk-stars"><img class="pk-buddy ${jobs.length ? '' : 'pk-hop'}" src="pucas/dabbit-${jobs.length ? 'idle' : 'happy'}.png" alt=""><div class="grow"><div class="starbig">${I.star} ${n}</div><div class="pk-msg">${esc(starMsg)}</div></div><button class="saybtn" data-act="say" data-v="${esc('You have ' + n + ' gems. ' + starMsg)}" aria-label="Read it to me">${I.speak}</button></div>
+  <div class="card pk-stars"><img class="pk-buddy ${jobs.length ? '' : 'pk-hop'}" src="pucas/dabbit-${jobs.length ? 'idle' : 'happy'}.png" alt=""><div class="grow"><div class="starbig">${I.gem} ${n}</div><div class="pk-msg">${esc(starMsg)}</div></div><button class="saybtn" data-act="say" data-v="${esc('You have ' + n + ' gems. ' + starMsg)}" aria-label="Read it to me">${I.speak}</button></div>
   <h2>Play</h2>${playCard(name)}
   <div class="row"><h2 class="grow">My jobs</h2><button class="saybtn" data-act="say" data-v="${esc(jobsSay)}" aria-label="Read my jobs to me">${I.speak}</button></div>
   ${jobs.length ? jobs.map(c => { const mates = choreKids(c).filter(n => n !== name);
       return pendTeam(c).includes(name)
       ? `<div class="card kidjob"><span class="kcheck on" aria-hidden="true">⏳</span><div class="grow"><b>${esc(c.title)}</b><div class="muted" style="font-size:17px">${pendTeam(c).length > 1 ? 'You did it together! ' : ''}Waiting for a grown-up to check</div></div></div>`
-      : `<div class="card kidjob" style="flex-wrap:wrap"><button class="kcheck" data-act="kidTick" data-id="${esc(c.id)}" aria-label="I did it: ${esc(c.title)}"></button><div class="grow"><b>${esc(c.title)}</b>${Number(c.points) ? ` <span class="pill warn" style="font-size:15px">${I.star} ${Number(c.points)}</span>` : ''}</div><button class="saybtn" data-act="say" data-v="${esc(c.title)}" aria-label="Read it to me">${I.speak}</button>${mates.length ? `<button class="btn kidtogether" data-act="kidTogether" data-id="${esc(c.id)}" aria-label="We did it together: ${esc(c.title)}, with ${esc(mates.join(" and "))}">${I.people} We did it together</button>` : ''}</div>`; }).join("")
+      : `<div class="card kidjob" style="flex-wrap:wrap"><button class="kcheck" data-act="kidTick" data-id="${esc(c.id)}" aria-label="I did it: ${esc(c.title)}"></button><div class="grow"><b>${esc(c.title)}</b>${Number(c.points) ? ` <span class="pill warn" style="font-size:15px">${I.gem} ${Number(c.points)}</span>` : ''}</div><button class="saybtn" data-act="say" data-v="${esc(c.title)}" aria-label="Read it to me">${I.speak}</button>${mates.length ? `<button class="btn kidtogether" data-act="kidTogether" data-id="${esc(c.id)}" aria-label="We did it together: ${esc(c.title)}, with ${esc(mates.join(" and "))}">${I.people} We did it together</button>` : ''}</div>`; }).join("")
     : '<div class="card pk-none"><img src="pucas/dabbit-happy.png" alt=""><span>No jobs right now. Nice one!</span></div>'}
   ${doneToday.length ? `<div class="muted" style="font-size:18px">${I.chore} Done today: ${esc(doneToday.map(c => c.title).join(", "))}</div>` : ''}
   <h2>Today</h2>
@@ -2297,7 +2307,7 @@ function pKid(name){
   ${tEvs.length ? `<h2>Tomorrow</h2><div class="card">${tEvs.map(e => `<div style="padding:4px 0"><b>${esc(e.start||'All day')}</b> ${esc(e.title)}${e.note ? `<div style="font-size:18px">📝 Remember: ${esc(e.note)}</div>` : ''}</div>`).join("")}</div>` : ''}
   <h2>My rewards</h2>
   ${rw.map(r => { const cost = Number(r.cost)||0; const ok = n >= cost; const pct = cost ? Math.max(0, Math.min(100, Math.round(n*100/cost))) : 100;
-    return `<div class="card"><div class="row"><span class="rpx" aria-hidden="true">${rIcon(r)}</span><div class="grow"><b>${esc(r.title)}</b><div style="font-size:16px"><span class="muted">${I.star} ${cost}</span> · ${ok ? '<b class="gain">You can have this!</b>' : `<span class="muted">${cost - Math.max(0,n)} more to go</span>`}</div></div></div><div class="bar" style="margin-top:10px;height:14px" role="progressbar" aria-valuemin="0" aria-valuemax="${cost}" aria-valuenow="${Math.max(0, Math.min(n,cost))}" aria-label="Gems towards ${esc(r.title)}"><i style="width:${pct}%"></i></div></div>`; }).join("")}
+    return `<div class="card"><div class="row"><span class="rpx" aria-hidden="true">${rIcon(r)}</span><div class="grow"><b>${esc(r.title)}</b><div style="font-size:16px"><span class="muted">${I.gem} ${cost}</span> · ${ok ? '<b class="gain">You can have this!</b>' : `<span class="muted">${cost - Math.max(0,n)} more to go</span>`}</div></div></div><div class="bar" style="margin-top:10px;height:14px" role="progressbar" aria-valuemin="0" aria-valuemax="${cost}" aria-valuenow="${Math.max(0, Math.min(n,cost))}" aria-label="Gems towards ${esc(r.title)}"><i style="width:${pct}%"></i></div></div>`; }).join("")}
   <p class="muted" style="font-size:17px">Ask a grown-up when you want to swap your gems for a reward.</p></div>`;
 }
 function pinSheet(title, onOk){
@@ -2324,10 +2334,28 @@ function kidModeSettings(){
     <label class="toggle small"><input type="checkbox" data-kidapprove ${ks.approval !== false ? 'checked' : ''}> <span>When a kid ticks a job, a grown-up says OK before the gems go on</span></label>
     <p class="muted small" style="margin-bottom:0">For a kid's own tablet: sign in on it, then tap their name above. It stays in kid mode, even after it's switched off, until the PIN is entered.</p></div>`;
 }
+// ----- Púcas cards (the card game at cards/): card pack requests wait here for a grown-up's OK -----
+// Data: cards/<kid>-pack {req:{at, price} while waiting, answer:{ok, at, by, seen}, granted (packs said yes to)}.
+// Gems only change here in Donrí: Yes adds a -price points entry and grants one pack.
+function cardPackLines(){
+  return kids().map(k => ({kid:k.name, r:doc("cards", k.name + "-pack")})).filter(x => x.r && x.r.req).map(({kid, r}) => { const price = Number(r.req.price) || 10;
+    return `<div class="item"><img src="cards/img/pack-front.png" alt="" style="width:44px;height:44px;object-fit:contain;flex:none"><div class="grow"><b>${esc(kid)}</b> wants to open a Púcas card pack <span class="pill warn">${I.gem} ${price}</span><div class="muted small">${esc(kid)} has ${stars(kid)} gems. Yes takes ${price} gems away.</div></div><button class="btn sm primary" data-act="cardPackYes" data-v="${esc(kid)}">Yes</button><button class="btn sm" data-act="cardPackNo" data-v="${esc(kid)}">Not yet</button></div>`; }).join("");
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest && e.target.closest("[data-act]"); if(!b) return; const act = b.dataset.act, v = b.dataset.v;
+  if(act === "cardPackYes"){ const r = doc("cards", v + "-pack"); if(!r || !r.req) return; const price = Number(r.req.price) || 10;
+    if(stars(v) < price){ toast(`${v} doesn't have ${price} gems any more.`); return; }
+    put("points", uid(), {kid:v, amount:-price, reason:"Púcas card pack", date:today(), by:myName(), at:Date.now()});
+    patch("cards", v + "-pack", {req:null, answer:{ok:true, at:Date.now(), by:myName()}, granted:(Number(r.granted)||0) + 1});
+    log(`said yes: ${v} opens a Púcas card pack (−${price} gems)`); toast(`Done. ${v} can open the pack in Púcas cards.`); }
+  if(act === "cardPackNo"){ const r = doc("cards", v + "-pack"); if(!r || !r.req) return;
+    patch("cards", v + "-pack", {req:null, answer:{ok:false, at:Date.now(), by:myName(), seen:false}});
+    log(`said not yet to ${v}'s Púcas card pack`); toast(`OK. ${v} will see "not yet".`); }
+});
 function pendingCard(){
-  const pend = docs("chores").filter(c => c.pendingBy && choreDue(c)); const swaps = pucaSwapLines();
+  const pend = docs("chores").filter(c => c.pendingBy && choreDue(c)); const swaps = pucaSwapLines() + cardPackLines();
   if(!pend.length && !swaps) return "";
-  return `<div class="card tcard next"><h3><span class="grow">Waiting for your OK</span></h3>${swaps}${pend.map(c => `<div class="item"><div class="grow">${pendTeam(c).length > 1 ? `<b>${esc(pendTeam(c).join(" and "))}</b> say they did it together: ${esc(c.title)}` : `<b>${esc(c.pendingBy)}</b> says they did: ${esc(c.title)}`}${Number(c.points) ? ` <span class="pill warn">${I.star} ${Number(c.points)}${pendTeam(c).length > 1 ? ' each' : ''}</span>` : ''}</div><button class="btn sm primary" data-act="kidApprove" data-id="${esc(c.id)}">Yes</button><button class="btn sm" data-act="kidReject" data-id="${esc(c.id)}">Not yet</button></div>`).join("")}</div>`;
+  return `<div class="card tcard next"><h3><span class="grow">Waiting for your OK</span></h3>${swaps}${pend.map(c => `<div class="item"><div class="grow">${pendTeam(c).length > 1 ? `<b>${esc(pendTeam(c).join(" and "))}</b> say they did it together: ${esc(c.title)}` : `<b>${esc(c.pendingBy)}</b> says they did: ${esc(c.title)}`}${Number(c.points) ? ` <span class="pill warn">${I.gem} ${Number(c.points)}${pendTeam(c).length > 1 ? ' each' : ''}</span>` : ''}</div><button class="btn sm primary" data-act="kidApprove" data-id="${esc(c.id)}">Yes</button><button class="btn sm" data-act="kidReject" data-id="${esc(c.id)}">Not yet</button></div>`).join("")}</div>`;
 }
 
 // ---------- GAMES: Ár bPeata (our pet) ----------
@@ -3518,20 +3546,21 @@ function pPuca(kid, ctx){
     <div class="pc-stage ${home ? 'pc-home' : 'pc-temp'}" id="pucastage" style="background-image:url('${home || `pucas/scene-${p.starter}.jpg`}')">
       ${grew ? `<div class="pc-grow"><p class="pc-gt">${esc(pucaInfo(p).name)} is growing up!</p><img src="${pucaImg(p, 'happy')}" alt=""><p class="pc-gn">Say hello to <b>${esc(pucaName(p))}</b>!</p><button class="btn primary" style="min-height:56px;font-size:19px" data-act="pucaGrowOk">Hooray!</button></div>` : ''}
       <div class="pc-say" id="pucaSay">${esc(pucaLine(p))}</div>
-      <div class="pc-spr ${night ? 'pc-sleep' : ''}" id="pucaSpr" style="left:50%" role="img" aria-label="${esc(I0.name)}. Stroke ${esc(I0.name)} with your finger."><div class="pc-bob" id="pucaBob"><img class="pc-img" id="pucaImg" src="${pucaImg(p, pucaPose(p))}" alt="" draggable="false"></div></div>
-      ${night ? '<div class="pc-z" aria-hidden="true">Z<span>z</span><span>z</span></div>' : `<button class="pc-ball" id="pucaBall" aria-label="Ball. Flick it for ${esc(I0.name)} to fetch." style="left:18%"></button>`}
+      <div class="pc-spr ${night ? 'pc-sleep pc-inden' : ''}" id="pucaSpr" style="left:50%" role="img" aria-label="${esc(I0.name)}. Stroke ${esc(I0.name)} with your finger."><div class="pc-bob" id="pucaBob"><img class="pc-img" id="pucaImg" src="${pucaImg(p, pucaPose(p))}" alt="" draggable="false"></div></div>
+      ${night ? pucaDenHTML(50) + '<div class="pc-z" aria-hidden="true">Z<span>z</span><span>z</span></div>' : `<button class="pc-ball" id="pucaBall" aria-label="Ball. Flick it for ${esc(I0.name)} to fetch." style="left:18%"></button>`}
       <div class="pc-fx" id="pucaFx" aria-hidden="true"></div>
     </div>
-    ${night ? '' : `<div class="pc-tray" aria-label="Treats"><span class="pc-tl">${treats ? `Treats: <b>${treats}</b><small>Drag one to ${esc(I0.name)}</small>` : `No treats<small>Do a job to earn one</small>`}</span><div class="pc-foods">${PUCA_TREATS.map(t => `<button class="pc-food ${treats ? '' : 'off'}" data-food="${t.id}" aria-label="Feed ${esc(t.label)}${t.id === I0.fav ? ', the favourite' : ''}" ${treats ? '' : 'disabled'}><img src="pucas/treat-${t.id}.png" alt="" draggable="false">${t.id === I0.fav ? '<i aria-hidden="true">★</i>' : ''}</button>`).join("")}</div></div>`}
+    ${night ? '' : `<div class="pc-tray" aria-label="Treats"><span class="pc-tl">${treats ? `Treats: <b>${treats}</b><small>Drag one to ${esc(I0.name)}</small>` : `No treats<small>Do a job to earn one</small>`}</span><div class="pc-foods">${PUCA_TREATS.map(t => `<button class="pc-food ${treats ? '' : 'off'}" data-food="${t.id}" aria-label="Feed ${esc(t.label)}${t.id === I0.fav ? ', the favourite' : ''}" ${treats ? '' : 'disabled'}><img src="pucas/treat-${t.id}.png" alt="" draggable="false">${t.id === I0.fav ? '<i aria-hidden="true">★</i>' : ''}</button>`).join("")}<button class="pc-food pc-drink" data-food="water" aria-label="Spring water. Give ${esc(I0.name)} a drink."><img src="pucas/help-water.png" alt="" draggable="false"></button></div></div>`}
     <div class="card pc-panel">
       ${pucaBar("Tummy", "🍽️", pucaNeed(p,"food"))}${pucaBar("Energy", "⚡", pucaNeed(p,"rest"))}${pucaBar("Fun", "✨", pucaNeed(p,"fun"))}
       <div class="pc-xp"><b>Level ${lv}</b><span class="bar" role="progressbar" aria-label="Level progress"><i style="width:${pucaXpIn(p) * 5}%"></i></span><span class="muted">${nextGrow ? `Grows up at level ${nextGrow}` : 'All grown up!'}</span></div>
     </div>
     <div class="pc-acts">
-      <button class="btn primary pc-act" data-act="pucaPlay" ${night ? 'disabled' : ''}><span>✨</span>Wisps<small>Catch them!</small></button>
-      <button class="btn primary pc-act" data-act="pucaNap" ${night ? 'disabled' : ''}><span>🌙</span>Nap<small>Rest a bit</small></button>
+      <button class="btn primary pc-act" data-act="pucaPlay" ${night ? 'disabled' : ''}><span><img src="pucas/help-wisp.png" alt=""></span>Wisps<small>Catch them!</small></button>
+      <button class="btn primary pc-act" data-act="pucaNap" ${night ? 'disabled' : ''}><span><img src="pucas/help-den.png" alt=""></span>Nap<small>In the den</small></button>
+      <button class="btn primary pc-act" data-act="pucaTune" ${night ? 'disabled' : ''}><span><img src="pucas/help-tune.png" alt=""></span>Tune<small>Play the whistle</small></button>
     </div>
-    <p class="muted pc-tip">Stroke ${esc(I0.name)}, flick the ball, or drag a treat over. It grows up at levels 10 and 25! Every job you finish earns a treat. ${esc(I0.name)} has a secret tickly spot… can you find it?</p>
+    <p class="muted pc-tip">Stroke ${esc(I0.name)}, flick the ball, or drag a treat over. It grows up at levels 10 and 25! Give it a drink of spring water, or play it a tune. Every job you finish earns a treat. ${esc(I0.name)} has a secret tickly spot… can you find it?</p>
     ${pucaSwapBit(p, kid)}
   </div>`;
 }
@@ -3611,6 +3640,25 @@ function pucaBurst(n, chars, x, y){
   const fx = document.getElementById("pucaFx"); if(!fx) return;
   for(let i = 0; i < n; i++){ const s = document.createElement("span"); s.className = "pc-heart"; s.textContent = chars[i % chars.length]; s.style.left = ((x === undefined ? pucaX : x) - 6 + Math.random() * 12) + "%"; s.style.bottom = (y === undefined ? 40 : y) + "%"; s.style.animationDelay = (i * 90) + "ms"; fx.appendChild(s); setTimeout(() => s.remove(), 1600 + i * 90); }
 }
+function pucaDenHTML(x){ return `<img class="pc-den" src="pucas/help-den.png" alt="" style="left:${x}%"><img class="pc-mist" src="pucas/mist-swirl.png" alt="" aria-hidden="true" style="bottom:12%"><img class="pc-mist" src="pucas/mist-swirl.png" alt="" aria-hidden="true" style="bottom:40%;animation-delay:-8s">`; }
+function pucaMelody(sleepy){ if(!soundOn()) return; const n = sleepy ? [659,587,523,494,440,392,440] : [587,659,740,880,740,659,587,659,740,587]; const d = sleepy ? 0.42 : 0.2; n.forEach((f, i) => tone(f, f, d * 0.95, "triangle", 0.12, i * d)); }
+function pucaNapStart(){ const p = puca(); const st = document.getElementById("pucastage"); if(!p || !st) return; const I0 = {name:pucaName(p)};
+  pucaBusy = 1; st.insertAdjacentHTML("beforeend", pucaDenHTML(pucaX)); const sp = document.getElementById("pucaSpr"); if(sp) sp.classList.add("pc-inden"); pucaPoseNow("asleep"); pucaSay(`Shh… ${I0.name} is napping in the cosy den.`); say(`Shh. ${I0.name} is napping in the cosy den.`);
+  setTimeout(() => { pucaBusy = 0; const q = puca(); if(!q) return; petQuiet = true; patch("settings", pucaId(petKid), {xp:(Number(q.xp)||0) + 2, care:{...(q.care||{}), rest:Date.now()}}); petQuiet = false; if(document.getElementById("pucastage")){ render(); setTimeout(() => { pucaPoseNow("happy", 1400); pucaSay(`${I0.name} feels full of beans!`); }, 60); } }, 12000); }
+function pucaTune(){ const st = document.getElementById("pucastage"); const p = puca(); if(!st || !p || pucaBusy || asleep()) return; const name = pucaName(p); const sleepy = pucaNeed(p,"rest") < 50;
+  pucaBusy = 1; const w = document.createElement("img"); w.className = "pc-whistle"; w.src = "pucas/help-tune.png"; w.alt = ""; w.style.left = (pucaX > 50 ? pucaX - 32 : pucaX + 32) + "%"; st.appendChild(w);
+  pucaMelody(sleepy); for(let i = 0; i < 5; i++) setTimeout(() => pucaBurst(1, ["🎵","🎶"], pucaX > 50 ? pucaX - 30 : pucaX + 34, 50), i * 450);
+  if(sleepy){ pucaSay(`A sleepy tune… ${name}'s eyes are closing.`); say(`A sleepy tune. ${name}'s eyes are closing.`); pucaPoseNow("tired");
+    setTimeout(() => { w.remove(); pucaBusy = 0; if(document.getElementById("pucastage")) pucaNapStart(); }, 3200); return; }
+  pucaSay(`${name} loves a tune! Look at those dance moves!`); say(`${name} loves a tune! Look at those dance moves!`); pucaPoseNow("happy");
+  const b = document.getElementById("pucaBob"); let hops = 0; const hop = setInterval(() => { if(!b || ++hops > 5){ clearInterval(hop); return; } b.classList.remove("pc-hop"); void b.offsetWidth; b.classList.add("pc-hop"); }, 450);
+  setTimeout(() => { w.remove(); pucaBusy = 0; pucaPoseNow("happy", 1200); pucaBurst(4, ["❤️","✨"]);
+    if(Date.now() - pucaTuneAt > 20000){ pucaTuneAt = Date.now(); const q = puca(); petQuiet = true; patch("settings", pucaId(petKid), {xp:(Number(q.xp)||0) + 1, care:{...(q.care||{}), fun:Date.now()}}); petQuiet = false; } }, 3000); }
+let pucaTuneAt = 0;
+function pucaDrink(){ const p = puca(); if(!p || asleep() || pucaBusy) return; const name = pucaName(p); const last = Number((p.care||{}).drink)||0;
+  if(Date.now() - last < 10 * 60000){ const m = `${name} isn't thirsty just now.`; pucaSay(m); say(m); return; }
+  petQuiet = true; patch("settings", pucaId(petKid), {xp:(Number(p.xp)||0) + 1, care:{...(p.care||{}), drink:Date.now()}}); petQuiet = false;
+  sfx("sweet"); pucaPoseNow("happy", 1400); pucaBurst(4, ["💧","✨"]); const m = `Slurp! Fresh spring water. ${name} feels refreshed!`; pucaSay(m); say(m); }
 function pucaWisps(){
   const st = document.getElementById("pucastage"); const p = puca(); if(!st || !p || pucaBusy) return; const I0 = pucaInfo(p);
   pucaBusy = 1; let caught = 0; const end = Date.now() + 15000; pucaSay("Catch the wisps! Tap them!"); say("Catch the wisps! Tap them!");
@@ -3636,14 +3684,15 @@ document.addEventListener("click", e => {
   if(act === "pucaGrowOk"){ const p = puca(); if(!p) return; petQuiet = true; patch("settings", pucaId(petKid), {seenStage:pucaStage(p)}); petQuiet = false; sfx("win"); render(); setTimeout(() => { pucaPoseNow("happy", 1600); pucaBurst(10, ["⭐","✨","❤️"]); }, 80); }
   if(act === "pucaTestXp"){ const p = puca(v); if(!p) return; patch("settings", pucaId(v), {xp:(Number(p.xp)||0) + 60}); toast(`${v}'s Púca got 60 points (now level ${pucaLevel(puca(v))})`); render(); }
   if(act === "pucaPlay"){ pucaWisps(); }
+  if(act === "pucaTune"){ pucaTune(); }
   if(act === "pucaNap"){ const p = puca(); if(!p || pucaBusy) return; const I0 = pucaInfo(p);
     if(pucaNeed(p,"rest") > 85){ pucaSay(`${I0.name} isn't sleepy yet. Let's play!`); say(`${I0.name} isn't sleepy yet. Let's play!`); return; }
-    pucaBusy = 1; pucaPoseNow("asleep"); pucaSay("Shh… a little nap."); say("Shh. A little nap.");
-    setTimeout(() => { pucaBusy = 0; const q = puca(); if(!q) return; petQuiet = true; patch("settings", pucaId(petKid), {xp:(Number(q.xp)||0) + 2, care:{...(q.care||{}), rest:Date.now()}}); petQuiet = false; if(document.getElementById("pucastage")){ render(); setTimeout(() => { pucaPoseNow("happy", 1400); pucaSay(`${I0.name} feels full of beans!`); }, 60); } }, 12000); }
+    pucaNapStart(); }
 });
 // ----- Púcas Cara interaction: wander, stroke, secret tickly spot, fetch the ball, drag treats -----
 const PUCA_TICKLE = {dabbit:[0.5, 0.64], sparkit:[0.84, 0.42], mossnub:[0.3, 0.46]}; // where on the picture (0–1), facing its normal way
 function pucaFeed(id){
+  if(id === "water") return pucaDrink();
   const p = puca(); if(!p || !pucaTreats(p, petKid) || asleep()) return; const I0 = {...pucaInfo(p), name:pucaName(p)}; const fav = id === I0.fav;
   petQuiet = true; patch("settings", pucaId(petKid), {treatsUsed:(Number(p.treatsUsed)||0) + 1, xp:(Number(p.xp)||0) + (fav ? 6 : 3), care:{...(p.care||{}), food:Date.now()}}); petQuiet = false;
   const x = pucaX; render(); pucaX = x; const s = document.getElementById("pucaSpr"); if(s){ s.style.transition = "none"; s.style.left = x + "%"; }
@@ -3715,7 +3764,7 @@ function startPucaLoop(){
     let g = null;
     f.addEventListener("pointerdown", e => { if(f.disabled) return; g = {x:e.clientX, y:e.clientY, el:null, moved:0}; f.setPointerCapture && f.setPointerCapture(e.pointerId); e.preventDefault(); });
     f.addEventListener("pointermove", e => { if(!g) return; g.moved = Math.max(g.moved, Math.hypot(e.clientX - g.x, e.clientY - g.y));
-      if(g.moved > 8 && !g.el){ g.el = document.createElement("img"); g.el.className = "pc-drag"; g.el.src = `pucas/treat-${f.dataset.food}.png`; g.el.alt = ""; document.body.appendChild(g.el); }
+      if(g.moved > 8 && !g.el){ g.el = document.createElement("img"); g.el.className = "pc-drag"; g.el.src = f.querySelector("img").src; g.el.alt = ""; document.body.appendChild(g.el); }
       if(g.el){ g.el.style.left = e.clientX + "px"; g.el.style.top = e.clientY + "px"; } });
     const done = e => { if(!g) return; const el = g.el, tap = g.moved < 8; g = null; if(el) el.remove();
       const im = document.getElementById("pucaImg"); const r = im && im.getBoundingClientRect();
@@ -3735,6 +3784,7 @@ function arcCarts(kid){
   return [
     {id:"story", title:"Story Time", sub:`${esc(st.series)}: ${esc(st.title)}`, note:"Reading doesn't use playtime!", lab:"#1F6B3A", art:`<img src="${stImg(st, st.key)}" alt="">`},
     {id:"puca", title:"Púcas Cara", sub:pc ? `Look after ${esc(nm)} at home in Wild Éire` : "Choose your own Púca friend from Wild Éire!", lab:"#2F7F74", art:`<img src="pucas/scene-${pc ? pc.starter : 'dabbit'}.jpg" alt="">`},
+    {id:"cards", title:"Púcas Cards", sub:pc ? `Battle Rua, or each other, with ${esc(nm)} leading your deck` : "Pick your Púca in Púcas Cara first!", lab:"#7A4C9A", art:`<img src="cards/img/pack-front.png" alt="" style="object-fit:contain;background:#1c1a2e">`},
     {id:"soon1", title:"Setanta's Sliotar", sub:"A hurling game for the Setanta book. Coming soon!", lab:"#575E70", locked:true, art:`<img src="${stImg(st, 6)}" alt="">`}
   ];
 }
@@ -3773,6 +3823,7 @@ function arcStart(){
   const c = arcCarts(petKid)[arcSel]; if(!c) return;
   if(c.locked){ arcBeep("nope"); say("Coming soon!"); const a = document.querySelector(".cart.on"); if(a){ a.classList.remove("arc-shake"); void a.offsetWidth; a.classList.add("arc-shake"); } return; }
   arcBeep("start"); const pal = document.querySelector(".arc-pal"); if(pal){ pal.src = pucaImg(puca(petKid), "happy"); pal.classList.add("yay"); }
+  if(c.id === "cards"){ setTimeout(() => { stopPlay(); persist(); location.href = "cards/"; }, 350); return; }
   if(c.id === "snack"){ snackLevel = Math.max(0, snackUnlockedCount() - 1); gameView = "snack"; }
   else gameView = c.id;
   setTimeout(() => { closeSheet(); render(); window.scrollTo(0,0); }, 350);
@@ -5127,7 +5178,7 @@ const HELP = {
     <li>When you give someone a chore, or it becomes their turn, they get a notification (if they have one set up).</li>
     <li>Tap the box when it's done. Donrí records who did it and when.</li>
     <li><b>Kid mode:</b> in Settings, tap <b>Hand to Donnacha</b> (or Rían). They see only their jobs, gems and rewards, in big text with 🔊 buttons that read things aloud. When they tick a job, you get a notification and a <b>Waiting for your OK</b> card. Tap <b>Yes</b> and the gems go on. To leave kid mode, tap <b>Grown-ups</b> and enter the PIN. A kid's own tablet can stay in kid mode all the time.</li>
-    <li><b>Púcas Cara (game):</b> "cara" means friend. Each kid chooses their own Púca (Dabbit the otter pup, Sparkit the fox cub or Mossnub the hedgehog) and looks after it at its home in Wild Éire: stroke it, find its secret tickly spot, flick the ball for it to fetch, drag treats over to feed it, catch wisps together, and let it nap. Every job that earns gems also earns their Púca a treat, and looking after it earns points to level up (it will grow up at levels 10 and 25). Púcas sleep from 9pm to 7am. Playtime unlocks once they've done a job that day, and lasts 10 minutes (change it in Settings). A grown-up can unlock it, or add time, with the PIN. Read-aloud and sounds can be switched on or off for each kid in Settings → Kid mode.</li>
+    <li><b>Púcas Cara (game):</b> "cara" means friend. Each kid chooses their own Púca (Dabbit the otter pup, Sparkit the fox cub or Mossnub the hedgehog) and looks after it at its home in Wild Éire: stroke it, find its secret tickly spot, flick the ball for it to fetch, drag treats over to feed it, catch wisps together, give it a drink of spring water, play it a tune on the tin whistle, and let it nap in its cosy den. Every job that earns gems also earns their Púca a treat, and looking after it earns points to level up (it will grow up at levels 10 and 25). Púcas sleep from 9pm to 7am. Playtime unlocks once they've done a job that day, and lasts 10 minutes (change it in Settings). A grown-up can unlock it, or add time, with the PIN. Read-aloud and sounds can be switched on or off for each kid in Settings → Kid mode.</li>
     <li><b>Change my Púca:</b> a kid can tap <b>Change my Púca</b> at their Púca's home and pick another starter. You get a notification and a <b>Waiting for your OK</b> card: <b>Yes</b> swaps, <b>Not yet</b> keeps things as they are. A new Púca starts at level 1; the old one goes home to rest with its level kept, so swapping back carries on where they left off. Nothing is deleted.</li>
     <li><b>Gems:</b> in <b>Edit</b>, give a chore some gems. Each kid who does it gets them. If Donrí can't tell who did it, it asks, and you can pick <b>Both of them</b> for a joint job. In kid mode, a shared job has a <b>We did it together</b> button. Untick by mistake and the gems come off again.</li>
     <li>Tap a kid's gem count to open their page: big gem total, rewards with how close they are, <b>Swap</b> when they have enough, and <b>bonus gems</b> for anything you want to praise. It's made to show them on your phone.</li>

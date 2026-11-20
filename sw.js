@@ -2,7 +2,7 @@
 // Pages are fetched fresh when online (so updates arrive straight away),
 // falling back to the saved copy when offline. Only this site's own files
 // are cached: Microsoft sign-in, OneDrive, Outlook and ntfy are never touched.
-const CACHE = "donri-shell-v20";
+const CACHE = "donri-shell-v21";
 const SHELL = ["./", "index.html", "app.webmanifest",
   "icons/d2-favicon-64.png", "icons/d2-apple-180.png", "icons/d2-icon-192.png",
   "icons/d2-icon-512.png", "icons/d2-maskable-512.png"];
@@ -22,6 +22,17 @@ self.addEventListener("fetch", e => {
   if (req.method !== "GET") return;
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
+  // Púcas cards (cards/) is its own page: network first for its page and scripts, saved under its own address,
+  // so it never replaces Donrí's saved page.
+  const inCards = /\/cards\//.test(url.pathname);
+  if (req.mode === "navigate" && inCards) {
+    const key = url.origin + url.pathname;
+    e.respondWith(fetch(new Request(req.url, {cache:"no-cache", credentials:"same-origin"})).then(res => {
+      if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(key, copy)); }
+      return res;
+    }).catch(() => caches.match(key)));
+    return;
+  }
   if (req.mode === "navigate") {
     // Network first for the page itself; keep the query (sign-in code) intact.
     e.respondWith(fetch(new Request(req.url, {cache:"no-cache", credentials:"same-origin"})).then(res => {
@@ -31,7 +42,7 @@ self.addEventListener("fetch", e => {
     }).catch(() => caches.match("index.html")));
     return;
   }
-  if (/\.webmanifest$|\/icons\//.test(url.pathname)) {
+  if (/\.webmanifest$|\/icons\//.test(url.pathname) || (inCards && /\.js$/.test(url.pathname))) {
     e.respondWith(fetch(req, {cache:"no-cache"}).then(res => {
       if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); }
       return res;
