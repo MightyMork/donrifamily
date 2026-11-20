@@ -1037,11 +1037,12 @@ input[type=text]:focus,input[type=number]:focus,input[type=date]:focus,input[typ
 
 /* ---------- Today as a bento grid ---------- */
 .bento{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;grid-auto-flow:row dense}
-.bento>.bt{min-width:0;display:flex;animation:bnIn .6s cubic-bezier(.2,.7,.2,1) both}
+.bento>.bt{min-width:0;display:flex}
+.bento.anim>.bt{animation:bnIn .6s cubic-bezier(.2,.7,.2,1) both}
 .bento>.bt.w{grid-column:1/-1}
 .bento>.bt>.card{flex:1;margin:0;border-radius:14px;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease}
 .bento>.bt>.card:hover{transform:translateY(-2px);box-shadow:var(--shadow-hover);border-color:var(--accent)}
-.bento>.bt:nth-child(2){animation-delay:.04s}.bento>.bt:nth-child(3){animation-delay:.08s}.bento>.bt:nth-child(4){animation-delay:.12s}.bento>.bt:nth-child(n+5){animation-delay:.16s}
+.bento.anim>.bt:nth-child(2){animation-delay:.04s}.bento.anim>.bt:nth-child(3){animation-delay:.08s}.bento.anim>.bt:nth-child(4){animation-delay:.12s}.bento.anim>.bt:nth-child(n+5){animation-delay:.16s}
 @keyframes bnIn{from{opacity:0;transform:translateY(8px)}}
 .bento .bt:not(.w) .tcard h3{flex-wrap:wrap;row-gap:0}
 .bento .bt:not(.w) .chip{min-height:36px;padding:0 10px}
@@ -1055,6 +1056,68 @@ input[type=text]:focus,input[type=number]:focus,input[type=date]:focus,input[typ
 .bstat span{font-size:.78rem;color:var(--muted);line-height:1.25}
 .bstat.hot{background:var(--soft);border-color:var(--accent)}
 .homeedit{display:flex;justify-content:center;margin-top:14px}
+/* v22: three panel sizes. small = square, medium = full width at the same height, large = 1.5x that height */
+.bento{container-type:inline-size;--ph:calc((100cqw - 12px) / 2)}
+.bento>.bt{height:var(--ph)}
+.bento>.bt.sz-l{height:calc(var(--ph) * 1.5)}
+.bento>.bt>.card{overflow:hidden}
+.bento .fithide{display:none!important}
+.bento>.bt>.card{padding:14px 14px 10px}
+.bento .tcard h3{margin-bottom:6px;min-height:30px}
+.bento .tcard h3 button{min-height:30px}
+.bento>.bt .row{min-height:28px!important}
+.bento>.bt .item{padding-top:6px;padding-bottom:6px}
+.gks{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));column-gap:16px}
+.sz-s .gks{grid-template-columns:1fr}
+.gks .gk+.gk{border-top:0}.sz-s .gks .gk+.gk{border-top:1px solid var(--line)}
+.sz-s .gk{padding:3px 0}.sz-s .gk .gh{min-height:28px}
+.fitmore{display:block;margin-top:6px;padding:0;min-height:30px;border:0;background:none;font:600 .85rem var(--body);color:var(--accent-ink);text-decoration:underline;text-underline-offset:3px;text-align:left}
+/* gems panel */
+.gk{padding:6px 0}.gk+.gk{border-top:1px solid var(--line)}
+.gk .gh{display:flex;align-items:center;gap:8px;min-height:36px;width:100%;border:0;background:none;padding:0;color:var(--ink);font:inherit;text-align:left}
+.gk .gh b{flex:1;font-family:var(--head);font-weight:600}
+.gk .gn{display:inline-flex;align-items:center;gap:4px;font-weight:700}
+.gk .gbar{height:8px;border-radius:4px;background:var(--soft);overflow:hidden;margin:4px 0 3px}.gk .gbar i{display:block;height:100%;background:var(--accent);border-radius:4px}
+.gk .gnow{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.gk .gnow span{font-size:.78rem;padding:3px 9px;border-radius:999px;background:var(--soft);color:var(--accent-ink);font-weight:600}
+.sz-s .gk .gbar{height:6px}
+.bento>.bt.sz-s>.card{padding:12px}
+.bento>.bt.sz-s .tcard h3{font-size:.92rem;margin-bottom:6px}
+.bento>.bt.photos>.card{padding:0;-webkit-mask-image:none;mask-image:none;overflow:hidden;position:relative}
+/* the Photos panel: a swipeable carousel of the newest photos */
+.pcar{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth}
+.pslide{flex:0 0 100%;height:100%;position:relative;scroll-snap-align:start;scroll-snap-stop:always}
+.pslide>.pimg{display:block;width:100%;height:100%;padding:0;border:0;background:#111}
+.pslide>.pimg img{width:100%;height:100%;object-fit:cover;display:block}
+.ptop{position:absolute;left:0;right:0;top:0;display:flex;align-items:center;gap:8px;padding:10px 12px;background:linear-gradient(rgba(0,0,0,.55),transparent);color:#fff;pointer-events:none}
+.ptop b{font-family:var(--head);font-weight:600;flex:1}
+.ptop button{pointer-events:auto;background:rgba(0,0,0,.35);color:#fff;border:0;border-radius:999px;padding:0 12px;min-height:34px;font:600 .82rem var(--body)}
+.pbot{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:flex-end;gap:6px;padding:28px 10px 10px;background:linear-gradient(transparent,rgba(0,0,0,.6));color:#fff;pointer-events:none}
+.pbot .cap{flex:1;min-width:0;font-size:.82rem;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pbot button{pointer-events:auto;display:inline-flex;align-items:center;gap:4px;min-height:40px;min-width:44px;justify-content:center;padding:0 10px;border-radius:999px;border:0;background:rgba(255,255,255,.2);color:#fff;font:600 .85rem var(--body)}
+.pbot button.on{background:var(--accent);color:var(--accent-on,#1a1a1a)}
+.pbot button svg{width:18px;height:18px}
+.pdots{position:absolute;left:0;right:0;bottom:4px;display:flex;justify-content:center;gap:5px;pointer-events:none}
+.pdots i{width:6px;height:6px;border-radius:3px;background:rgba(255,255,255,.5)}.pdots i.on{background:#fff;width:14px}
+.sz-s .pbot .cap{display:none}.sz-s .ptop b{font-size:.9rem}
+/* edit mode on Today */
+.bento.editing>.bt{position:relative}
+.bento.editing>.bt>.card{pointer-events:none;filter:saturate(.7);opacity:.55}
+.bento.editing>.bt.empty>.card{display:flex;align-items:center;justify-content:center;text-align:center;opacity:.6;border-style:dashed}
+.tedit{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:10px;border:2px dashed var(--accent);border-radius:14px;z-index:2}
+.tedit .tl{font-family:var(--head);font-weight:600;font-size:.95rem;color:var(--ink);background:var(--surface);align-self:flex-start;padding:4px 10px;border-radius:999px;box-shadow:var(--shadow);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tedit .tc{display:flex;flex-direction:column;gap:6px}
+.tedit .seg{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+.tedit .seg button{flex:1;min-height:44px;border:0;background:none;color:var(--ink);font:600 .85rem var(--body)}
+.tedit .seg button[aria-pressed=true]{background:var(--accent);color:var(--accent-on,#1a1a1a)}
+.tedit .seg button+button{border-left:1px solid var(--line)}
+.tedit .seg button:disabled{opacity:.35}
+.ebar{position:sticky;top:6px;z-index:5;display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--accent);border-radius:14px;padding:10px 12px;margin:0 0 12px;box-shadow:var(--shadow-hover)}
+.ebar .grow{flex:1;font-size:.85rem}
+.hidlist{margin-top:14px}
+/* About this app */
+.about .ver{font-family:var(--head);font-weight:700;font-size:1.6rem;line-height:1}
+.about ul{margin:6px 0 0;padding-left:20px}.about li{margin:4px 0;line-height:1.4}
+@supports not (container-type:inline-size){.bento>.bt{height:auto;min-height:170px}.bento>.bt.sz-l{min-height:255px}}
 @media (prefers-reduced-motion:reduce){.bento>.bt,.toast.show{animation:none}.bento>.bt>.card:hover,.bstat:hover{transform:none}}
 #phone,#toast{touch-action:none;user-select:none;-webkit-user-select:none}
 /* v18: no visible scroll bars anywhere (scrolling still works) */
@@ -1085,8 +1148,11 @@ details.sset[open]>summary::after{transform:rotate(-135deg)}
 details.sset>.sbody{padding:0 12px 12px}
 details.sset>.sbody>.card:first-child{margin-top:0}
 /* v18: swipe between photos */
-.pview{position:relative;touch-action:pan-y}
-.pview img{width:100%;border-radius:14px;display:block;user-select:none;-webkit-user-drag:none}
+.pview{position:relative;touch-action:pan-y;height:min(62vh,100vw);background:#0d0f14;border-radius:14px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.pview img{max-width:100%;max-height:100%;object-fit:contain;display:block;user-select:none;-webkit-user-drag:none;will-change:transform}
+.pview img.in-r{animation:pinR .22s ease-out}.pview img.in-l{animation:pinL .22s ease-out}
+@keyframes pinR{from{transform:translateX(40%);opacity:.3}}@keyframes pinL{from{transform:translateX(-40%);opacity:.3}}
+@media (prefers-reduced-motion:reduce){.pview img.in-r,.pview img.in-l{animation:none}}
 .pnav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:22px;border:0;background:rgba(0,0,0,.45);color:#fff;font-size:24px;line-height:1}
 .pnav.l{left:8px}.pnav.r{right:8px}
 .pcount{text-align:center;margin-top:6px}
@@ -1616,6 +1682,7 @@ let store = ls.get("donri.store","tesco");
 let pendingRender = false;
 function render(){
   if(petQuiet) return;
+  if(page !== "today") homeEditing = false;
   document.documentElement.dataset.palette = ls.get("donri.palette", "navy");
   document.documentElement.dataset.theme = ls.get("donri.theme", matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
   $("#themeBtn").innerHTML = document.documentElement.dataset.theme === "dark" ? ICON.sun : ICON.moon;
@@ -1636,7 +1703,11 @@ function render(){
   if(familyTab && LOCKED_PAGES.includes(page) && !grownOK()) page = "today";
   const tabs = [["today","Today",ICON.home],["shop","Shop",ICON.cart],["meals","Meals",ICON.meal],["chores","Chores",ICON.chore],["families","Families",ICON.people],["gifts","Gifts",ICON.gift],["meds","Health",ICON.pill]];
   $("#tabs").innerHTML = tabs.map(([k,l,i]) => `<button data-act="go" data-v="${k}" ${page===k?'aria-current="page"':''}>${i}<span>${l}${familyTab && LOCKED_PAGES.includes(k) && !grownOK() ? ' 🔒' : ''}</span></button>`).join("");
+  const carX = ($("#main .pcar")||{}).scrollLeft || 0; todayAnim = page === "today" && lastPage !== "today"; lastPage = page; const keepImg = {}; $("#main").querySelectorAll(".pcar img").forEach(i => keepImg[i.dataset.pid] = i);
   $("#main").innerHTML = ((page === "today" || page === "chores") ? famBar() : "") + ({today:pToday, shop:pShop, meals:pMeals, chores:pChores, families:pFamilies, gifts:pGifts, meds:pMeds, renew:pRenew}[page])();
+  { const c = $("#main .pcar"); if(c && carX){ c.style.scrollBehavior = "auto"; c.scrollLeft = carX; c.style.scrollBehavior = ""; } }
+  $("#main").querySelectorAll(".pcar img").forEach(n => { const o = keepImg[n.dataset.pid]; if(o) n.replaceWith(o); }); // keep photos already on screen, so liking one doesn't make them flash
+  if(page === "today") fitTiles();
   if(page === "today") loadTodayOutlook();
   updateBell();
   if(sheetRender && !($("#sheet").contains(document.activeElement) && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))) sheetRender();
@@ -1686,6 +1757,18 @@ function binsOn(dateStr){
   const weeks = Math.round(daysBetween(b.anchor, dateStr) / 7);
   return (b.streams||[]).filter(s => { const ev = Number(s.every)||1; return ((weeks - (Number(s.offset)||0)) % ev + ev) % ev === 0; });
 }
+// v22: the Gems panel. For each kid: gems, how far to the next reward or card pack, and (large) what they can get now.
+const PACK_GEMS = 10;
+function gemsTile(ks, size){
+  const goals = [...docs("rewards").map(r => ({t:r.title, c:Number(r.cost)||0})), {t:"Púcas card pack", c:PACK_GEMS}].filter(g => g.c > 0).sort((a,b) => a.c - b.c);
+  return `<div class="card tcard"><h3><span class="grow">Gems</span><button data-act="go" data-v="chores">Chores</button></h3><div class="gks">${ks.map(k => {
+    const g = stars(k.name), next = goals.find(x => x.c > g), now = goals.filter(x => x.c <= g);
+    const line = next ? (size === "s" ? `${next.c - g} to ${next.t === "Púcas card pack" ? "a pack" : esc(next.t.toLowerCase())}` : `${next.c - g} more for ${next.t === "Púcas card pack" ? "a Púcas card pack" : esc(next.t)}`) : "Can get anything on the list!";
+    return `<div class="gk"><button class="gh" data-act="starsOpen" data-v="${esc(k.name)}"><b>${esc(k.name)}</b><span class="gn">${I.gem} ${g}</span></button>
+      ${next ? `<div class="gbar" role="progressbar" aria-valuemin="0" aria-valuemax="${next.c}" aria-valuenow="${g}" aria-label="${esc(k.name)}: ${g} of ${next.c} gems"><i style="width:${Math.min(100, Math.round(g / next.c * 100))}%"></i></div>` : ''}
+      <div class="muted small">${line}</div>
+      ${size === "l" && now.length ? `<div class="gnow">${now.map(x => `<span>✓ ${esc(x.t)}</span>`).join("")}</div>` : ''}</div>`; }).join("")}</div></div>`;
+}
 function binCard(){
   const b = doc("settings","bins");
   if(!b || !b.anchor) return `<div class="card tcard"><h3>${ICON.bin.replace('<svg','<svg width="16" height="16"')}<span class="grow">Bins</span></h3><p class="muted small" style="margin:0 0 8px">Tell Donrí your collection day and it'll remind you the evening before.</p><button class="btn sm" data-act="editBins">Set up bin day</button></div>`;
@@ -1725,7 +1808,7 @@ function pToday(){
   const ks = kids(); const showStars = ks.length && (docs("points").length || docs("chores").some(c => Number(c.points)));
   const sug = docs("suggest").filter(x => x.status === "new").sort((a,b) => String(a.date).localeCompare(b.date));
   const rDue = docs("renewals").filter(r => !r.autoRenews).map(r => ({r, i:renewInfo(r)})).filter(x => x.i.st[0] !== "ok").sort((a,b) => a.i.days - b.i.days);
-  const S = {};
+  const S = {}; const HS = homePrefs().sizes, big = k => HS[k] === "l", wide = k => HS[k] !== "s";
   S.head = `<div class="hello">${greet}, ${familyTab ? "everyone" : esc(myName())}</div>
   <div class="muted" style="margin-bottom:14px">${DOW[now.getDay()]} ${now.getDate()} ${MONTHS[now.getMonth()]}</div>`;
   S.today = `<div class="card tcard"><h3><span class="grow">Today</span><button data-act="cal">Calendar</button></h3>
@@ -1733,27 +1816,29 @@ function pToday(){
   S.school = `${sug.length ? `<div class="card tcard next"><h3><span class="grow">From school emails</span><button data-act="sugReview">Review</button></h3><div style="font-weight:700;margin-bottom:4px">${sug.length} date${sug.length > 1 ? 's' : ''} to check</div>${sug.slice(0,3).map(x => `<div class="muted small" style="padding:2px 0">${nice(x.date)} · ${esc(x.title)}</div>`).join("")}${sug.length > 3 ? `<div class="muted small">and ${sug.length - 3} more</div>` : ''}</div>` : ''}`;
   S.bins = `${binCard()}`;
   S.dinner = `<div class="card tcard"><h3><span class="grow">Dinner tonight</span><button data-act="go" data-v="meals">Meal plan</button></h3>
-    ${meal.dinner ? `<div class="row"><div class="grow" style="font-weight:700">${esc(meal.dinner)}</div>${meal.recipeId && doc("recipes", meal.recipeId) ? `<button class="btn sm" data-act="recipeOpen" data-id="${esc(meal.recipeId)}">${I.book} Recipe</button>` : ''}</div>${missing.length ? `<div class="muted small" style="margin:6px 0">Not on a shopping list yet: ${esc(missing.join(", "))}</div><button class="btn sm" data-act="mealToList" data-v="${t}">Add to ${esc(STORES[store])} list</button>` : (meal.ingredients||[]).length ? '<div class="muted small" style="margin-top:4px">Ingredients are on the list or in the house.</div>' : ''}` : `<div class="muted small">No dinner planned.</div><button class="btn sm" style="margin-top:8px" data-act="go" data-v="meals">Plan it</button>`}</div>`;
+    ${meal.dinner ? `<div class="row"><div class="grow" style="font-weight:700">${esc(meal.dinner)}</div>${meal.recipeId && doc("recipes", meal.recipeId) ? `<button class="btn sm" data-act="recipeOpen" data-id="${esc(meal.recipeId)}">${I.book} Recipe</button>` : ''}</div>${missing.length ? `<div class="muted small" style="margin:6px 0">Not on a shopping list yet: ${esc(missing.join(", "))}</div><button class="btn sm" data-act="mealToList" data-v="${t}">Add to ${esc(STORES[store])} list</button>` : (meal.ingredients||[]).length ? '<div class="muted small" style="margin-top:4px">Ingredients are on the list or in the house.</div>' : ''}` : `<div class="muted small">No dinner planned.</div><button class="btn sm" style="margin-top:8px" data-act="go" data-v="meals">Plan it</button>`}
+    ${big("dinner") ? `<div style="margin-top:10px;border-top:1px solid var(--line);padding-top:6px">${[1,2,3].map(i => { const d = ymd(addDays(now,i)); const m = (doc("meals", d)||{}).dinner; return `<div class="row fitrow" style="min-height:30px"><span class="muted small" style="width:74px">${i === 1 ? 'Tomorrow' : DOW[parse(d).getDay()]}</span><span class="grow small">${m ? esc(m) : '<span class="muted">Not planned</span>'}</span></div>`; }).join("")}</div>` : ''}</div>`;
   S.chores = `<div class="card tcard"><h3><span class="grow">${familyTab ? (famWho ? esc(famWho) + "'s chores" : "Everyone's chores") : "Your chores"}</span><button data-act="go" data-v="chores">All chores</button></h3>
     ${myChores.length ? myChores.map(c => `<div class="item"><button class="check" data-act="choreDone" data-id="${esc(c.id)}" aria-label="Mark done: ${esc(c.title)}"></button><div class="grow"><div class="name">${esc(c.title)}</div><div class="muted small">${esc(whoLine(c))}</div></div></div>`).join("") : '<div class="muted small">Nothing due. Nice one!</div>'}</div>`;
   S.pending = `${pendingCard()}`;
-  S.stars = `${showStars ? `<div class="card tcard"><h3><span class="grow">Gems</span><button data-act="go" data-v="chores">Chores</button></h3><div class="row wrap">${ks.map(k => `<button class="chip" data-act="starsOpen" data-v="${esc(k.name)}">${esc(k.name)} <span>${I.gem} ${stars(k.name)}</span></button>`).join("")}</div></div>` : ''}`;
+  S.stars = showStars ? gemsTile(ks, HS.stars) : "";
   S.health = `${meds.length || medLow.length || hDue.length ? `<div class="card tcard"><h3><span class="grow">Health</span><button data-act="go" data-v="meds">Open</button></h3>
     ${medDue.map(m => `<div class="item"><div class="grow"><b>${esc(m.name)}</b> <span class="muted small">${esc(m.strength||'')}</span><div class="muted small">Today's dose not logged</div></div><button class="btn sm primary" data-act="medLog" data-id="${esc(m.id)}">Log</button></div>`).join("")}
     ${meds.length && !medDue.length ? '<div class="muted small">Today\'s doses are logged.</div>' : ''}
     ${medLow.map(m => `<div class="muted small" style="margin-top:6px"><span class="pill ${medInfo(m).st[0]}">${medInfo(m).st[1]}</span> ${esc(m.forWho===myName() ? m.name : (m.forWho||'Someone') + "'s medicine")}: ${medInfo(m).left} days left</div>`).join("")}
     ${hDue.map(x => `<div class="muted small" style="margin-top:6px"><span class="pill info">${x.d===t?'Today':nice(x.d).slice(4)}</span> ${esc(x.who)}: ${esc(x.what)}</div>`).join("")}</div>` : ''}`;
   S.renewals = `<div class="card tcard"><h3><span class="grow">Renewals</span><button data-act="go" data-v="renew">All renewals</button></h3>
-    ${rDue.length ? rDue.slice(0,3).map(x => `<div class="row" style="min-height:34px"><span aria-hidden="true">${renewKind(x.r).icon}</span><span class="grow">${esc(x.r.title)}</span><span class="pill ${x.i.st[0]}">${esc(x.i.label)}</span></div>`).join("") + (rDue.length > 3 ? `<div class="muted small">and ${rDue.length - 3} more</div>` : '') : '<div class="muted small">Nothing due in the next month.</div>'}</div>`;
+    ${rDue.length ? rDue.slice(0, big("renewals") ? 8 : 3).map(x => `<div class="row fitrow" style="min-height:34px"><span aria-hidden="true">${renewKind(x.r).icon}</span><span class="grow">${esc(x.r.title)}</span><span class="pill ${x.i.st[0]}">${esc(x.i.label)}</span></div>`).join("") + (rDue.length > (big("renewals") ? 8 : 3) ? `<div class="muted small">and ${rDue.length - (big("renewals") ? 8 : 3)} more</div>` : '') : '<div class="muted small">Nothing due in the next month.</div>'}</div>`;
   S.shopping = `<div class="card tcard"><h3><span class="grow">Shopping</span><button data-act="go" data-v="shop">Lists</button></h3>
-    ${shopCounts.length ? `<div class="row wrap">${shopCounts.map(([k,l,n]) => `<button class="chip" data-act="goStore" data-v="${k}">${esc(l)} <span class="n">${n}</span></button>`).join("")}</div>` : '<div class="muted small">All lists are empty.</div>'}</div>`;
+    ${shopCounts.length ? `<div class="row wrap">${shopCounts.map(([k,l,n]) => `<button class="chip" data-act="goStore" data-v="${k}">${esc(l)} <span class="n">${n}</span></button>`).join("")}</div>` : '<div class="muted small">All lists are empty.</div>'}
+    ${wide("shopping") && shopCounts.length ? `<div style="margin-top:8px">${docs("shop").filter(x => !x.done).sort((a,b) => (a.at||0)-(b.at||0)).map(x => `<div class="row fitrow small" style="min-height:28px"><span class="grow">${x.qty && x.qty !== "1" ? `<b>${esc(x.qty)} ×</b> ` : ''}${esc(x.name)}</span><span class="muted">${esc(STORES[x.store]||'')}</span></div>`).join("")}</div>` : ''}</div>`;
   S.comingup = `${bdays.length ? `<div class="card tcard"><h3><span class="grow">Coming up</span><button data-act="go" data-v="gifts">Gifts</button></h3>${bdays.map(x => `<div class="row" style="min-height:32px"><span class="grow"><b>${esc(x.p.name)}</b>'s birthday</span><span class="pill ${x.n<=7?'warn':'info'}">${x.n===0?'today':x.n===1?'tomorrow':'in '+x.n+' days'}</span></div>`).join("")}</div>` : ''}`;
   S.tomorrow = `<div class="card tcard"><h3><span class="grow">Tomorrow</span></h3>
     ${tEvs.length ? tEvs.map(e => `<div class="small" style="padding:3px 0"><b>${esc(e.start||'All day')}</b> ${esc(e.title)}</div>`).join("") : '<div class="muted small">No events yet.</div>'}
     ${tMeal ? `<div class="muted small" style="margin-top:4px">Dinner: ${esc(tMeal)}</div>` : ''}
     ${binsOn(tmr).length ? `<div class="muted small" style="margin-top:4px">Bin day: ${esc(binsOn(tmr).map(s=>s.name).join(", "))}</div>` : ''}</div>`;
   S.families = CIRCLE_READY ? famTodayCard() : "";
-  S.photos = CIRCLE_READY ? photosTodayCard() : "";
+  S.photos = photosTodayCard();
   if(!grownOK()){ S.health = ""; S.renewals = ""; } // family tablet: private health and household costs stay behind the PIN
   const {order, hidden} = homePrefs();
   // Bento look: a stat strip, then the sections as tiles (wide ones span the row; half tiles pair up)
@@ -1762,10 +1847,20 @@ function pToday(){
     <button class="bstat" data-act="cal">${ICON.cal}<b>${evs.length}</b><span>${evs.length === 1 ? "event" : "events"} today</span></button>
     <button class="bstat" data-act="go" data-v="chores">${ICON.chore}<b>${myChores.length}</b><span>${myChores.length === 1 ? "job" : "jobs"} due</span></button>
     <button class="bstat" data-act="go" data-v="shop">${ICON.cart}<b>${shopN}</b><span>on the lists</span></button></div>`;
-  const HALF = new Set(["bins","dinner","stars","shopping","comingup","tomorrow"]);
-  const tiles = order.filter(k => !hidden.includes(k) && (S[k] || "").trim());
-  const halves = tiles.filter(k => HALF.has(k)); const lone = halves.length % 2 ? halves[halves.length - 1] : null;
-  return S.head + stats + `<div class="bento">${tiles.map(k => `<div class="bt ${HALF.has(k) && k !== lone ? '' : 'w'}" data-tile="${k}">${S[k]}</div>`).join("\n")}</div>` + `<div class="homeedit"><button class="btn sm" data-act="homeOpen">Change my home screen</button></div>`;
+  const {sizes} = homePrefs(); const label = k => (HOME_SECTIONS.find(s => s[0] === k)||[])[1];
+  const tiles = order.filter(k => !hidden.includes(k) && (homeEditing || (S[k] || "").trim()));
+  // small panels pair up side by side; an odd one out at the end shows as medium so there's no gap
+  const smalls = tiles.filter(k => sizes[k] === "s"); const lone = smalls.length % 2 ? smalls[smalls.length - 1] : null;
+  const sz = k => sizes[k] === "s" && k === lone ? "m" : sizes[k];
+  const ed = (k, i) => `<div class="tedit"><span class="tl">${esc(label(k))}${k === lone ? " · fills the row" : ""}</span><div class="tc">
+      <div class="seg" role="group" aria-label="Size of ${esc(label(k))}">${["s","m","l"].map(x => `<button data-act="homeSize" data-v="${k}:${x}" aria-pressed="${sizes[k] === x}" aria-label="${SIZE_NAMES[x]}">${sizes[k] === "s" ? x.toUpperCase() : SIZE_NAMES[x]}</button>`).join("")}</div>
+      <div class="seg"><button data-act="homeMove" data-v="${k}:-1" ${i === 0 ? 'disabled' : ''} aria-label="Move ${esc(label(k))} earlier">↑</button><button data-act="homeMove" data-v="${k}:1" ${i === order.length - 1 ? 'disabled' : ''} aria-label="Move ${esc(label(k))} later">↓</button><button data-act="homeHide" data-v="${k}" aria-label="Hide ${esc(label(k))}">Hide</button></div></div></div>`;
+  const body = k => (S[k] || "").trim() || `<div class="card tcard"><div class="muted small">${esc(label(k))}<br>Shows here when there's something to show.</div></div>`;
+  const hid = order.filter(k => hidden.includes(k));
+  const bar = homeEditing ? `<div class="ebar"><span class="grow"><b>Editing your home screen.</b> Pick a size for each panel, move it, or hide it.</span><button class="btn sm primary" data-act="homeDone">Done</button></div>` : "";
+  return (homeEditing ? bar : S.head + stats) + `<div class="bento ${homeEditing ? 'editing' : ''} ${todayAnim ? 'anim' : ''}">${tiles.map(k => `<div class="bt sz-${sz(k)} ${sz(k) === 's' ? '' : 'w'} ${k === 'photos' ? 'photos' : ''} ${(S[k] || "").trim() ? '' : 'empty'}" data-tile="${k}">${homeEditing ? body(k) + ed(k, order.indexOf(k)) : S[k]}</div>`).join("\n")}</div>`
+    + (homeEditing ? `${hid.length ? `<div class="card hidlist"><b class="small">Hidden panels</b><div class="row wrap" style="margin-top:8px">${hid.map(k => `<button class="chip" data-act="homeHide" data-v="${k}">+ ${esc(label(k))}</button>`).join("")}</div></div>` : ''}<div class="homeedit" style="gap:8px;flex-wrap:wrap"><button class="btn sm" data-act="homeReset">Back to the usual</button><button class="btn sm primary" data-act="homeDone">Done</button></div>`
+       : `<div class="homeedit"><button class="btn sm" data-act="homeOpen">Change my home screen</button></div>`);
 }
 function binsForm(){
   const b = doc("settings","bins") || {streams:[{name:"General waste", colour:"black", every:2, offset:0},{name:"Recycling", colour:"green", every:2, offset:1},{name:"Compost", colour:"brown", every:1, offset:0}]};
@@ -4295,10 +4390,56 @@ function itemForm(id){
     <div class="row wrap" style="margin-top:12px"><button class="btn primary" type="submit">Save</button></div></form>`);
 }
 
+// ---------- About this app (v22). Update RELEASE with each release: version, date and a few plain lines of what's new ----------
+const RELEASE = {
+  version: "v22", date: "2026-11-20",
+  news: [
+    "About this app: see the version and what's new, here in Settings.",
+    "Home screen panels come in three sizes: small, medium and large.",
+    "New Photos panel on Today: swipe through the newest photos, like or love them.",
+    "Fixed: swiping between photos no longer jumps in size or goes blank."
+  ],
+  earlier: [
+    {version:"v21", date:"2026-11-20", news:["The Púcas cards game, with card pack OKs in Donrí.", "Púcas Cara: den naps, the tin whistle and spring water.", "Gems show as emeralds."]},
+    {version:"v20", date:"2026-11-20", news:["The request tracker in Ideas and requests."]},
+    {version:"v19", date:"2026-11-20", news:["Change my Púca, and the notifications list behind the bell."]}
+  ]
+};
+function aboutBlock(){
+  const d = x => parse(x).toLocaleDateString("en-IE", {day:"numeric", month:"long", year:"numeric"});
+  return `<div class="card about"><div class="row"><div class="grow"><div class="ver">Donrí ${esc(RELEASE.version)}</div><div class="muted small" style="margin-top:4px">Last updated ${esc(d(RELEASE.date))}</div></div><button class="btn sm" data-act="aboutCheck">Check for updates</button></div>
+    <b class="small" style="display:block;margin-top:12px">What's new</b><ul class="small">${RELEASE.news.map(n => `<li>${esc(n)}</li>`).join("")}</ul>
+    ${RELEASE.earlier.length ? `<details style="margin-top:10px"><summary class="small muted">Earlier versions</summary>${RELEASE.earlier.map(r => `<div class="small" style="margin-top:8px"><b>${esc(r.version)}</b> <span class="muted">· ${esc(d(r.date))}</span><ul>${r.news.map(n => `<li>${esc(n)}</li>`).join("")}</ul></div>`).join("")}</details>` : ''}
+    <p class="muted small" style="margin:10px 0 0">Made by our family, for our family.</p></div>`;
+}
+
 // ---------- home screen layout (each person's own) ----------
-const HOME_SECTIONS = [["today","Today's events"],["families","Families & friends"],["photos","New photos"],["school","From school emails"],["pending","Waiting for your OK"],["bins","Bins"],["dinner","Dinner tonight"],["chores","Your chores"],["stars","Gems"],["health","Health"],["renewals","Renewals"],["shopping","Shopping"],["comingup","Birthdays coming up"],["tomorrow","Tomorrow"]];
-function homePrefs(){ const p = doc("settings", "home-" + myName()) || {}; const order = (p.order||[]).filter(k => HOME_SECTIONS.some(s => s[0] === k)); HOME_SECTIONS.forEach(s => { if(!order.includes(s[0])) order.push(s[0]); }); return {order, hidden:p.hidden||[]}; }
-function homeSave(order, hidden){ put("settings", "home-" + myName(), {order, hidden}); }
+const HOME_SECTIONS = [["today","Today's events"],["families","Families & friends"],["photos","Photos"],["school","From school emails"],["pending","Waiting for your OK"],["bins","Bins"],["dinner","Dinner tonight"],["chores","Your chores"],["stars","Gems"],["health","Health"],["renewals","Renewals"],["shopping","Shopping"],["comingup","Birthdays coming up"],["tomorrow","Tomorrow"]];
+// v22: each panel is small (square), medium (full width, same height) or large (1.5x as tall). Large for photos and lists.
+const HOME_SIZES = {today:"l", families:"m", photos:"l", school:"m", pending:"m", bins:"s", dinner:"m", chores:"l", stars:"m", health:"l", renewals:"m", shopping:"s", comingup:"s", tomorrow:"s"};
+const SIZE_NAMES = {s:"Small", m:"Medium", l:"Large"};
+function homePrefs(){ const p = doc("settings", "home-" + myName()) || {}; const order = (p.order||[]).filter(k => HOME_SECTIONS.some(s => s[0] === k)); HOME_SECTIONS.forEach(s => { if(!order.includes(s[0])) order.push(s[0]); }); return {order, hidden:p.hidden||[], sizes:{...HOME_SIZES, ...(p.sizes||{})}}; }
+function homeSave(order, hidden, sizes){ const p = doc("settings", "home-" + myName()) || {}; put("settings", "home-" + myName(), {order, hidden, sizes:sizes || p.sizes || {}}); }
+let homeEditing = false, todayAnim = false, lastPage = "";
+// v22: each panel shows what fits its size. Rows that don't fit are tucked away behind "+N more", which opens the panel's page.
+function fitTiles(){
+  document.querySelectorAll(".bento:not(.editing)>.bt:not(.photos)>.card").forEach(card => {
+    card.querySelectorAll(".fithide").forEach(x => x.classList.remove("fithide")); const old = card.querySelector(".fitmore"); if(old) old.remove();
+    if(card.scrollHeight <= card.clientHeight + 1) return;
+    const rows = [...card.querySelectorAll(".item,.ev,.gk,.fitrow,.gnow,.card>.row,.card>.muted.small,.card>div.small,.card>.btn")].filter(x => !x.closest("h3"));
+    const link = card.querySelector("h3 button[data-act]");
+    let n = 0; const over = () => card.scrollHeight > card.clientHeight + 1;
+    const hide = () => { const r = rows.pop(); r.classList.add("fithide"); if(r.matches(".item,.ev,.gk,.fitrow")) n++; };
+    while(rows.length && over()) hide();
+    if(!n) return;
+    const more = document.createElement("button"); more.className = "fitmore";
+    if(link){ more.dataset.act = link.dataset.act; if(link.dataset.v) more.dataset.v = link.dataset.v; }
+    card.appendChild(more); more.textContent = `+${n} more`;
+    while(rows.length && over()){ hide(); more.textContent = `+${n} more`; }
+  });
+}
+addEventListener("resize", () => { if(page === "today") fitTiles(); });
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if(page === "today") fitTiles(); });
 function homeSheet(){
   openSheet("Your home screen", () => { const {order, hidden} = homePrefs(); const label = k => (HOME_SECTIONS.find(s => s[0] === k)||[])[1];
     return `<p class="muted small" style="margin-top:0">Move sections up or down, or switch them off. This only changes your own home screen.</p>
@@ -4449,9 +4590,14 @@ document.addEventListener("click", e => {
     case "storeNew": storeForm(); break;
     case "storeEdit": storeForm(v); break;
     case "storeDel": { if(docs("shop").some(i => i.store === id)){ toast("Clear that shop's list first"); break; } put("settings","stores",{list:customStores().filter(s => s.id !== id)}); if(store === id){ store = "tesco"; ls.set("donri.store", store); } closeSheet(); toast("Shop removed"); break; }
-    case "homeOpen": homeSheet(); break;
+    case "homeOpen": closeSheet(); homeEditing = true; if(page !== "today"){ page = "today"; ls.set("donri.page", "today"); history.replaceState(null, "", "#today"); } render(); window.scrollTo(0,0); break;
+    case "aboutCheck": aboutCheck(); break;
+    case "homeDone": homeEditing = false; render(); toast("Home screen saved"); break;
+    case "homeList": homeSheet(); break;
+    case "homeSize": { const [k, sz] = v.split(":"); const {order, hidden, sizes} = homePrefs(); const mine = {...((doc("settings", "home-" + myName())||{}).sizes||{})}; mine[k] = sz; homeSave(order, hidden, mine); break; }
+    case "homeHide": { const {order, hidden} = homePrefs(); homeSave(order, hidden.includes(v) ? hidden.filter(x => x !== v) : [...hidden, v]); break; }
     case "homeMove": { const [k, d] = v.split(":"); const {order, hidden} = homePrefs(); const i = order.indexOf(k), j = i + Number(d); if(j < 0 || j >= order.length) break; [order[i], order[j]] = [order[j], order[i]]; homeSave(order, hidden); break; }
-    case "homeReset": homeSave(HOME_SECTIONS.map(s => s[0]), []); toast("Home screen back to the usual"); break;
+    case "homeReset": homeSave(HOME_SECTIONS.map(s => s[0]), [], {}); toast("Home screen back to the usual"); break;
   }
 });
 document.addEventListener("change", e => {
@@ -4574,6 +4720,7 @@ function delPhotoFile(p){ if(p && p.file && cfg.d) graph(`/drives/${cfg.d}/items
 const shareScope = x => !x.sharedWith || x.sharedWith === "none" ? "Only our family" : x.sharedWith === "all" ? "All families" : "Shared with " + x.sharedWith.map(fname).join(", ");
 const canSee = x => x.fam === US || x.sharedWith === "all" || (Array.isArray(x.sharedWith) && x.sharedWith.includes(US));
 const photosAll = () => docs("c_photos").filter(canSee).sort((a,b) => (b.at||0) - (a.at||0));
+async function aboutCheck(){ toast("Checking for updates…"); try{ const r = navigator.serviceWorker && await navigator.serviceWorker.getRegistration(); if(r) await r.update(); }catch(e){} setTimeout(() => location.reload(), 700); }
 const albumsAll = () => docs("c_albums").filter(canSee).sort((a,b) => (b.at||0) - (a.at||0));
 const reactKey = () => US + ":" + myName();
 const reactCount = (p, k) => Object.values(p.reacts||{}).filter(x => x === k).length;
@@ -4626,7 +4773,7 @@ function photoSheet(id){
     const inAlbums = (p.albums||[]).map(x => doc("c_albums", x)).filter(Boolean);
     const seq = (photoAlbum ? photosAll().filter(x => (x.albums||[]).includes(photoAlbum)) : photosAll()).map(x => x.id); const at = seq.indexOf(id);
     const nav = seq.length > 1 && at >= 0;
-    return `<div class="pview" data-pswipe="${esc(id)}"><img ${phSrc(p,"large")} alt="${esc(p.caption||'Photo')}" draggable="false" style="min-height:200px;background:var(--line)">${nav && at > 0 ? `<button class="pnav l" data-act="photoOpen" data-id="${esc(seq[at-1])}" aria-label="Previous photo">‹</button>` : ''}${nav && at < seq.length - 1 ? `<button class="pnav r" data-act="photoOpen" data-id="${esc(seq[at+1])}" aria-label="Next photo">›</button>` : ''}</div>
+    return `<div class="pview" data-pswipe="${esc(id)}"><img class="${photoDir ? 'in-' + photoDir : ''}" ${phSrc(p,"large")} alt="${esc(p.caption||'Photo')}" draggable="false">${nav && at > 0 ? `<button class="pnav l" data-act="photoOpen" data-id="${esc(seq[at-1])}" aria-label="Previous photo">‹</button>` : ''}${nav && at < seq.length - 1 ? `<button class="pnav r" data-act="photoOpen" data-id="${esc(seq[at+1])}" aria-label="Next photo">›</button>` : ''}</div>
       ${nav ? `<div class="muted small pcount">${at + 1} of ${seq.length} · swipe for the next one</div>` : ''}
       <div class="card" style="margin-top:10px">${p.caption ? `<b>${esc(p.caption)}</b>` : ''}<div class="muted small">${own ? 'Shared by ' + esc(p.by||'us') + ' · ' + esc(shareScope(p)) : 'From ' + esc(fname(p.fam))} · ${new Date(p.at).toLocaleDateString("en-IE",{day:"numeric", month:"short"})}</div>
         <div class="row" style="gap:8px;margin-top:10px"><button class="btn ${mine==='like'?'primary':''}" data-act="photoReact" data-id="${esc(id)}" data-v="like" aria-pressed="${mine==='like'}">${I.thumb} ${reactCount(p,'like')}</button><button class="btn ${mine==='love'?'primary':''}" data-act="photoReact" data-id="${esc(id)}" data-v="love" aria-pressed="${mine==='love'}">${mine==='love' ? I.heartf : I.heart} ${reactCount(p,'love')}</button></div>
@@ -4637,11 +4784,20 @@ function photoSheet(id){
   });
 }
 // v18: swipe left or right on an open photo to go to the next or previous one.
-let pSw = null;
-document.addEventListener("touchstart", e => { const v = e.target.closest && e.target.closest("[data-pswipe]"); if(!v || e.target.closest("button")) return; pSw = {x:e.touches[0].clientX, y:e.touches[0].clientY}; }, {passive:true});
-document.addEventListener("touchend", e => { if(!pSw) return; const t = e.changedTouches[0], dx = t.clientX - pSw.x, dy = t.clientY - pSw.y; pSw = null;
-  if(Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.3) return;
-  const b = document.querySelector(dx < 0 ? ".pview .pnav.r" : ".pview .pnav.l"); if(b) b.click(); }, {passive:true});
+// v22 fix: the photo box keeps one size, the photo follows your finger, and the next one is loaded before it's shown (no resizing, no blank).
+let pSw = null, photoDir = "";
+function photoGo(id, dir){
+  const p = doc("c_photos", id); if(!p) return;
+  const show = () => { photoDir = dir || ""; photoSheet(id); photoDir = ""; };
+  const load = p.photo ? Promise.resolve(p.photo) : p.file ? phUrl(p.file, "large") : Promise.resolve("");
+  load.then(u => { if(!u) return; const im = new Image(); im.src = u; return im.decode ? im.decode() : null; }).catch(() => {}).then(show);
+}
+document.addEventListener("touchstart", e => { const v = e.target.closest && e.target.closest("[data-pswipe]"); if(!v || e.target.closest("button")) return; pSw = {x:e.touches[0].clientX, y:e.touches[0].clientY, img:v.querySelector("img")}; }, {passive:true});
+document.addEventListener("touchmove", e => { if(!pSw || !pSw.img) return; const dx = e.touches[0].clientX - pSw.x, dy = e.touches[0].clientY - pSw.y; if(Math.abs(dx) > Math.abs(dy)) pSw.img.style.transform = `translateX(${dx * 0.6}px)`; }, {passive:true});
+document.addEventListener("touchend", e => { if(!pSw) return; const t = e.changedTouches[0], dx = t.clientX - pSw.x, dy = t.clientY - pSw.y, img = pSw.img; pSw = null;
+  const back = () => { if(img){ img.style.transition = "transform .18s ease"; img.style.transform = ""; setTimeout(() => { img.style.transition = ""; }, 200); } };
+  if(Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.3) return back();
+  const b = document.querySelector(dx < 0 ? ".pview .pnav.r" : ".pview .pnav.l"); if(b) photoGo(b.dataset.id, dx < 0 ? "r" : "l"); else back(); }, {passive:true});
 function albumForm(id){
   const a = doc("c_albums", id) || {sharedWith:"all"};
   openSheet(id ? "Edit collection" : "New collection", () => `<form class="card" data-form="saveAlbum" data-id="${esc(id||'')}">
@@ -4651,10 +4807,21 @@ function albumForm(id){
     <div class="row wrap" style="margin-top:12px"><button class="btn primary" type="submit">Save</button></div></form>`);
 }
 function newAlbum(name, sharedWith){ const id = uid(); put("c_albums", id, {fam:US, by:myName(), name:name.trim(), sharedWith:CIRCLE_READY ? (sharedWith || "all") : "none", at:Date.now()}); return id; }
+// v22: the Photos panel. A carousel of the newest photos with like and love. Tap a photo to open it; tap anywhere else on the panel for Photos.
+const PCAR_MAX = 10;
 function photosTodayCard(){
-  const l = photosAll().filter(p => p.fam !== US).slice(0,4); if(!l.length) return "";
-  return `<div class="card tcard"><h3><span class="grow">New photos</span><button data-act="famGo" data-v="photos">All photos</button></h3><div class="pgrid" style="grid-template-columns:repeat(4,minmax(0,1fr))">${l.map(p => `<button class="ptile" data-act="photoOpen" data-id="${esc(p.id)}" aria-label="Photo from ${esc(fname(p.fam))}"><img ${phSrc(p,"medium")} alt=""></button>`).join("")}</div></div>`;
+  const l = photosAll().slice(0, PCAR_MAX); if(!l.length) return "";
+  const k = reactKey();
+  return `<div class="card tcard pcard" data-act="famGo" data-v="photos" aria-label="Photos">
+    <div class="pcar" data-pcar>${l.map(p => { const mine = (p.reacts||{})[k];
+      return `<div class="pslide"><button class="pimg" data-act="photoOpen" data-id="${esc(p.id)}" aria-label="Open photo: ${esc(p.caption || 'from ' + (p.fam === US ? (p.by||'us') : fname(p.fam)))}"><img ${phSrc(p,"medium")} data-pid="${esc(p.id)}" alt="" loading="lazy" draggable="false"></button>
+        <div class="pbot"><span class="cap">${esc(p.caption || '')}${p.fam !== US ? `<br><span style="opacity:.8">${esc(fname(p.fam))}</span>` : ''}</span>
+          <button class="${mine === 'like' ? 'on' : ''}" data-act="photoReact" data-id="${esc(p.id)}" data-v="like" aria-pressed="${mine === 'like'}" aria-label="Like">${I.thumb}${reactCount(p,'like') || ''}</button>
+          <button class="${mine === 'love' ? 'on' : ''}" data-act="photoReact" data-id="${esc(p.id)}" data-v="love" aria-pressed="${mine === 'love'}" aria-label="Love">${mine === 'love' ? I.heartf : I.heart}${reactCount(p,'love') || ''}</button></div></div>`; }).join("")}</div>
+    <div class="ptop"><b>Photos</b><button data-act="famGo" data-v="photos">All photos</button></div>
+    ${l.length > 1 ? `<div class="pdots" aria-hidden="true">${l.map((_, i) => `<i class="${i === 0 ? 'on' : ''}"></i>`).join("")}</div>` : ''}</div>`;
 }
+document.addEventListener("scroll", e => { const c = e.target; if(!c.matches || !c.matches("[data-pcar]")) return; const i = Math.round(c.scrollLeft / Math.max(1, c.clientWidth)); c.parentNode.querySelectorAll(".pdots i").forEach((d, j) => d.classList.toggle("on", j === i)); }, true);
 
 // ---------- the + button: quick add ----------
 function quickSheet(){
@@ -4681,7 +4848,7 @@ document.addEventListener("click", e => {
     case "famGo": closeSheet(); page = "families"; famView = v; photoAlbum = ""; ls.set("donri.page", "families"); history.replaceState(null, "", "#families"); render(); window.scrollTo(0,0); break;
     case "photoAdd": if(!CIRCLE_READY && !photoSet().folder){ toast("Getting the Photos folder ready…", 3000); ensurePhotoFolder().then(() => { if(photoSet().folder){ photoFiles = []; photoAddForm(v || photoAlbum); } else toast(cfg.f ? "Couldn't make the Photos folder. Check your connection and try again." : "Photos will be ready once the person who set up Donrí opens it on one of their devices.", 6000); }); break; } photoFiles = []; photoAddForm(v || photoAlbum); break;
     case "photoDraftDel": photoDraft.splice(Number(v), 1); photoFiles.splice(Number(v), 1); drawDraft(); break;
-    case "photoOpen": photoSheet(id); break;
+    case "photoOpen": if(b.classList.contains("pnav")) photoGo(id, b.classList.contains("r") ? "r" : "l"); else photoSheet(id); break;
     case "photoReact": { const p = doc("c_photos", id); if(!p) break; const r = {...(p.reacts||{})}; const k = reactKey(); const was = r[k]; if(was === v) delete r[k]; else r[k] = v;
       patch("c_photos", id, {reacts:r}); if(was !== v && p.fam !== US) notifyFamilies([p.fam], "Photos", `${myName()} from ${famName()} ${v === "love" ? "loved" : "liked"} your photo`); break; }
     case "photoDelAsk": openSheet("Remove this photo?", () => `<div class="card"><p style="margin-top:0">It's removed for every family, and from any collections it's in.</p><div class="row wrap"><button class="btn danger" data-act="photoDel" data-id="${esc(id)}">Yes, remove it</button><button class="btn" data-act="photoOpen" data-id="${esc(id)}">Keep it</button></div></div>`); break;
@@ -5009,7 +5176,10 @@ function growthForm(id){
 let sheetRender = null;
 function openSheet(title, bodyFn, theme){
   $("#sheet").classList.toggle("pz", theme === "pz");
-  sheetRender = () => { $("#sheet").innerHTML = `<div class="head"><h3 id="sheetTitle">${esc(title)}</h3><button class="iconbtn" data-act="close" aria-label="Close">${ICON.x}</button></div>${bodyFn()}`; rtagDraw(); };
+  let last = null;
+  sheetRender = () => { const html = `<div class="head"><h3 id="sheetTitle">${esc(title)}</h3><button class="iconbtn" data-act="close" aria-label="Close">${ICON.x}</button></div>${bodyFn()}`;
+    if(html === last && $("#sheet").innerHTML) return; // v22: nothing changed, so leave the sheet alone (no flashing, scroll kept)
+    const top = $("#sheet").scrollTop, same = last !== null; last = html; $("#sheet").innerHTML = html; if(same) $("#sheet").scrollTop = top; rtagDraw(); };
   sheetRender(); $("#scrim").classList.add("open");
 }
 function closeSheet(){ $("#scrim").classList.remove("open"); $("#sheet").classList.remove("pz"); sheetRender = null; $("#sheet").innerHTML = ""; }
@@ -5376,7 +5546,7 @@ function settingsSheet(){
     <h2>Colours</h2>
     ${paletteBlock()}
     <h2>Your home screen</h2>
-    <div class="card row"><span class="grow small">Choose which sections show on your Today screen, and in what order.</span><button class="btn sm" data-act="homeOpen">Change</button></div>
+    <div class="card row"><span class="grow small">Choose which panels show on your Today screen, their size and their order.</span><button class="btn sm" data-act="homeOpen">Change</button></div>
     <h2>Shops</h2>
     <div class="card"><div class="row wrap">${Object.entries(STORES).map(([k,l]) => k.startsWith("s-") ? `<button class="chip" data-act="storeEdit" data-v="${esc(k)}">${esc(l)} ✎</button>` : `<span class="chip" style="opacity:.7">${esc(l)}</span>`).join("")}<button class="chip" data-act="storeNew">+ Add a shop</button></div></div>
     <h2>Other families</h2>
@@ -5397,7 +5567,9 @@ function settingsSheet(){
     <h2>This phone</h2>
     <p class="muted small" style="margin:-4px 0 8px">Family tablet: for a tablet everyone uses. It opens on everyone's chores, with a name button for each person. Health, Gifts, Renewals, Settings, the activity list and your own Outlook events need the grown-up PIN, then lock again after 10 minutes.</p>
     <div class="card small">Signed in as <b>${esc(me ? me.name + (me.email ? " (" + me.email + ")" : "") : "?")}</b>, using Donrí as <b>${esc(myName())}</b>.<br>Sync: ${syncState === "off" ? "not synced, check your connection" : "up to date"}.
-      <div class="row wrap" style="margin-top:10px"><button class="btn sm" data-act="syncNow">Sync now</button><button class="btn sm" data-act="kitchenOn">Use as kitchen display</button>${familyTab ? '<button class="btn sm" data-act="familyTabOff">Stop using as family tablet</button>' : '<button class="btn sm" data-act="familyTabOn">Use as family tablet</button>'}<button class="btn sm" data-act="switchWho">I'm not ${esc(myName())}</button><button class="btn sm danger" data-act="signout">Sign out</button></div></div>`;
+      <div class="row wrap" style="margin-top:10px"><button class="btn sm" data-act="syncNow">Sync now</button><button class="btn sm" data-act="kitchenOn">Use as kitchen display</button>${familyTab ? '<button class="btn sm" data-act="familyTabOff">Stop using as family tablet</button>' : '<button class="btn sm" data-act="familyTabOn">Use as family tablet</button>'}<button class="btn sm" data-act="switchWho">I'm not ${esc(myName())}</button><button class="btn sm danger" data-act="signout">Sign out</button></div></div>
+    <h2>About this app</h2>
+    ${aboutBlock()}`;
   })()));
 }
 // ----- The bell: your Donrí notifications. Tap one to go straight there; swipe it away or tap × to clear; Clear all at the top -----
