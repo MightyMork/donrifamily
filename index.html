@@ -41,6 +41,14 @@ header.top{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1
 .stripe i{flex:1}
 .iconbtn{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--card);display:inline-flex;align-items:center;justify-content:center;position:relative;flex:none}
 .iconbtn svg{width:22px;height:22px}
+.notes{display:flex;flex-direction:column;gap:8px}
+.note{display:flex;align-items:stretch;background:var(--card);border:1px solid var(--line);border-radius:14px;touch-action:pan-y;user-select:none}
+.note-go{flex:1;text-align:left;background:none;border:0;padding:12px 4px 12px 14px;color:inherit;font:inherit;display:flex;flex-direction:column;gap:2px;cursor:pointer}
+.note-go span{font-size:15px}
+.note-x{flex:none;width:44px;background:none;border:0;color:var(--muted,#888);font-size:22px;line-height:1;cursor:pointer;border-radius:0 14px 14px 0}
+.note-x:hover{color:inherit}
+.bt.flash>.card{animation:okflash 1.6s ease}
+@keyframes okflash{0%,60%{box-shadow:0 0 0 4px var(--accent,#E3B23C)}100%{box-shadow:none}}
 .badge{position:absolute;top:4px;right:4px;min-width:18px;height:18px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;padding:0 4px}
 [data-theme="dark"] .badge{color:#1a0f0e}
 .sync{width:10px;height:10px;border-radius:5px;background:var(--green);flex:none}
@@ -1546,6 +1554,7 @@ const NOTIFY_KINDS = {shop:"Shopping (added and picked up)", calendar:"New calen
 const NOTIFY_DEFAULT = {shop:true, calendar:true, meals:true, chores:false, assigned:true, stars:true, renewals:true, meds:true, families:true, sits:true};
 const wants = (m,k) => (m.notify && k in m.notify) ? !!m.notify[k] : NOTIFY_DEFAULT[k];
 async function ntfy(topic, title, message, tags, link){
+  const m = members().find(x => x.topic === topic); if(m) put("inbox", uid(), {to:m.name, title, message, link:link||"today", at:Date.now()}); // Donrí's own notifications list (bell)
   try{ await fetch("https://ntfy.sh/", {method:"POST", body:JSON.stringify({topic, title, message, tags:tags||[], click:REDIRECT + "#" + (link || "today")})}); }catch(e){}
 }
 function notify(kind, title, message, opts = {}){
@@ -1564,6 +1573,7 @@ function goLink(link, force){
   if(page === "families" && extra && FAM_VIEWS.some(x => x[0] === extra)) famView = extra;
   history.replaceState(null, "", "#" + page); window.scrollTo(0,0); render();
   if(extra === "cal") calSheet(); else if(extra === "school") schoolSheet();
+  else if(extra === "pending") setTimeout(() => { const t = document.querySelector('[data-tile="pending"]'); if(t){ t.scrollIntoView({behavior:"smooth", block:"center"}); t.classList.remove("flash"); void t.offsetWidth; t.classList.add("flash"); } else toast("Nothing waiting for your OK now"); }, 80);
 }
 // Group bursts (e.g. ticking five items) into one notification
 const batches = {};
@@ -2314,9 +2324,9 @@ function kidModeSettings(){
     <p class="muted small" style="margin-bottom:0">For a kid's own tablet: sign in on it, then tap their name above. It stays in kid mode, even after it's switched off, until the PIN is entered.</p></div>`;
 }
 function pendingCard(){
-  const pend = docs("chores").filter(c => c.pendingBy && choreDue(c));
-  if(!pend.length) return "";
-  return `<div class="card tcard next"><h3><span class="grow">Waiting for your OK</span></h3>${pend.map(c => `<div class="item"><div class="grow">${pendTeam(c).length > 1 ? `<b>${esc(pendTeam(c).join(" and "))}</b> say they did it together: ${esc(c.title)}` : `<b>${esc(c.pendingBy)}</b> says they did: ${esc(c.title)}`}${Number(c.points) ? ` <span class="pill warn">${I.star} ${Number(c.points)}${pendTeam(c).length > 1 ? ' each' : ''}</span>` : ''}</div><button class="btn sm primary" data-act="kidApprove" data-id="${esc(c.id)}">Yes</button><button class="btn sm" data-act="kidReject" data-id="${esc(c.id)}">Not yet</button></div>`).join("")}</div>`;
+  const pend = docs("chores").filter(c => c.pendingBy && choreDue(c)); const swaps = pucaSwapLines();
+  if(!pend.length && !swaps) return "";
+  return `<div class="card tcard next"><h3><span class="grow">Waiting for your OK</span></h3>${swaps}${pend.map(c => `<div class="item"><div class="grow">${pendTeam(c).length > 1 ? `<b>${esc(pendTeam(c).join(" and "))}</b> say they did it together: ${esc(c.title)}` : `<b>${esc(c.pendingBy)}</b> says they did: ${esc(c.title)}`}${Number(c.points) ? ` <span class="pill warn">${I.star} ${Number(c.points)}${pendTeam(c).length > 1 ? ' each' : ''}</span>` : ''}</div><button class="btn sm primary" data-act="kidApprove" data-id="${esc(c.id)}">Yes</button><button class="btn sm" data-act="kidReject" data-id="${esc(c.id)}">Not yet</button></div>`).join("")}</div>`;
 }
 
 // ---------- GAMES: Ár bPeata (our pet) ----------
@@ -3503,6 +3513,7 @@ function pPuca(kid, ctx){
   const nextGrow = PUCA_GROW.find(g => lv < g);
   return `<div class="kid pc">
     <div class="snackbar"><button class="btn sm" data-act="petBack" aria-label="Back to games">‹</button><div class="snacktitle">${esc(I0.name)} · Level ${lv}</div><span class="pill info" style="font-size:15px" id="playLeft">${I.clock} ${fmtLeft(timeLeftSecs(kid))}</span>${speechOn() ? `<button class="saybtn" data-act="say" data-v="${esc(pucaLine(p))}" aria-label="Read it to me">${I.speak}</button>` : ''}</div>
+    ${pucaSwapNews(p)}
     <div class="pc-stage ${home ? 'pc-home' : 'pc-temp'}" id="pucastage" style="background-image:url('${home || `pucas/scene-${p.starter}.jpg`}')">
       ${grew ? `<div class="pc-grow"><p class="pc-gt">${esc(pucaInfo(p).name)} is growing up!</p><img src="${pucaImg(p, 'happy')}" alt=""><p class="pc-gn">Say hello to <b>${esc(pucaName(p))}</b>!</p><button class="btn primary" style="min-height:56px;font-size:19px" data-act="pucaGrowOk">Hooray!</button></div>` : ''}
       <div class="pc-say" id="pucaSay">${esc(pucaLine(p))}</div>
@@ -3520,6 +3531,7 @@ function pPuca(kid, ctx){
       <button class="btn primary pc-act" data-act="pucaNap" ${night ? 'disabled' : ''}><span>🌙</span>Nap<small>Rest a bit</small></button>
     </div>
     <p class="muted pc-tip">Stroke ${esc(I0.name)}, flick the ball, or drag a treat over. It grows up at levels 10 and 25! Every job you finish earns a treat. ${esc(I0.name)} has a secret tickly spot… can you find it?</p>
+    ${pucaSwapBit(p, kid)}
   </div>`;
 }
 function pucaChoose(kid){
@@ -3533,6 +3545,59 @@ function pucaChoose(kid){
         <div class="row" style="gap:8px;margin-top:8px">${speechOn() ? `<button class="saybtn" data-act="say" data-v="${esc(s.name + '. ' + s.blurb)}" aria-label="Read it to me">${I.speak}</button>` : ''}<button class="btn primary" style="min-height:52px;font-size:18px" data-act="pucaPick" data-v="${id}">Pick ${s.name}</button></div></div>
     </div>`).join("")}
   </div>`;
+}
+// ----- Change my Púca: the kid asks, a grown-up says OK in Donrí. Old Púca rests at home with its level kept; nothing is deleted -----
+// Data on settings/puca-<kid>: swapReq {from, to, at} while waiting; resting {<starter>:{xp, born, seenStage, restAt}}; swapAnswer {ok, from, to, at, seen}
+const pucaFormName = (starter, xp) => pucaName({starter, xp});
+const pucaRestOf = (p, id) => (p.resting || {})[id] || null;
+function pucaSwapBit(p, kid){
+  if(p.swapReq){ const to = PUCA_STARTERS[p.swapReq.to];
+    return `<div class="card pc-swap" style="text-align:center"><img src="pucas/${p.swapReq.to}-idle.png" alt="" style="height:90px;image-rendering:pixelated"><div style="font-size:20px;font-weight:700">⏳ Asking a grown-up…</div><p style="font-size:17px;margin:6px 0">You asked to swap ${esc(pucaName(p))} for ${esc(to.name)}.</p><button class="btn" style="min-height:52px" data-act="pucaSwapCancel" data-v="${esc(kid)}">Never mind, keep ${esc(pucaName(p))}</button></div>`; }
+  return `<div style="text-align:center;margin:6px 0 18px"><button class="btn" style="min-height:52px;font-size:18px" data-act="pucaSwapOpen" data-v="${esc(kid)}">🔄 Change my Púca</button></div>`;
+}
+function pucaSwapNews(p){
+  const a = p.swapAnswer; if(!a || a.seen) return "";
+  const msg = a.ok
+    ? `Say hello to ${pucaName(p)}! ${pucaFormName(a.from, (pucaRestOf(p, a.from)||{}).xp)} has gone home to rest. It keeps its level, so you can swap back any time.`
+    : `A grown-up said not yet. ${pucaName(p)} is still your Púca. You can ask again another day.`;
+  return `<div class="card pc-swap" style="text-align:center;margin-bottom:10px"><p style="font-size:19px;margin:0 0 8px">${esc(msg)}</p><div class="row" style="gap:8px;justify-content:center">${speechOn() ? `<button class="saybtn" data-act="say" data-v="${esc(msg)}" aria-label="Read it to me">${I.speak}</button>` : ''}<button class="btn primary" style="min-height:52px;font-size:18px" data-act="pucaSwapSeen">OK!</button></div></div>`;
+}
+function pucaSwapSheet(kid){
+  const p = puca(kid); if(!p) return;
+  openSheet("Change my Púca", () => `<p style="font-size:18px;margin-top:0">Which Púca would you like? A grown-up will say OK first. ${esc(pucaName(p))} will go home to rest and keep its level.</p>
+    ${Object.entries(PUCA_STARTERS).filter(([id]) => id !== p.starter).map(([id, s]) => { const r = pucaRestOf(p, id); const nm = r ? pucaFormName(id, r.xp) : s.name; const lv = r ? pucaLevel(r) : 1;
+      const line = r ? `${nm} is resting at home. Carry on at level ${lv}.` : `A new friend. Starts at level 1.`;
+      return `<div class="card pc-pick" style="--pc:${s.col}"><img src="pucas/${PUCA_FORMS[id][r ? pucaStage({starter:id, xp:r.xp}) : 0]}-idle.png" alt=""><div class="grow"><b class="pc-pn">${esc(nm)}</b><div style="font-size:17px">${esc(line)}</div>
+        <div class="row" style="gap:8px;margin-top:8px">${speechOn() ? `<button class="saybtn" data-act="say" data-v="${esc(nm + '. ' + line)}" aria-label="Read it to me">${I.speak}</button>` : ''}<button class="btn primary" style="min-height:52px;font-size:18px" data-act="pucaSwapAsk" data-v="${id}">Ask for ${esc(nm)}</button></div></div></div>`; }).join("")}
+    <button class="btn" style="min-height:52px;width:100%" data-act="closeSheet">Keep ${esc(pucaName(p))}</button>`);
+}
+function pucaSwapDo(kid){
+  const p = puca(kid); if(!p || !p.swapReq) return; const to = p.swapReq.to, from = p.starter; if(!PUCA_STARTERS[to] || to === from) return;
+  const resting = {...(p.resting || {})}; resting[from] = {xp:Number(p.xp)||0, born:p.born || today(), seenStage:Number(p.seenStage)||0, restAt:Date.now()};
+  const back = resting[to]; delete resting[to];
+  const fresh = {food:Date.now(), rest:Date.now(), fun:agoAwake(3)}; // a rested Púca comes back fed and full of beans
+  patch("settings", pucaId(kid), {starter:to, xp:back ? back.xp : 0, born:back ? back.born : today(), seenStage:back ? back.seenStage : 0, care:fresh, resting, swapReq:null, swapAnswer:{ok:true, from, to, at:Date.now(), seen:false}});
+  return {from, to, back};
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest && e.target.closest("[data-act]"); if(!b) return; const act = b.dataset.act, v = b.dataset.v;
+  if(act === "pucaSwapOpen"){ pucaSwapSheet(v); }
+  if(act === "pucaSwapAsk"){ const kid = petKid, p = puca(kid); if(!p || !PUCA_STARTERS[v]) return; const fromNm = pucaName(p), r = pucaRestOf(p, v), toNm = r ? pucaFormName(v, r.xp) : PUCA_STARTERS[v].name;
+    patch("settings", pucaId(kid), {swapReq:{from:p.starter, to:v, at:Date.now()}, swapAnswer:null}); log(`${kid} asked to swap ${fromNm} for ${toNm}`);
+    notify("stars", "Púca swap", `${kid} wants to swap ${fromNm} for ${toNm}. Check Donrí.`, {includeMe:true, tags:["arrows_counterclockwise"], link:"today/pending"});
+    closeSheet(); sfx("right"); render(); say(`Asking a grown-up. They'll say OK soon.`); }
+  if(act === "pucaSwapCancel"){ const p = puca(v); if(!p) return; patch("settings", pucaId(v), {swapReq:null}); log(`${v} kept ${pucaName(p)}`); render(); }
+  if(act === "pucaSwapSeen"){ const p = puca(); if(!p || !p.swapAnswer) return; petQuiet = true; patch("settings", pucaId(petKid), {swapAnswer:{...p.swapAnswer, seen:true}}); petQuiet = false; render(); if(p.swapAnswer.ok) setTimeout(() => { pucaPoseNow("happy", 1500); pucaBurst(8, ["❤️","✨","⭐"]); }, 120); }
+  if(act === "pucaSwapYes"){ const p = puca(v); if(!p || !p.swapReq) return; const fromNm = pucaName(p); const res = pucaSwapDo(v); if(!res) return; const q = puca(v);
+    log(`said yes: ${v} swapped ${fromNm} for ${pucaName(q)}`); notify("stars", "Púca swap", `${myName()} said yes: ${v} now has ${pucaName(q)}.`, {tags:["arrows_counterclockwise"]});
+    toast(`Done. ${v} has ${pucaName(q)} now${res.back ? ` (level ${pucaLevel(q)})` : ''}. ${fromNm} is resting with its level kept.`, 4500); }
+  if(act === "pucaSwapNo"){ const p = puca(v); if(!p || !p.swapReq) return; const to = p.swapReq.to;
+    patch("settings", pucaId(v), {swapReq:null, swapAnswer:{ok:false, from:p.starter, to, at:Date.now(), seen:false}}); log(`said "not yet" to ${v}'s Púca swap`); toast(`OK. ${v} keeps ${pucaName(p)}.`); }
+});
+function pucaSwapLines(){
+  return kids().map(k => ({kid:k.name, p:puca(k.name)})).filter(x => x.p && x.p.swapReq && PUCA_STARTERS[x.p.swapReq.to]).map(({kid, p}) => {
+    const to = p.swapReq.to, r = pucaRestOf(p, to), toNm = r ? pucaFormName(to, r.xp) : PUCA_STARTERS[to].name;
+    return `<div class="item"><img src="pucas/${PUCA_FORMS[to][r ? pucaStage({starter:to, xp:r.xp}) : 0]}-idle.png" alt="" style="width:44px;height:44px;object-fit:contain;image-rendering:pixelated;flex:none"><div class="grow"><b>${esc(kid)}</b> wants to swap ${esc(pucaName(p))} for ${esc(toNm)}<div class="muted small">${esc(pucaName(p))} (level ${pucaLevel(p)}) goes home to rest and keeps its level. ${esc(toNm)} ${r ? `carries on at level ${pucaLevel(r)}` : 'starts at level 1'}.</div></div><button class="btn sm primary" data-act="pucaSwapYes" data-v="${esc(kid)}">Yes</button><button class="btn sm" data-act="pucaSwapNo" data-v="${esc(kid)}">Not yet</button></div>`; }).join("");
 }
 let pucaBusy = 0, pucaHello = 0, pucaPoseT = 0, pucaLoopId = 0, pucaX = 50, pucaFace = 1, pucaWalkT = 0, pucaPlayAt = 0, pucaTickleAt = 0;
 function pucaPoseNow(pose, ms){
@@ -4983,6 +5048,7 @@ const HELP = {
     <li>Tap the box when it's done. Donrí records who did it and when.</li>
     <li><b>Kid mode:</b> in Settings, tap <b>Hand to Donnacha</b> (or Rían). They see only their jobs, gems and rewards, in big text with 🔊 buttons that read things aloud. When they tick a job, you get a notification and a <b>Waiting for your OK</b> card. Tap <b>Yes</b> and the gems go on. To leave kid mode, tap <b>Grown-ups</b> and enter the PIN. A kid's own tablet can stay in kid mode all the time.</li>
     <li><b>Púcas Cara (game):</b> "cara" means friend. Each kid chooses their own Púca (Dabbit the otter pup, Sparkit the fox cub or Mossnub the hedgehog) and looks after it at its home in Wild Éire: stroke it, find its secret tickly spot, flick the ball for it to fetch, drag treats over to feed it, catch wisps together, and let it nap. Every job that earns gems also earns their Púca a treat, and looking after it earns points to level up (it will grow up at levels 10 and 25). Púcas sleep from 9pm to 7am. Playtime unlocks once they've done a job that day, and lasts 10 minutes (change it in Settings). A grown-up can unlock it, or add time, with the PIN. Read-aloud and sounds can be switched on or off for each kid in Settings → Kid mode.</li>
+    <li><b>Change my Púca:</b> a kid can tap <b>Change my Púca</b> at their Púca's home and pick another starter. You get a notification and a <b>Waiting for your OK</b> card: <b>Yes</b> swaps, <b>Not yet</b> keeps things as they are. A new Púca starts at level 1; the old one goes home to rest with its level kept, so swapping back carries on where they left off. Nothing is deleted.</li>
     <li><b>Gems:</b> in <b>Edit</b>, give a chore some gems. Each kid who does it gets them. If Donrí can't tell who did it, it asks, and you can pick <b>Both of them</b> for a joint job. In kid mode, a shared job has a <b>We did it together</b> button. Untick by mistake and the gems come off again.</li>
     <li>Tap a kid's gem count to open their page: big gem total, rewards with how close they are, <b>Swap</b> when they have enough, and <b>bonus gems</b> for anything you want to praise. It's made to show them on your phone.</li>
     <li><b>Change rewards</b> to add treats (Xbox time, a trip for a treat, picking dinner) and set how many gems each costs. When gems are swapped, the other parent gets a notification.</li></ul>`,
@@ -5203,14 +5269,35 @@ function settingsSheet(){
       <div class="row wrap" style="margin-top:10px"><button class="btn sm" data-act="syncNow">Sync now</button><button class="btn sm" data-act="kitchenOn">Use as kitchen display</button>${familyTab ? '<button class="btn sm" data-act="familyTabOff">Stop using as family tablet</button>' : '<button class="btn sm" data-act="familyTabOn">Use as family tablet</button>'}<button class="btn sm" data-act="switchWho">I'm not ${esc(myName())}</button><button class="btn sm danger" data-act="signout">Sign out</button></div></div>`;
   })()));
 }
-function activitySheet(){
+// ----- The bell: your Donrí notifications. Tap one to go straight there; swipe it away or tap × to clear; Clear all at the top -----
+const myInbox = () => docs("inbox").filter(n => n.to === myName()).sort((a,b) => (b.at||0)-(a.at||0));
+function noteWhen(t){ const m = Math.round((Date.now() - t) / 60000); if(m < 1) return "Just now"; if(m < 60) return m + " min ago"; const d = new Date(t); return d.toDateString() === new Date().toDateString() ? d.toLocaleTimeString("en-IE",{hour:"2-digit",minute:"2-digit"}) : d.toLocaleString("en-IE",{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}); }
+function notesSheet(){
   ls.set("donri.seen", Date.now()); updateBell();
+  openSheet("Notifications", () => { const ns = myInbox();
+    return `${ns.length ? `<div class="row" style="justify-content:flex-end;margin:-4px 0 8px"><button class="btn sm" data-act="noteClearAll">Clear all</button></div>` : ''}
+    <div class="notes">${ns.length ? ns.map(n => `<div class="note" data-note="${esc(n.id)}"><button class="note-go" data-act="noteOpen" data-id="${esc(n.id)}"><b>${esc(n.title)}</b><span>${esc(n.message)}</span><small class="muted">${esc(noteWhen(n.at))}</small></button><button class="note-x" data-act="noteClear" data-id="${esc(n.id)}" aria-label="Clear this notification">×</button></div>`).join("") : '<div class="card empty">No notifications. You\'re all caught up.</div>'}</div>
+    <p class="muted small" style="margin:10px 0 0">Tap one to go there. Swipe it away or tap × to clear it.</p>
+    <button class="btn sm" style="margin-top:12px" data-act="activityAll">See all family activity</button>`; });
+}
+// Swipe a notification left or right to clear it (one listener for the whole list, so it survives redraws). A tap still works as a tap.
+(() => { let el = null, sx = 0, sy = 0, dx = 0, moved = false;
+  document.addEventListener("pointerdown", e => { const n = e.target.closest && e.target.closest("#sheet .note"); if(!n || e.target.closest(".note-x")) return; el = n; sx = e.clientX; sy = e.clientY; dx = 0; moved = false; el.style.transition = "none"; });
+  document.addEventListener("pointermove", e => { if(!el) return; dx = e.clientX - sx; if(!moved && Math.abs(e.clientY - sy) > 12 && Math.abs(dx) < 12){ el = null; return; } if(Math.abs(dx) > 8) moved = true; if(moved){ el.style.transform = `translateX(${dx}px)`; el.style.opacity = Math.max(.2, 1 - Math.abs(dx) / 260); } });
+  const up = () => { if(!el) return; const n = el; el = null;
+    if(Math.abs(dx) > 80){ n.style.transition = "transform .18s ease-out, opacity .18s ease-out"; n.style.transform = `translateX(${Math.sign(dx) * window.innerWidth}px)`; n.style.opacity = 0; setTimeout(() => noteClear(n.dataset.note), 190); }
+    else { n.style.transition = "transform .15s ease, opacity .15s ease"; n.style.transform = ""; n.style.opacity = ""; } };
+  document.addEventListener("pointerup", up); document.addEventListener("pointercancel", up);
+  document.addEventListener("click", e => { if(moved && e.target.closest && e.target.closest("#sheet .note")){ e.stopImmediatePropagation(); e.preventDefault(); moved = false; } }, true);
+})();
+function noteClear(id){ if(doc("inbox", id)) put("inbox", id, {_del:true}); if(sheetRender) sheetRender(); updateBell(); }
+function activitySheet(){
   openSheet("What's been happening", () => { const a = docs("activity").sort((x,y) => (y.at||0)-(x.at||0)).slice(0,50);
-    return `<div class="card">${a.length ? a.map(x => `<div class="item"><div class="grow"><b>${esc(who(x.by))}</b> ${esc(x.text)}<div class="muted small">${new Date(x.at).toLocaleString("en-IE",{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}</div></div></div>`).join("") : '<div class="empty">Nothing yet.</div>'}</div>`; });
+    return `<button class="btn sm" style="margin-bottom:10px" data-act="activity">‹ Notifications</button><div class="card">${a.length ? a.map(x => `<div class="item"><div class="grow"><b>${esc(who(x.by))}</b> ${esc(x.text)}<div class="muted small">${new Date(x.at).toLocaleString("en-IE",{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}</div></div></div>`).join("") : '<div class="empty">Nothing yet.</div>'}</div>`; });
 }
 function updateBell(){
   const seen = ls.get("donri.seen", 0);
-  const n = docs("activity").filter(a => a.at > seen && a.by !== myName()).length;
+  const n = myInbox().filter(x => (x.at||0) > seen).length;
   const b = $("#bell"); b.hidden = !n; b.textContent = n > 9 ? "9+" : n;
 }
 
@@ -5268,7 +5355,11 @@ document.addEventListener("click", async e => {
     case "cal": calSheet(); break;
     case "help": openSheet("How to use: " + ({today:"Today",shop:"Shopping",meals:"Meal plan",chores:"Chores",families:"Families",gifts:"Gifts",meds:"Health",renew:"Renewals"}[page]), () => `<button class="card row" style="width:100%;text-align:left;gap:12px" data-act="introPlay"><span class="iplaybadge" aria-hidden="true">▶</span><span class="grow"><b>Watch Donrí in 30 seconds</b><div class="muted small">A quick tour of the app</div></span></button><div class="card help">${HELP[page]}</div>`); break;
     case "calHelp": openSheet("How to use: Calendar", () => `<div class="card help">${HELP.calendar}</div><button class="btn" data-act="cal">Back to calendar</button>`); break;
-    case "activity": needGrown(activitySheet); break;
+    case "activity": needGrown(notesSheet); break;
+    case "activityAll": needGrown(activitySheet); break;
+    case "noteOpen": { const n = doc("inbox", id); if(!n) break; put("inbox", id, {_del:true}); updateBell(); goLink(n.link || "today"); break; }
+    case "noteClear": noteClear(id); break;
+    case "noteClearAll": myInbox().forEach(n => put("inbox", n.id, {_del:true})); if(sheetRender) sheetRender(); updateBell(); toast("All cleared"); break;
     case "settings": needGrown(settingsSheet); break;
     case "famWho": famWho = v || ""; choreWho = famWho; render(); break;
     case "grownLock": grownLock(); toast("Locked"); break;
@@ -5351,12 +5442,12 @@ document.addEventListener("click", async e => {
     case "say": say(v); break;
     case "kidTick": { const c = doc("chores", id); if(!c || !choreDue(c) || !kidMode) break;
       if(kidSettings().approval !== false){ patch("chores", id, {pendingBy:kidMode, pendingTeam:[], pendingAt:Date.now()}); log(`${kidMode} says they did: ${c.title}`);
-        notify("stars", "Job to check", `${kidMode} says they did: ${c.title}. Check Donrí.`, {includeMe:true, tags:["white_check_mark"]}); sfx("right"); toast(`Great job, ${kidMode}! A grown-up will check it.`); }
+        notify("stars", "Job to check", `${kidMode} says they did: ${c.title}. Check Donrí.`, {includeMe:true, tags:["white_check_mark"], link:"today/pending"}); sfx("right"); toast(`Great job, ${kidMode}! A grown-up will check it.`); }
       else kitchenDone(id, kidMode); break; }
     case "kidTogether": { const c = doc("chores", id); if(!c || !choreDue(c) || !kidMode) break;
       const team = [kidMode, ...choreKids(c).filter(n => n !== kidMode)]; const names = team.join(" and ");
       if(kidSettings().approval !== false){ patch("chores", id, {pendingBy:kidMode, pendingTeam:team, pendingAt:Date.now()}); log(`${names} say they did it together: ${c.title}`);
-        notify("stars", "Job to check", `${names} say they did it together: ${c.title}. Check Donrí.`, {includeMe:true, tags:["white_check_mark"]}); sfx("right"); toast(`Great teamwork, ${names}! A grown-up will check it.`); }
+        notify("stars", "Job to check", `${names} say they did it together: ${c.title}. Check Donrí.`, {includeMe:true, tags:["white_check_mark"], link:"today/pending"}); sfx("right"); toast(`Great teamwork, ${names}! A grown-up will check it.`); }
       else kitchenDone(id, team.join(" & "), team); break; }
     case "kidApprove": { const c = doc("chores", id); if(!c || !c.pendingBy) break; const team = pendTeam(c); if(team.length > 1) kitchenDone(id, team.join(" & "), team); else kitchenDone(id, c.pendingBy); break; }
     case "kidReject": { const c = doc("chores", id); if(!c) break; patch("chores", id, {pendingBy:"", pendingTeam:[], pendingAt:0}); log(`said "not yet" to ${pendTeam(c).join(" and ")} for ${c.title}`); toast("OK. It's back on their list."); break; }
