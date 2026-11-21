@@ -3918,7 +3918,7 @@ function arcStart(){
   const c = arcCarts(petKid)[arcSel]; if(!c) return;
   if(c.locked){ arcBeep("nope"); say("Coming soon!"); const a = document.querySelector(".cart.on"); if(a){ a.classList.remove("arc-shake"); void a.offsetWidth; a.classList.add("arc-shake"); } return; }
   arcBeep("start"); const pal = document.querySelector(".arc-pal"); if(pal){ pal.src = pucaImg(puca(petKid), "happy"); pal.classList.add("yay"); }
-  if(c.id === "cards"){ setTimeout(() => { stopPlay(); persist(); location.href = "cards/"; }, 350); return; }
+  if(c.id === "cards"){ setTimeout(() => { stopPlay(); persist(); location.href = "/pucas/"; }, 350); return; }
   if(c.id === "snack"){ snackLevel = Math.max(0, snackUnlockedCount() - 1); gameView = "snack"; }
   else gameView = c.id;
   setTimeout(() => { closeSheet(); render(); window.scrollTo(0,0); }, 350);
@@ -4392,12 +4392,13 @@ function itemForm(id){
 
 // ---------- About this app (v22). Update RELEASE with each release: version, date and a few plain lines of what's new ----------
 const RELEASE = {
-  version: "v24", date: "2026-11-21",
+  version: "v25", date: "2026-11-21",
   news: [
-    "Púcas Cards can go on the home screen as its own app, with Rua as its picture.",
-    "In the game, open Grown-ups ⚙ and tap \"Add Púcas Cards to the home screen\"."
+    "Púcas Cards has its own address (mightymork.github.io/pucas/), so it can go on the home screen as its own app with Rua as its picture.",
+    "In the game: Chrome ⋮ then Install, or Grown-ups ⚙ then \"Add Púcas Cards to the home screen\"."
   ],
   earlier: [
+    {version:"v24", date:"2026-11-21", news:["Púcas Cards ready to install as its own app (moved to its own address in v25)."]},
     {version:"v23", date:"2026-11-21", news:["Púcas Cards: one-off extra playtime from a grown-up (PIN)."]},
     {version:"v22", date:"2026-11-20", news:["About this app in Settings.", "Three panel sizes on Today and the Photos panel.", "Fixed: smooth swiping between photos."]},
     {version:"v21", date:"2026-11-20", news:["The Púcas cards game, with card pack OKs in Donrí.", "Púcas Cara: den naps, the tin whistle and spring water.", "Gems show as emeralds."]},
