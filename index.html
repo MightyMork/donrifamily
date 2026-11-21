@@ -3891,7 +3891,7 @@ function arcCarts(kid){
   return [
     {id:"story", title:"Story Time", sub:`${esc(st.series)}: ${esc(st.title)}`, note:"Reading doesn't use playtime!", lab:"#1F6B3A", art:`<img src="${stImg(st, st.key)}" alt="">`},
     {id:"puca", title:"Púcas Cara", sub:pc ? `Look after ${esc(nm)} at home in Wild Éire` : "Choose your own Púca friend from Wild Éire!", lab:"#2F7F74", art:`<img src="pucas/scene-${pc ? pc.starter : 'dabbit'}.jpg" alt="">`},
-    {id:"cards", title:"Púcas Cards", sub:pc ? `Battle Rua, or each other, with ${esc(nm)} leading your deck` : "Pick your Púca in Púcas Cara first!", lab:"#7A4C9A", art:`<img src="cards/img/pack-front.png" alt="" style="object-fit:contain;background:#1c1a2e">`},
+    {id:"cards", title:"Púcas Cards", sub:pc ? "Opens the Púcas Cards app" : "Pick your Púca in Púcas Cara first!", lab:"#7A4C9A", art:`<img src="cards/img/pack-front.png" alt="" style="object-fit:contain;background:#1c1a2e">`},
     {id:"soon1", title:"Setanta's Sliotar", sub:"A hurling game for the Setanta book. Coming soon!", lab:"#575E70", locked:true, art:`<img src="${stImg(st, 6)}" alt="">`}
   ];
 }
@@ -4404,13 +4404,14 @@ function itemForm(id){
 
 // ---------- About this app (v22). Update RELEASE with each release: version, date and a few plain lines of what's new ----------
 const RELEASE = {
-  version: "v26", date: "2026-11-21",
+  version: "v27", date: "2026-11-21",
   news: [
-    "A Play button for each kid on the Gems panel: straight into their games (the grown-up PIN still gets you back).",
-    "Sharper photos on the Photos panel, in the photo grid and when you open a photo."
+    "Púcas Cards is now its own app: the Play cartridge opens it, or shows how to get it (Download game, then ⋮ and Install).",
+    "The card packs have the Púcas logo."
   ],
   earlier: [
-    {version:"v25", date:"2026-11-21", news:["Púcas Cards has its own address (mightymork.github.io/pucas/), so it can go on the home screen as its own app with Rua as its picture.", "In the game: Chrome ⋮ then Install, or Grown-ups ⚙ then \"Add Púcas Cards to the home screen\"."]},
+    {version:"v26", date:"2026-11-21", news:["A Play button for each kid on the Gems panel: straight into their games (the grown-up PIN still gets you back).", "Sharper photos on the Photos panel, in the photo grid and when you open a photo."]},
+    {version:"v25", date:"2026-11-21", news:["Púcas Cards moved to its own address so it installs as its own app, with Rua as its picture."]},
     {version:"v24", date:"2026-11-21", news:["Púcas Cards ready to install as its own app (moved to its own address in v25)."]},
     {version:"v23", date:"2026-11-21", news:["Púcas Cards: one-off extra playtime from a grown-up (PIN)."]},
     {version:"v22", date:"2026-11-20", news:["About this app in Settings.", "Three panel sizes on Today and the Photos panel.", "Fixed: smooth swiping between photos."]},
