@@ -1077,6 +1077,14 @@ input[type=text]:focus,input[type=number]:focus,input[type=date]:focus,input[typ
 .gk .gh{display:flex;align-items:center;gap:8px;min-height:36px;width:100%;border:0;background:none;padding:0;color:var(--ink);font:inherit;text-align:left}
 .gk .gh b{flex:1;font-family:var(--head);font-weight:600}
 .gk .gn{display:inline-flex;align-items:center;gap:4px;font-weight:700}
+/* v26: a round Play button on each kid's row in the Gems panel */
+.gk .ghrow{display:flex;align-items:center;gap:8px}.gk .ghrow .gh{flex:1;min-width:0;width:auto}
+.gk .gh b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gk .gplay{flex:none;display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:var(--accent);color:var(--accent-on,#1a1a1a);cursor:pointer;box-shadow:0 2px 0 rgba(0,0,0,.12)}
+.gk .gplay svg{width:20px;height:20px}.gk .gplay:not(.locked) svg{margin-left:2px}
+.gk .gplay.locked{background:var(--soft);color:var(--muted);box-shadow:none}
+.sz-m .gk .gplay{width:40px;height:40px}.sz-m .gk .ghrow,.sz-s .gk .ghrow{gap:6px}
+.sz-s .gk .gplay{width:32px;height:32px}.sz-s .gk .gplay svg{width:16px;height:16px}
 .gk .gbar{height:8px;border-radius:4px;background:var(--soft);overflow:hidden;margin:4px 0 3px}.gk .gbar i{display:block;height:100%;background:var(--accent);border-radius:4px}
 .gk .gnow{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.gk .gnow span{font-size:.78rem;padding:3px 9px;border-radius:999px;background:var(--soft);color:var(--accent-ink);font-weight:600}
 .sz-s .gk .gbar{height:6px}
@@ -1759,12 +1767,16 @@ function binsOn(dateStr){
 }
 // v22: the Gems panel. For each kid: gems, how far to the next reward or card pack, and (large) what they can get now.
 const PACK_GEMS = 10;
+// v26: Play from the Gems panel. Opens kid mode for that kid and goes straight to the games (the PIN still guards the way out).
+let kidPlayNext = "";
+function kidPlayStart(name){ setKid(name); gameView = "hub"; kidView = "pet"; setTimeout(() => sfx("unlock"), 50); startPlay(name, "kid"); render(); window.scrollTo(0,0); toast(`Have fun, ${name}! A grown-up's PIN gets you back.`, 3500); }
 function gemsTile(ks, size){
   const goals = [...docs("rewards").map(r => ({t:r.title, c:Number(r.cost)||0})), {t:"Púcas card pack", c:PACK_GEMS}].filter(g => g.c > 0).sort((a,b) => a.c - b.c);
   return `<div class="card tcard"><h3><span class="grow">Gems</span><button data-act="go" data-v="chores">Chores</button></h3><div class="gks">${ks.map(k => {
     const g = stars(k.name), next = goals.find(x => x.c > g), now = goals.filter(x => x.c <= g);
     const line = next ? (size === "s" ? `${next.c - g} to ${next.t === "Púcas card pack" ? "a pack" : esc(next.t.toLowerCase())}` : `${next.c - g} more for ${next.t === "Púcas card pack" ? "a Púcas card pack" : esc(next.t)}`) : "Can get anything on the list!";
-    return `<div class="gk"><button class="gh" data-act="starsOpen" data-v="${esc(k.name)}"><b>${esc(k.name)}</b><span class="gn">${I.gem} ${g}</span></button>
+    const ok = canPlay(k.name);
+    return `<div class="gk"><div class="ghrow"><button class="gh" data-act="starsOpen" data-v="${esc(k.name)}"><b>${esc(k.name)}</b><span class="gn">${I.gem} ${g}</span></button><button class="gplay ${ok ? '' : 'locked'}" data-act="gemPlay" data-v="${esc(k.name)}" aria-label="${ok ? 'Play games as ' + esc(k.name) : esc(k.name) + ': playtime is locked'}">${ok ? '<svg class="bi" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg>' : I.lock}</button></div>
       ${next ? `<div class="gbar" role="progressbar" aria-valuemin="0" aria-valuemax="${next.c}" aria-valuenow="${g}" aria-label="${esc(k.name)}: ${g} of ${next.c} gems"><i style="width:${Math.min(100, Math.round(g / next.c * 100))}%"></i></div>` : ''}
       <div class="muted small">${line}</div>
       ${size === "l" && now.length ? `<div class="gnow">${now.map(x => `<span>✓ ${esc(x.t)}</span>`).join("")}</div>` : ''}</div>`; }).join("")}</div></div>`;
@@ -4392,12 +4404,13 @@ function itemForm(id){
 
 // ---------- About this app (v22). Update RELEASE with each release: version, date and a few plain lines of what's new ----------
 const RELEASE = {
-  version: "v25", date: "2026-11-21",
+  version: "v26", date: "2026-11-21",
   news: [
-    "Púcas Cards has its own address (mightymork.github.io/pucas/), so it can go on the home screen as its own app with Rua as its picture.",
-    "In the game: Chrome ⋮ then Install, or Grown-ups ⚙ then \"Add Púcas Cards to the home screen\"."
+    "A Play button for each kid on the Gems panel: straight into their games (the grown-up PIN still gets you back).",
+    "Sharper photos on the Photos panel, in the photo grid and when you open a photo."
   ],
   earlier: [
+    {version:"v25", date:"2026-11-21", news:["Púcas Cards has its own address (mightymork.github.io/pucas/), so it can go on the home screen as its own app with Rua as its picture.", "In the game: Chrome ⋮ then Install, or Grown-ups ⚙ then \"Add Púcas Cards to the home screen\"."]},
     {version:"v24", date:"2026-11-21", news:["Púcas Cards ready to install as its own app (moved to its own address in v25)."]},
     {version:"v23", date:"2026-11-21", news:["Púcas Cards: one-off extra playtime from a grown-up (PIN)."]},
     {version:"v22", date:"2026-11-20", news:["About this app in Settings.", "Three panel sizes on Today and the Photos panel.", "Fixed: smooth swiping between photos."]},
@@ -4657,6 +4670,7 @@ let photoDraft = [], photoFiles = [], photoAlbum = "", photoOpen = "";
 // Real app, before the circle: each photo is a JPEG in Donri/Photos in the family file owner's OneDrive.
 // The owner's phone creates that folder and shares it (write) with the other grown-ups; settings/photos = {folder, invited[]}.
 const BLANK_IMG = "data:image/gif;base64,R0lGODlhAQABAAAAACw=";
+const PH_BIG = "c1600x1600"; // bounded, keeps the photo's shape
 const phCache = {}; let phBusy = {}, phT = null, phCheckAt = 0;
 function phSrc(p, size){
   if(p.photo) return `src="${esc(p.photo)}"`;
@@ -4669,8 +4683,11 @@ async function phUrl(file, size){
   const k = file + size, c = phCache[k]; if(c && Date.now() - c.at < 45 * 60000) return c.url;
   if(phBusy[k]) return phBusy[k];
   phBusy[k] = (async () => { try{
-    let j; try{ j = await graphJson(`/drives/${cfg.d}/items/${file}/thumbnails`); }catch(e){ if(!cfg.p) throw e; j = await graphJson(`/shares/${shareId(cfg.p)}/items/${file}/thumbnails`); } const t = (j.value || [])[0] || {};
-    let url = (t[size] || t.large || t.medium || {}).url;
+    // "big" asks OneDrive for a sharp 1600px copy (for the Photos panel and the full-size view); the stock sizes are only 176px (medium) and 800px (large).
+    const q = size === "big" ? "?select=" + PH_BIG : "";
+    const thumbs = sfx => graphJson(`/drives/${cfg.d}/items/${file}/thumbnails${sfx}`).catch(e => { if(!cfg.p) throw e; return graphJson(`/shares/${shareId(cfg.p)}/items/${file}/thumbnails${sfx}`); });
+    let j; try{ j = await thumbs(q); }catch(e){ if(!q) throw e; j = await thumbs(""); } const t = (j.value || [])[0] || {};
+    let url = (t[size === "big" ? PH_BIG : size] || t.large || t.medium || {}).url;
     if(!url){ const m = await graphJson(`/drives/${cfg.d}/items/${file}?select=id,@microsoft.graph.downloadUrl`); url = m["@microsoft.graph.downloadUrl"]; }
     if(url) phCache[k] = {url, at:Date.now()}; return url || "";
   }catch(e){ return ""; } finally{ delete phBusy[k]; } })();
@@ -4736,7 +4753,7 @@ function pickedShare(fd, prefix){ const sc = fd[prefix + "Scope"]; if(sc === "al
 function albumOptions(sel){ const mine = docs("c_albums").filter(a => a.fam === US); return `<option value="">No collection</option>${mine.map(a => `<option value="${esc(a.id)}" ${sel===a.id?'selected':''}>${esc(a.name)}</option>`).join("")}<option value="__new">+ New collection…</option>`; }
 function photoGrid(list){
   if(!list.length) return '<div class="card empty">No photos here yet.</div>';
-  return `<div class="pgrid">${list.map(p => { const n = Object.keys(p.reacts||{}).length; return `<button class="ptile" data-act="photoOpen" data-id="${esc(p.id)}" aria-label="Photo${p.caption ? ': ' + esc(p.caption) : ''} from ${esc(fname(p.fam))}"><img ${phSrc(p,"medium")} alt="" loading="lazy">${p.fam !== US ? `<span class="pfrom" style="background:${esc((fam(p.fam)||{}).colour||'#999')}" aria-hidden="true"></span>` : ''}${n ? `<span class="preact">${reactCount(p,'love') ? I.heartf : I.thumb} ${n}</span>` : ''}</button>`; }).join("")}</div>`;
+  return `<div class="pgrid">${list.map(p => { const n = Object.keys(p.reacts||{}).length; return `<button class="ptile" data-act="photoOpen" data-id="${esc(p.id)}" aria-label="Photo${p.caption ? ': ' + esc(p.caption) : ''} from ${esc(fname(p.fam))}"><img ${phSrc(p,"large")} alt="" loading="lazy">${p.fam !== US ? `<span class="pfrom" style="background:${esc((fam(p.fam)||{}).colour||'#999')}" aria-hidden="true"></span>` : ''}${n ? `<span class="preact">${reactCount(p,'love') ? I.heartf : I.thumb} ${n}</span>` : ''}</button>`; }).join("")}</div>`;
 }
 function famPhotosView(){
   const albums = albumsAll(); const a = photoAlbum ? doc("c_albums", photoAlbum) : null;
@@ -4749,7 +4766,7 @@ function famPhotosView(){
   }
   const recent = photosAll();
   return `<div class="row wrap"><button class="btn primary" data-act="photoAdd">Add photos</button><button class="btn" data-act="albumNew">New collection</button></div>
-    <h2>Collections</h2>${albums.length ? `<div class="agrid">${albums.map(al => { const ps = photosAll().filter(p => (p.albums||[]).includes(al.id)); return `<button class="acard" data-act="albumOpen" data-id="${esc(al.id)}">${ps[0] ? `<img ${phSrc(ps[0],"medium")} alt="">` : '<span class="aempty">No photos yet</span>'}<span class="aname"><b>${esc(al.name)}</b><span class="muted small">${ps.length} · ${al.fam === US ? esc(shareScope(al)) : esc(fname(al.fam))}</span></span></button>`; }).join("")}</div>` : '<div class="card empty">No collections yet. Make one for a day out, a birthday or Christmas.</div>'}
+    <h2>Collections</h2>${albums.length ? `<div class="agrid">${albums.map(al => { const ps = photosAll().filter(p => (p.albums||[]).includes(al.id)); return `<button class="acard" data-act="albumOpen" data-id="${esc(al.id)}">${ps[0] ? `<img ${phSrc(ps[0],"large")} alt="">` : '<span class="aempty">No photos yet</span>'}<span class="aname"><b>${esc(al.name)}</b><span class="muted small">${ps.length} · ${al.fam === US ? esc(shareScope(al)) : esc(fname(al.fam))}</span></span></button>`; }).join("")}</div>` : '<div class="card empty">No collections yet. Make one for a day out, a birthday or Christmas.</div>'}
     <h2>All photos</h2>${photoGrid(recent)}
     <p class="muted small">You choose who sees each photo and collection. Only the family who shared a photo can remove it.</p>`;
 }
@@ -4774,7 +4791,7 @@ function photoSheet(id){
     const inAlbums = (p.albums||[]).map(x => doc("c_albums", x)).filter(Boolean);
     const seq = (photoAlbum ? photosAll().filter(x => (x.albums||[]).includes(photoAlbum)) : photosAll()).map(x => x.id); const at = seq.indexOf(id);
     const nav = seq.length > 1 && at >= 0;
-    return `<div class="pview" data-pswipe="${esc(id)}"><img class="${photoDir ? 'in-' + photoDir : ''}" ${phSrc(p,"large")} alt="${esc(p.caption||'Photo')}" draggable="false">${nav && at > 0 ? `<button class="pnav l" data-act="photoOpen" data-id="${esc(seq[at-1])}" aria-label="Previous photo">‹</button>` : ''}${nav && at < seq.length - 1 ? `<button class="pnav r" data-act="photoOpen" data-id="${esc(seq[at+1])}" aria-label="Next photo">›</button>` : ''}</div>
+    return `<div class="pview" data-pswipe="${esc(id)}"><img class="${photoDir ? 'in-' + photoDir : ''}" ${phSrc(p,"big")} alt="${esc(p.caption||'Photo')}" draggable="false">${nav && at > 0 ? `<button class="pnav l" data-act="photoOpen" data-id="${esc(seq[at-1])}" aria-label="Previous photo">‹</button>` : ''}${nav && at < seq.length - 1 ? `<button class="pnav r" data-act="photoOpen" data-id="${esc(seq[at+1])}" aria-label="Next photo">›</button>` : ''}</div>
       ${nav ? `<div class="muted small pcount">${at + 1} of ${seq.length} · swipe for the next one</div>` : ''}
       <div class="card" style="margin-top:10px">${p.caption ? `<b>${esc(p.caption)}</b>` : ''}<div class="muted small">${own ? 'Shared by ' + esc(p.by||'us') + ' · ' + esc(shareScope(p)) : 'From ' + esc(fname(p.fam))} · ${new Date(p.at).toLocaleDateString("en-IE",{day:"numeric", month:"short"})}</div>
         <div class="row" style="gap:8px;margin-top:10px"><button class="btn ${mine==='like'?'primary':''}" data-act="photoReact" data-id="${esc(id)}" data-v="like" aria-pressed="${mine==='like'}">${I.thumb} ${reactCount(p,'like')}</button><button class="btn ${mine==='love'?'primary':''}" data-act="photoReact" data-id="${esc(id)}" data-v="love" aria-pressed="${mine==='love'}">${mine==='love' ? I.heartf : I.heart} ${reactCount(p,'love')}</button></div>
@@ -4815,7 +4832,7 @@ function photosTodayCard(){
   const k = reactKey();
   return `<div class="card tcard pcard" data-act="famGo" data-v="photos" aria-label="Photos">
     <div class="pcar" data-pcar>${l.map(p => { const mine = (p.reacts||{})[k];
-      return `<div class="pslide"><button class="pimg" data-act="photoOpen" data-id="${esc(p.id)}" aria-label="Open photo: ${esc(p.caption || 'from ' + (p.fam === US ? (p.by||'us') : fname(p.fam)))}"><img ${phSrc(p,"medium")} data-pid="${esc(p.id)}" alt="" loading="lazy" draggable="false"></button>
+      return `<div class="pslide"><button class="pimg" data-act="photoOpen" data-id="${esc(p.id)}" aria-label="Open photo: ${esc(p.caption || 'from ' + (p.fam === US ? (p.by||'us') : fname(p.fam)))}"><img ${phSrc(p,"big")} data-pid="${esc(p.id)}" alt="" loading="lazy" draggable="false"></button>
         <div class="pbot"><span class="cap">${esc(p.caption || '')}${p.fam !== US ? `<br><span style="opacity:.8">${esc(fname(p.fam))}</span>` : ''}</span>
           <button class="${mine === 'like' ? 'on' : ''}" data-act="photoReact" data-id="${esc(p.id)}" data-v="like" aria-pressed="${mine === 'like'}" aria-label="Like">${I.thumb}${reactCount(p,'like') || ''}</button>
           <button class="${mine === 'love' ? 'on' : ''}" data-act="photoReact" data-id="${esc(p.id)}" data-v="love" aria-pressed="${mine === 'love'}" aria-label="Love">${mine === 'love' ? I.heartf : I.heart}${reactCount(p,'love') || ''}</button></div></div>`; }).join("")}</div>
@@ -5739,6 +5756,10 @@ document.addEventListener("click", async e => {
     case "delPoint": { const p = doc("points", id); del("points", id); if(p) log(`removed ${p.amount} gems (${p.reason||'entry'}) from ${p.kid}`); toast("Removed"); if(v) starsSheet(v); break; }
     case "noGems": { const c = doc("chores", id); if(c) patch("chores", id, {noGems:today()}); closeSheet(); break; }
     case "giveGems": { const c = doc("chores", id); if(!c) break; const ck = choreKids(c); whoDidSheet(id, ck.length ? ck : kids().map(k => k.name)); break; }
+    case "gemPlay": { if(!canPlay(v)){ openSheet("Playtime for " + v, () => playCard(v)); break; }
+      if(kitchen){ closeSheet(); gameView = "hub"; setTimeout(() => sfx("unlock"), 50); kitchenPlay = v; startPlay(v, "kitchen"); render(); window.scrollTo(0,0); break; }
+      if(!kidSettings().pin){ kidPlayNext = v; pinSetSheet(v); break; }
+      kidPlayStart(v); break; }
     case "kidOn": if(!kidSettings().pin){ pinSetSheet(v); break; } setKid(v); toast(`Kid mode for ${v}. Tap Grown-ups and enter the PIN to leave.`, 4500); break;
     case "kidPinSet": pinSetSheet(""); break;
     case "kidExitAsk": pinSheet("Grown-ups only", () => { setKid(""); toast("Kid mode off"); }); break;
@@ -5927,7 +5948,7 @@ document.addEventListener("submit", async e => {
     log(petMode() === "own" ? `${petKid} welcomed ${name} the ${PETS[k].label.toLowerCase()}` : `welcomed ${name} the ${PETS[k].label.toLowerCase()} to the family`); closeSheet(); render(); toast(`Say hello to ${name}! 🎉`); say(`Hello ${name}!`); return; }
   if(kind === "kidPin"){ const a = (fd.a||"").trim(), b2 = (fd.b||"").trim();
     if(!/^\d{4,6}$/.test(a)){ toast("Use 4 to 6 numbers"); return; } if(a !== b2){ toast("The two PINs don't match"); return; }
-    put("settings","kids",{...kidSettings(), pin:pinHash(a)}); const then = f.dataset.v; closeSheet(); toast("Grown-up PIN saved"); if(then){ setKid(then); } return; }
+    put("settings","kids",{...kidSettings(), pin:pinHash(a)}); const then = f.dataset.v; closeSheet(); toast("Grown-up PIN saved"); if(then){ setKid(then); if(kidPlayNext === then && canPlay(then)) kidPlayStart(then); kidPlayNext = ""; } return; }
   if(kind === "kAdd"){ const name = (fd.name||"").trim(); if(!name) return; const st = fd.store || store;
     put("shop", uid(), {store:st, name, qty:"1", done:false, addedBy:myName(), at:Date.now()}); log(`added ${name} to ${STORES[st]} on the kitchen display`);
     notifyBatched("add-"+st, "shop", "Added to " + STORES[st], name, "added", "shop/" + st); toast(`Added ${name} to ${STORES[st]}`); f.reset(); f.querySelector("input").blur(); render(); return; }
