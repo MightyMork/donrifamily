@@ -3,7 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>Púcas cards</title>
+<title>Púcas Cards</title>
+<meta name="theme-color" content="#121B33">
+<link rel="manifest" href="app.webmanifest">
+<link rel="icon" href="icons/rua-favicon-64.png">
+<link rel="apple-touch-icon" href="icons/rua-apple-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Pixelify+Sans:wght@500;700&display=swap" rel="stylesheet">
 <style>
@@ -1504,6 +1508,7 @@ document.addEventListener("click", e => {
     case "gmode": { const k = el.dataset.k; if (S.kids[k]) { S.kids[k].mode = el.dataset.m; save(); grownSheet(); if (R !== "match") render(); } break; }
     case "gtest": testCards(); save(); toast("Test cards", "Every card added to both kids' collections, for grown-up testing.", true); grownSheet(); break;
     case "glooks": looksSheet(); break;
+    case "ginstall": doInstall(); break;
     case "gsync": LINK.sync(true).then(() => { project(); grownSheet(); }); break;
     case "looks": looksSheet(); break;
     case "howto": howTo(R === "match" && M ? (M.mode === "little" ? "little" : "normal") : null); break;
@@ -1620,8 +1625,26 @@ function grownSheet() {
   ${kidsRows}
   <div class="card"><div class="row wrap" style="gap:8px"><button class="btn alt small" data-act="glooks">Looks</button><button class="btn alt small" data-act="gsync">Sync now</button><button class="btn alt small" data-act="gtest">Add test cards</button></div>
   <p class="muted" style="margin:8px 0 0">Sync: ${LINK.state}${LINK.error ? " (" + String(LINK.error.message || LINK.error).slice(0, 80) + ")" : ""}. "Add test cards" gives both kids every card, for trying things out.</p></div>
+  ${installCard()}
   <a class="btn" href="../" style="display:block;text-align:center;text-decoration:none">Back to Donrí</a>
   <button class="link" data-act="close" style="width:100%">Close</button>`);
+}
+// ---------- Its own app on the home screen (v24) ----------
+let installEvt = null;
+const isInstalled = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+addEventListener("beforeinstallprompt", e => { e.preventDefault(); installEvt = e; });
+addEventListener("appinstalled", () => { installEvt = null; toast("Púcas Cards", "Added to the home screen. Look for Rua!"); });
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js").catch(() => {});
+function installCard() {
+  const body = isInstalled() ? `<p class="muted" style="margin:0">✓ This is the Púcas Cards app.</p>`
+    : installEvt ? `<button class="btn alt small" data-act="ginstall">📲 Add Púcas Cards to the home screen</button><p class="muted" style="margin:8px 0 0">Its own app with Rua's picture. Donrí stays its own app beside it.</p>`
+    : `<p class="muted" style="margin:0">To add it to the home screen: in Chrome, tap ⋮ then <b>Add to home screen</b> (or <b>Install app</b>). If it's already there, look for Rua.</p>`;
+  return `<div class="card"><b style="font-size:18px">On the home screen</b><div style="margin-top:8px">${body}</div></div>`;
+}
+async function doInstall() {
+  if (!installEvt) return grownSheet();
+  installEvt.prompt(); try { await installEvt.userChoice; } catch (e) {}
+  installEvt = null; grownSheet();
 }
 LINK.on(kind => {
   if (kind === "state") { updateBar(); return; }
