@@ -290,6 +290,12 @@ h1{font-size:30px}h2{font-size:22px}
 @keyframes jump{to{transform:translateY(-14px)}}
 .gate{text-align:center;padding-top:30px}
 .gate img{height:170px}
+.gbtn{display:flex;width:fit-content;align-items:center;gap:8px;margin:22px auto 0;min-height:48px;padding:8px 16px;border-radius:24px;border:2px dashed #6a6290;background:transparent;color:#cfc6e6;font:inherit;font-size:16px;cursor:pointer}
+.tlk{display:inline-block;width:18px;height:18px;opacity:.8}.tlk svg{width:100%;height:100%}
+.tchip{cursor:pointer}.tchip small{color:#9fe0b0}
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0}
+.tgrid .btn{font-size:20px;padding:12px 4px}
+.tnote{background:#1d1a38;border:1px solid #3a3462;border-radius:12px;padding:10px 12px;margin:10px 0;font-size:15px;color:#cfc6e6}
 .avgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 .avgrid button{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;color:var(--soft);text-align:center}
 .avgrid .av{width:68px;height:68px}
@@ -440,7 +446,7 @@ function project() {
     const p = LINK.doc("settings", "puca-" + k), cd = LINK.doc("cards", k) || {}, pk = LINK.doc("cards", k + "-pack") || {};
     const mode = cd.mode || (k === "Rían" ? "little" : "normal");
     kidsNow[k] = { puca: p.starter, xp: Number(p.xp) || 0, gems: LINK.gems(k), unlocked: LINK.jobToday(k) || !!LINK.playDoc(k).unlocked,
-      minsLeft: Math.ceil(LINK.secsLeft(k) / 60), speech: LINK.kidPref("speech", k), sound: LINK.kidPref("sound", k), mode,
+      minsLeft: Math.ceil(LINK.secsLeft(k) / 60), extra: Number(LINK.playDoc(k).extraMins) || 0, gUnlock: !!LINK.playDoc(k).unlocked, lateUntil: Number(LINK.playDoc(k).lateUntil) || 0, lateMins: Number(LINK.playDoc(k).lateMins) || 0, speech: LINK.kidPref("speech", k), sound: LINK.kidPref("sound", k), mode,
       read: { setanta: !!(stories.setanta || stories[k + "-setanta"] || Object.keys(stories).some(x => /setanta/.test(x))) } };
     seenXp[k] = kidsNow[k].xp; lastMode[k] = mode;
     if (cd.deck) { const j = JSON.stringify(cd.deck); if (!S.cards[k] || j !== lastDeck[k]) { S.cards[k] = JSON.parse(j); lastDeck[k] = j; } }
@@ -506,7 +512,12 @@ function board() { return deck().board.map(realId); }
 
 /* ---------- time ---------- */
 function clockNow() { if (S.clock === "real") { const d = new Date(); return { h: d.getHours() }; } return { h: +S.clock.split(":")[0] }; }
-function asleep() { const h = clockNow().h; return h >= 21 || h < 7; }
+function asleep() {
+  const h = clockNow().h, bed = h >= 21 || h < 7;
+  if (bed && kid && K().lateMins && !K().lateUntil) { const until = Date.now() + K().lateMins * 60000; playPut(kid, { lateUntil: until, lateMins: 0 }); K().lateUntil = until; K().lateMins = 0; }
+  return bed && !(kid && K().lateUntil && Date.now() < K().lateUntil);
+}
+function playPut(k, data) { LINK.addPlay(k, 0); const d = LINK.playDoc(k); const { id: _i, ...rest } = d; LINK.put("play", k + "-" + LINK.today(), { ...rest, kid: k, date: LINK.today(), ...data }); }
 function gate() {
   if (!kid) return null;
   if (asleep()) return "sleep";
@@ -660,7 +671,8 @@ function whoHTML() {
 function gateHTML(g) {
   const id = myId(), sw = S.device === "family" ? `<button class="pxb" data-act="who" aria-label="Switch player" style="margin:10px auto">${PX.swap}</button>` : "";
   const t = { sleep: ["Shh!", "The Púcas are asleep. Come back at 7 in the morning.", "asleep"], locked: ["Not yet!", "Do a job in Donrí to unlock playtime today.", "idle"], timeup: ["All done for today!", `That's all your playtime. ${C[id].name} says see you tomorrow!`, "happy"] }[g];
-  return `<div class="gate"><img src="${img(id, t[2])}" alt=""><h1>${t[0]}</h1><p style="font-size:22px">${t[1]}</p>${sayBtn(t[0] + " " + t[1])}<br>${sw}</div>`;
+  const gl = { sleep: "Grown-ups: a bit later tonight", locked: "Grown-ups: unlock today", timeup: "Grown-ups: more time today" }[g];
+  return `<div class="gate"><img src="${img(id, t[2])}" alt=""><h1>${t[0]}</h1><p style="font-size:22px">${t[1]}</p>${sayBtn(t[0] + " " + t[1])}<br>${sw}<button class="gbtn" data-act="timer"><span class="tlk">${PX.lock}</span>${gl}</button></div>`;
 }
 function homeHTML() {
   const k = K(), id = myId(), d = deck();
@@ -678,7 +690,7 @@ function homeHTML() {
   const main = k.mode === "little" ? `<button class="btn" data-act="play" data-m="little">▶ Play with Rua</button>` : `<button class="btn" data-act="setup" data-m="normal">▶ Match: 3 Púcas each</button>`;
   const grid = opts().icons === 3 ? `<div class="tiles">${items.map(x => tile(...x)).join("")}</div>` : `<div class="g2" style="margin-top:10px">${items.map(x => bt(...x)).join("")}</div>`;
   return top + `<div class="hero" style="background-image:url(${STAGES[d.stage].img})"><img src="${img(id)}" alt="${C[id].name}"><div class="lbl"><div class="px" style="font-size:26px;color:var(--cream)">${C[id].name}</div><div class="sub" style="color:#e8def5">Level ${level(kid)} in Púcas Cara · leads your deck</div></div></div>
-  <div class="row wrap" style="margin:10px 0"><span class="chip"><span class="gem"></span> ${k.gems} gems</span><span class="chip">⏱ ${k.minsLeft} min left today</span></div>
+  <div class="row wrap" style="margin:10px 0"><span class="chip"><span class="gem"></span> ${k.gems} gems</span><button class="chip tchip" data-act="timer" aria-label="Playtime: ${k.minsLeft} minutes left today. Grown-ups can add time.">⏱ ${k.minsLeft} min left today${k.extra ? ` <small>(+${k.extra})</small>` : ""} <span class="tlk">${PX.lock}</span></button></div>
   ${main}${grid}`;
 }
 const PX = (() => {
@@ -1388,6 +1400,52 @@ function pinKey(n) {
   }
 }
 
+/* ---------- one-off timers (grown-ups, behind the PIN) ---------- */
+let TK = null;
+function timerOpen(k) {
+  TK = k || kid || KIDS[0]; if (!TK) return;
+  if (!LINK.hasPin()) { toast("Grown-ups", "Set a grown-up PIN in Donrí first (Settings → Kid mode)."); return; }
+  pinNext = () => timerSheet(TK); pinPad();
+}
+function timerSheet(k) {
+  TK = k || TK; const x = S.kids[TK]; if (!x) return closeSheet();
+  const kk = kid; kid = TK; const g = gate(); kid = kk;
+  const lateOn = (x.lateUntil && Date.now() < x.lateUntil) || x.lateMins;
+  const status = g === "sleep" ? "The Púcas are asleep (9pm–7am)." : g === "locked" ? "Playtime isn't unlocked yet today." : `${x.minsLeft} min left today.`;
+  const pick = KIDS.length > 1 && S.device === "family" ? `<div class="opt">${KIDS.map(k2 => `<button class="${k2 === TK ? "on" : ""}" data-act="tkid" data-k="${k2}">${k2}</button>`).join("")}</div>` : "";
+  const sofar = [x.gUnlock && !LINK.jobToday(TK) ? "unlocked by a grown-up" : "", x.extra ? `+${x.extra} min extra` : "",
+    lateOn ? (x.lateUntil && Date.now() < x.lateUntil ? `up until ${new Date(x.lateUntil).toLocaleTimeString("en-IE", { hour: "numeric", minute: "2-digit" })}` : `${x.lateMins} min past 9 tonight`) : ""].filter(Boolean);
+  sheet(`<h2>Playtime for ${TK}</h2>${pick}<p class="sub">${status} Shared with Púcas Cara.</p>
+  ${!x.unlocked ? `<button class="btn" data-act="tunlock">Unlock playtime today</button><p class="sub">Same as doing a job.</p>` : ""}
+  <h2 style="font-size:18px;margin-top:12px">Extra time, just for today</h2>
+  <div class="tgrid">${[10, 15, 30].map(m => `<button class="btn alt" data-act="tadd" data-m="${m}">+${m} min</button>`).join("")}</div>
+  <h2 style="font-size:18px;margin-top:12px">A bit later tonight</h2>
+  <div class="tgrid">${[15, 30].map(m => `<button class="btn alt" data-act="tlate" data-m="${m}">+${m} min</button>`).join("")}${lateOn ? `<button class="btn alt" data-act="tlate" data-m="0">Cancel</button>` : ""}</div>
+  <div class="tnote">${sofar.length ? `<b>Today so far:</b> ${sofar.join(", ")}.<br>` : ""}One-off: tomorrow goes back to the usual playtime. The usual daily minutes are set in Donrí.</div>
+  <button class="btn small" data-act="close">Done</button>`);
+}
+function timerApply(kind, m) {
+  const k = TK, x = S.kids[k]; if (!x) return;
+  const d = LINK.playDoc(k), extra = Number(d.extraMins) || 0, limit = Number(LINK.kidSettings().playMins) || 10;
+  let line;
+  if (kind === "unlock") { playPut(k, { unlocked: true, extraMins: LINK.secsLeft(k) <= 0 ? extra + limit : extra }); line = `Playtime unlocked today for ${k}`; }
+  if (kind === "add") { playPut(k, { extraMins: extra + m }); line = `+${m} min playtime today for ${k}`; }
+  if (kind === "late") {
+    const h = clockNow().h, bed = h >= 21 || h < 7;
+    if (!m) { playPut(k, { lateUntil: 0, lateMins: 0 }); line = `Late night cancelled for ${k}`; }
+    else {
+      const top = Math.max(0, m - Math.floor(LINK.secsLeft(k) / 60));
+      playPut(k, bed ? { lateUntil: Date.now() + m * 60000, lateMins: 0, extraMins: extra + top } : { lateMins: m, lateUntil: 0, extraMins: extra + top });
+      line = bed ? `${k} can play ${m} more minutes tonight` : `${k} can play until ${m} minutes past 9 tonight`;
+    }
+  }
+  timeUpPending = false;
+  LINK.log("Extra playtime from a grown-up: " + line + " (Púcas Cards, just today)", "A grown-up");
+  project(); SFX.tap();
+  toast("Done", line + ". Just for today.");
+  timerSheet(k); if (R !== "match") render();
+}
+
 /* ---------- Donrí link panel (grown-ups' side, pretend) ---------- */
 function tg(on, a, k) { return `<button class="tg${on ? " on" : ""}" data-act="${a}" data-k="${k}" aria-pressed="${on}"></button>`; }
 function openDonri() {
@@ -1464,6 +1522,12 @@ document.addEventListener("click", e => {
     case "pick": kid = el.dataset.k; deck(); R = "home"; SFX.tap(); render(); speak("Hi " + kid + "!"); break;
     case "who": kid = null; R = "who"; render(); break;
     case "lock": pinPad(); break;
+    case "timer": timerOpen(kid); break;
+    case "tkid": timerSheet(el.dataset.k); break;
+    case "tunlock": timerApply("unlock"); break;
+    case "tadd": timerApply("add", +el.dataset.m); break;
+    case "tlate": timerApply("late", +el.dataset.m); break;
+    case "gtime": TK = el.dataset.k; timerSheet(el.dataset.k); break;
     case "pin": pinKey(el.dataset.n); break;
     case "go": closeSheet(); R = el.dataset.r; SFX.tap(); render(); break;
     case "avatars": avatarSheet(); break;
@@ -1550,8 +1614,9 @@ function grownGate() { if (!LINK.hasPin() || Date.now() < unlockedUntil) return 
 function grownSheet() {
   const kidsRows = KIDS.map(k => { const x = S.kids[k]; return `<div class="card"><b style="font-size:18px">${k}</b>
     <div class="muted" style="margin:4px 0 8px">${C[P.myCard(x.puca, level(k))].name} · level ${level(k)} · ${x.gems} gems · ${x.unlocked ? (x.minsLeft > 0 ? x.minsLeft + " min playtime left" : "no playtime left") : "playtime locked until a job is done"}</div>
-    <div class="row" style="gap:8px">${[["little", "Little (younger kids)"], ["normal", "Normal (bigger kids)"]].map(([m, n]) => `<button class="btn ${x.mode === m ? "" : "alt"} small" data-act="gmode" data-k="${k}" data-m="${m}" aria-pressed="${x.mode === m}">${n}</button>`).join("")}</div></div>`; }).join("");
-  sheet(`<h2>Grown-ups</h2><p class="sub">Gems, playtime, packs and the PIN are all set in Donrí. Card pack requests appear in Donrí under Waiting for your OK.</p>
+    <div class="row" style="gap:8px">${[["little", "Little (younger kids)"], ["normal", "Normal (bigger kids)"]].map(([m, n]) => `<button class="btn ${x.mode === m ? "" : "alt"} small" data-act="gmode" data-k="${k}" data-m="${m}" aria-pressed="${x.mode === m}">${n}</button>`).join("")}</div>
+    <button class="btn alt small" data-act="gtime" data-k="${k}" style="margin-top:8px">⏱ Extra time today…</button></div>`; }).join("");
+  sheet(`<h2>Grown-ups</h2><p class="sub">Gems, packs, the usual daily playtime and the PIN are set in Donrí. Extra time just for today can be given here. Card pack requests appear in Donrí under Waiting for your OK.</p>
   ${kidsRows}
   <div class="card"><div class="row wrap" style="gap:8px"><button class="btn alt small" data-act="glooks">Looks</button><button class="btn alt small" data-act="gsync">Sync now</button><button class="btn alt small" data-act="gtest">Add test cards</button></div>
   <p class="muted" style="margin:8px 0 0">Sync: ${LINK.state}${LINK.error ? " (" + String(LINK.error.message || LINK.error).slice(0, 80) + ")" : ""}. "Add test cards" gives both kids every card, for trying things out.</p></div>
