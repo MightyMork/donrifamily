@@ -46,7 +46,7 @@ header.top{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1
 .note-go{flex:1;text-align:left;background:none;border:0;padding:12px 4px 12px 14px;color:inherit;font:inherit;display:flex;flex-direction:column;gap:2px;cursor:pointer}
 .note-go span{font-size:15px}
 .note-x{flex:none;width:44px;background:none;border:0;color:var(--muted,#888);font-size:22px;line-height:1;cursor:pointer;border-radius:0 14px 14px 0}
-.note-x:hover{color:inherit}
+@media (hover:hover) and (pointer:fine){.note-x:hover{color:inherit}}
 .bt.flash>.card{animation:okflash 1.6s ease}
 @keyframes okflash{0%,60%{box-shadow:0 0 0 4px var(--accent,#E3B23C)}100%{box-shadow:none}}
 .badge{position:absolute;top:4px;right:4px;min-width:18px;height:18px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;padding:0 4px}
@@ -931,7 +931,7 @@ h2{font-family:var(--head);font-weight:600;font-size:1.15rem;line-height:1.2;tex
 /* Header and tab bar */
 header.top{background:var(--surface);border-bottom:1px solid var(--line);gap:8px}
 .iconbtn{width:44px;height:44px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);transition:border-color .15s ease,background .15s ease}
-.iconbtn:hover{border-color:var(--accent)}
+@media (hover:hover) and (pointer:fine){.iconbtn:hover{border-color:var(--accent)}}
 .badge{background:var(--accent);color:#121B33;font-family:var(--head);font-weight:600}
 [data-theme="dark"] .badge{color:#121B33}
 .sync{background:var(--ok)}
@@ -958,21 +958,21 @@ nav.tabs button[aria-current="page"]::before{content:"";position:absolute;top:0;
 
 /* Buttons */
 .btn{min-height:44px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:0 16px;font-family:var(--head);font-weight:600;font-size:.93rem;transition:border-color .15s ease,box-shadow .15s ease}
-.btn:hover{border-color:var(--accent)}
+@media (hover:hover) and (pointer:fine){.btn:hover{border-color:var(--accent)}}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:#121B33}
-.btn.primary:hover{box-shadow:var(--shadow-hover)}
+@media (hover:hover) and (pointer:fine){.btn.primary:hover{box-shadow:var(--shadow-hover)}}
 .btn.primary .ac{stroke:#121B33}
 .btn.danger{color:var(--crit)}
-.btn.danger:hover{border-color:var(--crit)}
+@media (hover:hover) and (pointer:fine){.btn.danger:hover{border-color:var(--crit)}}
 .btn.sm{min-height:36px;padding:0 12px;font-size:.85rem}
 .x{border-radius:8px}
-.x:hover{background:var(--bg);color:var(--ink)}
+@media (hover:hover) and (pointer:fine){.x:hover{background:var(--bg);color:var(--ink)}}
 .fab{background:var(--accent);color:#121B33;border-radius:16px;box-shadow:var(--shadow-pop)}
 .linkish{color:inherit}
 
 /* Chips, segmented control, pills */
 .chip{min-height:40px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font-family:var(--body);font-weight:600;font-size:.9rem;transition:border-color .15s ease}
-.chip:hover{border-color:var(--accent)}
+@media (hover:hover) and (pointer:fine){.chip:hover{border-color:var(--accent)}}
 .chip[aria-pressed="true"]{background:var(--soft);color:var(--ink);border-color:var(--accent)}
 .chip .n{font-family:var(--head);font-weight:600;opacity:1;color:var(--muted)}
 .seg{display:inline-flex;gap:2px;padding:3px;background:var(--bg);border:1px solid var(--line);border-radius:999px;overflow:visible}
@@ -987,7 +987,7 @@ nav.tabs button[aria-current="page"]::before{content:"";position:absolute;top:0;
 /* Lists, ticks, progress */
 .item{border-bottom:1px solid var(--line)}
 .check{width:30px;height:30px;border-radius:7px;border:2px solid var(--muted);transition:background .15s ease,border-color .15s ease}
-.check:hover{border-color:var(--accent)}
+@media (hover:hover) and (pointer:fine){.check:hover{border-color:var(--accent)}}
 .check.on{background:var(--ok);border-color:var(--ok);color:var(--surface)}
 .item.done .name{color:var(--muted)}
 .bar{height:10px;background:var(--bg);border:1px solid var(--line);border-radius:999px}
@@ -1027,7 +1027,7 @@ input[type=text]:focus,input[type=number]:focus,input[type=date]:focus,input[typ
 .saybtn .bi{color:var(--accent-ink)}
 .remoji .bi{color:var(--accent-ink)}
 .qbtn{border-radius:14px}
-.qbtn:hover{border-color:var(--accent);box-shadow:var(--shadow-hover)}
+@media (hover:hover) and (pointer:fine){.qbtn:hover{border-color:var(--accent);box-shadow:var(--shadow-hover)}}
 .acard{border-radius:10px;background:var(--surface)}
 
 /* Kitchen display: big clock, calm cards */
@@ -1038,10 +1038,10 @@ input[type=text]:focus,input[type=number]:focus,input[type=date]:focus,input[typ
 /* ---------- Today as a bento grid ---------- */
 .bento{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;grid-auto-flow:row dense}
 .bento>.bt{min-width:0;display:flex}
-.bento.anim>.bt{animation:bnIn .6s cubic-bezier(.2,.7,.2,1) both}
+.bento.anim>.bt{animation:none}
 .bento>.bt.w{grid-column:1/-1}
 .bento>.bt>.card{flex:1;margin:0;border-radius:14px;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease}
-.bento>.bt>.card:hover{transform:translateY(-2px);box-shadow:var(--shadow-hover);border-color:var(--accent)}
+@media (hover:hover) and (pointer:fine){.bento>.bt>.card:hover{transform:translateY(-2px);box-shadow:var(--shadow-hover);border-color:var(--accent)}}
 .bento.anim>.bt:nth-child(2){animation-delay:.04s}.bento.anim>.bt:nth-child(3){animation-delay:.08s}.bento.anim>.bt:nth-child(4){animation-delay:.12s}.bento.anim>.bt:nth-child(n+5){animation-delay:.16s}
 @keyframes bnIn{from{opacity:0;transform:translateY(8px)}}
 .bento .bt:not(.w) .tcard h3{flex-wrap:wrap;row-gap:0}
@@ -1049,7 +1049,7 @@ input[type=text]:focus,input[type=number]:focus,input[type=date]:focus,input[typ
 .bento .bt:not(.w) .btn{max-width:100%;white-space:normal;text-align:center}
 .bstats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0 0 12px}
 .bstat{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;box-shadow:var(--shadow);color:var(--ink);font:inherit;min-height:84px;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease}
-.bstat:hover{transform:translateY(-2px);box-shadow:var(--shadow-hover);border-color:var(--accent)}
+@media (hover:hover) and (pointer:fine){.bstat:hover{transform:translateY(-2px);box-shadow:var(--shadow-hover);border-color:var(--accent)}}
 .bstat .bi{width:22px;height:22px;padding:6px;box-sizing:content-box;border-radius:8px;background:var(--soft);color:var(--accent-ink)}
 .bstat .bi .ac{stroke:var(--accent-ink)}
 .bstat b{font-family:var(--head);font-weight:700;font-size:1.4rem;line-height:1.1;margin-top:4px}
@@ -1278,6 +1278,56 @@ body.pucas .arc{background:linear-gradient(180deg,rgba(23,26,51,.25),rgba(23,26,
 .starcard.pzt .starbig{font-family:'Pixelify Sans','Bricolage Grotesque',sans-serif;color:#FFF6DE;text-shadow:3px 3px 0 #10122A}
 .starcard.pzt .starbig .bi{color:#F2B33D}
 /* ---------- end PÚCAS GEMS ---------- */
+
+/* ---------- v29 polish (21 Nov 2026): press feedback, 44px tap areas, input focus, calmer motion ---------- */
+:root{--ease-out:cubic-bezier(0.23,1,0.32,1);--press:.97}
+/* Press feedback: a small squash, fast ease-out (colour changes keep their own timing) */
+.btn,.chip,.iconbtn,.bstat,.fab,.x,.check,.gk .gplay,.seg button,.pbot button,.ptop button,.note-go,nav.tabs button,.fitmore{transition-property:transform,border-color,background-color,box-shadow,color;transition-duration:.16s;transition-timing-function:var(--ease-out)}
+.btn:active,.chip:active,.iconbtn:active,.bstat:active,.fab:active,.x:active,.check:active,.gk .gplay:active,.seg button:active,.pbot button:active,.ptop button:active,.note-go:active,nav.tabs button:active,.fitmore:active{transform:scale(var(--press))}
+.btn:disabled:active{transform:none}
+/* Tap areas of at least 44px: the look stays the same, the touch area grows */
+.btn.sm,.x,.seg button,.chip,.tcard h3 a,.tcard h3 button,.fitmore,.linkish,.gk .gh,.gk .gplay,.check,.pbot button,.ptop button{position:relative}
+.btn.sm::after,.x::after,.gk .gh::after,.bento .bt:not(.w) .chip::after{content:"";position:absolute;inset:-4px}
+.seg button::after{content:"";position:absolute;inset:-3px 0}
+.chip::after,.pbot button::after,.kt .check::after{content:"";position:absolute;inset:-2px}
+.tcard h3 a::after,.tcard h3 button::after,.fitmore::after,.linkish::after,.check::after,.pdel::after{content:"";position:absolute;inset:-7px}
+.ptop button::after{content:"";position:absolute;inset:-5px}
+.sz-s .gk .gplay::after{content:"";position:absolute;inset:-6px}
+.sz-m .gk .gplay::after{content:"";position:absolute;inset:-2px}
+details summary{min-height:44px}
+/* Keep a clear focus ring on form fields (the gold border alone is only 1.96:1) */
+:is(input[type=text],input[type=number],input[type=date],input[type=time],input[type=email],input[type=password],input[type=search],select,textarea):focus-visible{outline:2px solid var(--focus);outline-offset:1px}
+/* Number-tile captions: 12px */
+.bstat span{font-size:.8rem}
+/* Reduced motion: no squash, no smooth-scroll; colour changes stay */
+@media (prefers-reduced-motion:reduce){:root{--press:1}.pcar{scroll-behavior:auto}details.sset>summary::after{transition:none}}
+/* Selected states: dark gold (5.6:1) instead of fada gold (1.96:1) so "selected" is clear without relying on the faint gold */
+.chip[aria-pressed="true"],.palbtn[aria-checked="true"]{border-color:var(--accent-ink)}
+.seg button[aria-pressed="true"]{box-shadow:inset 0 0 0 1.5px var(--accent-ink)}
+/* Progress bars: the gold fill gets a dark-gold edge so it stands out from its track */
+.bar i,.gk .gbar i{box-shadow:inset 0 0 0 1.5px var(--accent-ink)}
+body.pucas .bar i,.sheet.pz .bar i{box-shadow:none}
+/* Bottom sheets slide up (occasional action, so a short ease-out is fine); the dim fades in */
+:root{--ease-drawer:cubic-bezier(0.32,0.72,0,1)}
+.scrim.open{animation:scrimIn .2s ease-out}
+.scrim.open .sheet{animation:sheetUp .24s var(--ease-drawer)}
+@keyframes scrimIn{from{opacity:0}}
+@keyframes sheetUp{from{transform:translateY(100%)}}
+@media (prefers-reduced-motion:reduce){.scrim.open .sheet{animation:none}}
+/* Bottom bar: Today, Shop, Meals, Chores + More (Families, Gifts, Health). Five columns leave room for 12px labels. */
+nav.tabs .in{grid-template-columns:repeat(5,minmax(0,1fr))}
+nav.tabs button span{font-size:12px}
+.moretabs{position:fixed;z-index:30;right:max(12px,calc(50vw - 308px));bottom:calc(72px + env(safe-area-inset-bottom));min-width:200px;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow-pop);padding:6px;display:flex;flex-direction:column;gap:2px;transform-origin:bottom right;animation:moreIn .16s var(--ease-out)}
+.moretabs button{display:flex;align-items:center;gap:12px;min-height:48px;padding:0 14px;border:0;border-radius:10px;background:transparent;color:var(--ink);font-family:var(--head);font-weight:500;font-size:.95rem;text-align:left;transition:transform .16s var(--ease-out),background-color .16s var(--ease-out)}
+.moretabs button svg{width:24px;height:24px;flex:none}
+.moretabs button:not([aria-current="page"]) .ac{stroke:currentColor}
+.moretabs button[aria-current="page"]{background:var(--soft);font-weight:600}
+.moretabs button:active{transform:scale(var(--press))}
+@media (hover:hover) and (pointer:fine){.moretabs button:hover{background:var(--bg)}}
+body.kiosk .moretabs,body.gamefull .moretabs{display:none!important}
+@keyframes moreIn{from{opacity:0;transform:scale(.95)}}
+@media (prefers-reduced-motion:reduce){.moretabs{animation:none}}
+/* ---------- end v29 polish ---------- */
 
 /* real app: no prototype bar */
 :root{--protoH:0px}
@@ -1709,8 +1759,20 @@ function render(){
   if(kidOk){ $("#main").innerHTML = pKid(kidMode); if(document.getElementById("petstage")) startPetLoop(); if(document.getElementById("pucastage")) startPucaLoop(); if(document.getElementById("snackCanvas")) startSnack(); if(sheetRender && !($("#sheet").contains(document.activeElement) && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))) sheetRender(); return; }
   if(kitchen){ kApplyTheme(); document.body.classList.toggle("nospeech", !speechOn()); $("#main").innerHTML = pKitchen(); if(document.getElementById("petstage")) startPetLoop(); if(document.getElementById("pucastage")) startPucaLoop(); if(document.getElementById("snackCanvas")) startSnack(); updateBell(); if(sheetRender && !($("#sheet").contains(document.activeElement) && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))) sheetRender(); return; }
   if(familyTab && LOCKED_PAGES.includes(page) && !grownOK()) page = "today";
-  const tabs = [["today","Today",ICON.home],["shop","Shop",ICON.cart],["meals","Meals",ICON.meal],["chores","Chores",ICON.chore],["families","Families",ICON.people],["gifts","Gifts",ICON.gift],["meds","Health",ICON.pill]];
-  $("#tabs").innerHTML = tabs.map(([k,l,i]) => `<button data-act="go" data-v="${k}" ${page===k?'aria-current="page"':''}>${i}<span>${l}${familyTab && LOCKED_PAGES.includes(k) && !grownOK() ? ' 🔒' : ''}</span></button>`).join("");
+  const tabs = [["today","Today",ICON.home],["shop","Shop",ICON.cart],["meals","Meals",ICON.meal],["chores","Chores",ICON.chore]];
+  const moreTabs = [["families","Families",ICON.people],["gifts","Gifts",ICON.gift],["meds","Health",ICON.pill]];
+  const tabLock = k => familyTab && LOCKED_PAGES.includes(k) && !grownOK() ? ' 🔒' : '';
+  let mt = document.getElementById("moreTabs");
+  if(!mt){
+    mt = document.createElement("div"); mt.id = "moreTabs"; mt.className = "moretabs"; mt.hidden = true; document.body.appendChild(mt);
+    const moreBtn = () => document.querySelector("[data-more]");
+    document.addEventListener("click", e => { const m = document.getElementById("moreTabs"), b = e.target.closest("[data-more]"); if(b){ m.hidden = !m.hidden; b.setAttribute("aria-expanded", String(!m.hidden)); } else if(!m.hidden){ m.hidden = true; const bb = moreBtn(); if(bb) bb.setAttribute("aria-expanded", "false"); } });
+    document.addEventListener("keydown", e => { const m = document.getElementById("moreTabs"); if(e.key === "Escape" && !m.hidden){ m.hidden = true; const bb = moreBtn(); if(bb){ bb.setAttribute("aria-expanded", "false"); bb.focus(); } } });
+  }
+  mt.innerHTML = moreTabs.map(([k,l,i]) => `<button data-act="go" data-v="${k}" ${page===k?'aria-current="page"':''}>${i}<span>${l}${tabLock(k)}</span></button>`).join("");
+  const moreOn = moreTabs.some(t => t[0] === page);
+  const moreIcon = `<svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle class="ac" cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>`;
+  $("#tabs").innerHTML = tabs.map(([k,l,i]) => `<button data-act="go" data-v="${k}" ${page===k?'aria-current="page"':''}>${i}<span>${l}${tabLock(k)}</span></button>`).join("") + `<button data-more="1" aria-haspopup="true" aria-expanded="${!mt.hidden}" aria-controls="moreTabs" ${moreOn?'aria-current="page"':''}>${moreIcon}<span>More</span></button>`;
   const carX = ($("#main .pcar")||{}).scrollLeft || 0; todayAnim = page === "today" && lastPage !== "today"; lastPage = page; const keepImg = {}; $("#main").querySelectorAll(".pcar img").forEach(i => keepImg[i.dataset.pid] = i);
   $("#main").innerHTML = ((page === "today" || page === "chores") ? famBar() : "") + ({today:pToday, shop:pShop, meals:pMeals, chores:pChores, families:pFamilies, gifts:pGifts, meds:pMeds, renew:pRenew}[page])();
   { const c = $("#main .pcar"); if(c && carX){ c.style.scrollBehavior = "auto"; c.scrollLeft = carX; c.style.scrollBehavior = ""; } }
@@ -4404,12 +4466,14 @@ function itemForm(id){
 
 // ---------- About this app (v22). Update RELEASE with each release: version, date and a few plain lines of what's new ----------
 const RELEASE = {
-  version: "v28", date: "2026-11-21",
+  version: "v29", date: "2026-11-23",
   news: [
-    "Púcas card packs now have 5 cards: a new Púca, a matching gem and help cards. Still 10 gems with a grown-up's OK.",
-    "Never the same Púca twice, a double pack (two new Púcas) every 4th pack when lots are waiting, and the packs page shows how many Púcas are still to find."
+    "A calmer bottom bar: Today, Shop, Meals and Chores, with Families, Gifts and Health under More.",
+    "Buttons give a small press when tapped, small buttons are easier to hit, and forms show a clear ring on the box you're typing in.",
+    "Pop-up sheets slide up from the bottom, and Today opens straight away without the panels sliding in."
   ],
   earlier: [
+    {version:"v28", date:"2026-11-21", news:["Púcas card packs now have 5 cards: a new Púca, a matching gem and help cards. Still 10 gems with a grown-up's OK.", "Never the same Púca twice, a double pack (two new Púcas) every 4th pack when lots are waiting, and the packs page shows how many Púcas are still to find."]},
     {version:"v27", date:"2026-11-21", news:["Púcas Cards is now its own app: the Play cartridge opens it, or shows how to get it (Download game, then ⋮ and Install).", "The card packs have the Púcas logo."]},
     {version:"v26", date:"2026-11-21", news:["A Play button for each kid on the Gems panel: straight into their games (the grown-up PIN still gets you back).", "Sharper photos on the Photos panel, in the photo grid and when you open a photo."]},
     {version:"v25", date:"2026-11-21", news:["Púcas Cards moved to its own address so it installs as its own app, with Rua as its picture."]},
