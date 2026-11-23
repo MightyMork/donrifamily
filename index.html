@@ -11,6 +11,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600&family=Andika:wght@400;700&family=Lilita+One&family=Patrick+Hand&family=Press+Start+2P&family=Pixelify+Sans:wght@500;700&family=Baloo+2:wght@700&family=Poppins:wght@500;600;700&family=Open+Sans:wght@400;600&display=swap">
 <style>
+/* Numbers in the pixel font: its 5, 8 and 2 look like S and 8, so digits 0-9 are drawn in Andika (the reading font).
+   Words keep the pixel look. If this font can't load, the pixel font draws the digits as before. (v33) */
+@font-face{font-family:"PxDigits";font-weight:400 600;font-display:swap;src:url(https://fonts.gstatic.com/s/andika/v27/mem_Ya6iyW-LwqgwarYQ.woff2) format("woff2");unicode-range:U+0030-0039}
+@font-face{font-family:"PxDigits";font-weight:700 900;font-display:swap;src:url(https://fonts.gstatic.com/s/andika/v27/mem8Ya6iyW-Lwqg40ZMFVZ0b.woff2) format("woff2");unicode-range:U+0030-0039}
 :root{
   --bg:#FAF8F2; --card:#FFFFFF; --ink:#121B33; --muted:#575E70; --line:#E4E1D6;
   --green:#1F6B3A; --green-soft:#E3F0E6; --blue:#2A4C8C; --blue-soft:#E4EAF6;
@@ -686,11 +690,11 @@ body.pucas .fv-pmain{border-radius:0;clip-path:var(--pxc);box-shadow:none}
 
 /* ---------- PLAY in the Púcas look (20 Nov 2026): painted-pixel game cards, gold pixel type, the new wordmark ---------- */
 .pkarc{background:radial-gradient(1px 1px at 12% 8%,#F4E6C8 50%,transparent 51%) 0 0/220px 260px,radial-gradient(1.5px 1.5px at 68% 22%,#F2E28B 50%,transparent 51%) 0 0/300px 340px,linear-gradient(180deg,#1C2045 0%,#2A2552 55%,#3B2A4C 100%)!important;border-radius:0;clip-path:var(--pxc,none);color:#F4E6C8}
-.pkarc .arc-pill{border-radius:0;clip-path:var(--pxc,none);font-family:'Pixelify Sans',Inter,sans-serif;font-weight:600;background:#232848;border-color:#4A5190;color:#F4E6C8}
+.pkarc .arc-pill{border-radius:0;clip-path:var(--pxc,none);font-family:"PxDigits",'Pixelify Sans',Inter,sans-serif;font-weight:600;background:#232848;border-color:#4A5190;color:#F4E6C8}
 .pkarc .arc-logo{display:flex;flex-direction:column;align-items:center;gap:2px;text-shadow:none!important}
 .pkarc .arc-wm{display:block;font-size:38px;line-height:1}.pkarc .arc-wm .iwm{height:1em;width:auto;display:block}
 .pkarc .arc-wm .iwm .l,.pkarc .arc-wm .iwm .sp{animation:none}
-.pkarc .arc-logo>span:last-child{font:700 18px 'Pixelify Sans',sans-serif!important;color:#F2B33D!important;letter-spacing:.2em;text-shadow:2px 2px 0 #10122A!important}
+.pkarc .arc-logo>span:last-child{font:700 18px "PxDigits",'Pixelify Sans',sans-serif!important;color:#F2B33D!important;letter-spacing:.2em;text-shadow:2px 2px 0 #10122A!important}
 .pkarc .arc-stripe i{height:6px}.pkarc .arc-stripe i:nth-child(1){background:#3E9A5C}.pkarc .arc-stripe i:nth-child(4){background:#5B82CF}
 .pkarc .arc-screen{border-radius:0;clip-path:var(--pxc,none);background:rgba(16,18,42,.55);border:4px solid #10122A;box-shadow:inset 0 0 0 3px #3B4070}
 .pkarc .arc-scan{display:none}
@@ -699,20 +703,20 @@ body.pucas .fv-pmain{border-radius:0;clip-path:var(--pxc);box-shadow:none}
 .pkarc .cart-grip{display:none}
 .pkarc .cart-label{left:6px;right:6px;top:6px;bottom:10px;border-radius:0;background:#10122A;padding:0;gap:0;box-shadow:none}
 .pkarc .cart-art{border-radius:0}.pkarc .cart-art img{image-rendering:pixelated}
-.pkarc .cart-name{font:700 17px 'Pixelify Sans',sans-serif;color:#F2B33D;padding:8px 4px;background:#232848;border-top:3px solid #10122A}
+.pkarc .cart-name{font:700 17px "PxDigits",'Pixelify Sans',sans-serif;color:#F2B33D;padding:8px 4px;background:#232848;border-top:3px solid #10122A}
 .pkarc .cart.locked{background:#4A5190;box-shadow:inset 0 -6px 0 #2E3460}
 .pkarc .arc-dots i{background:#3B4070}.pkarc .arc-dots i.on{background:#F2B33D}
-.pkarc .arc-title{font:700 30px 'Pixelify Sans',sans-serif!important;color:#F2B33D;text-shadow:3px 3px 0 #10122A}
+.pkarc .arc-title{font:700 30px "PxDigits",'Pixelify Sans',sans-serif!important;color:#F2B33D;text-shadow:3px 3px 0 #10122A}
 .pkarc .arc-say{border-radius:0;clip-path:var(--pxc,none);background:#2E3460;border-color:#4A5190}
 .pkarc .arc-sub{color:#E7DCC4}
-.pkarc .arc-note{border-radius:0;clip-path:var(--pxc,none);background:#2F7F74;font-family:'Pixelify Sans',sans-serif;font-weight:600}
+.pkarc .arc-note{border-radius:0;clip-path:var(--pxc,none);background:#2F7F74;font-family:"PxDigits",'Pixelify Sans',sans-serif;font-weight:600}
 .pkarc .arc-dpad{border-radius:0;clip-path:var(--pxc,none);background:#232848;border-color:#4A5190}
 .pkarc .arc-dpad button{border-radius:0!important}
-.pkarc .arc-btn b{font-family:'Pixelify Sans',sans-serif}
+.pkarc .arc-btn b{font-family:"PxDigits",'Pixelify Sans',sans-serif}
 .pkarc .arc-btn.b b{background:#2E3460!important;box-shadow:inset 0 -5px 0 #10122A!important;border-radius:0!important;clip-path:var(--pxc,none)}
 .pkarc .arc-btn.a b{background:#F2B33D!important;color:#171A33!important;box-shadow:inset 0 -5px 0 #B5862A!important;border-radius:0!important;clip-path:var(--pxc,none)}
-.pkarc .arc-btn span{font-family:'Pixelify Sans',sans-serif}
-body.pucas .kd-btitle{font-family:'Pixelify Sans',sans-serif;font-weight:700;color:#F2B33D;text-shadow:3px 3px 0 #10122A;transform:none}
+.pkarc .arc-btn span{font-family:"PxDigits",'Pixelify Sans',sans-serif}
+body.pucas .kd-btitle{font-family:"PxDigits",'Pixelify Sans',sans-serif;font-weight:700;color:#F2B33D;text-shadow:3px 3px 0 #10122A;transform:none}
 /* ---------- STORY FILM in the Púcas look (20 Nov 2026): presents, series plaque, Gigi by the fire, into her book, the cover ---------- */
 #sfilm.gsf{background:#0d1020!important;animation:none!important}
 .gs{position:absolute;inset:0;overflow:hidden;background:linear-gradient(180deg,#141838 0%,#221f4a 60%,#33284a 100%);font-family:Andika,sans-serif;color:#F4E6C8}
@@ -729,13 +733,13 @@ body.pucas .kd-btitle{font-family:'Pixelify Sans',sans-serif;font-weight:700;col
 .gs-stripe{display:flex;width:520px;height:22px;clip-path:polygon(0 6px,6px 6px,6px 0,calc(100% - 6px) 0,calc(100% - 6px) 6px,100% 6px,100% calc(100% - 6px),calc(100% - 6px) calc(100% - 6px),calc(100% - 6px) 100%,6px 100%,6px calc(100% - 6px),0 calc(100% - 6px));animation:gsGrow .7s steps(8) .9s both}
 .gs-stripe i{flex:1}.gs-stripe i:nth-child(1){background:#3E9A5C}.gs-stripe i:nth-child(2){background:#E3B23C}.gs-stripe i:nth-child(3){background:#F2E28B}.gs-stripe i:nth-child(4){background:#5B82CF}
 @keyframes gsGrow{from{width:0}}
-.gs-pres{font:600 64px 'Pixelify Sans',sans-serif;color:#F2B33D;letter-spacing:.12em;text-shadow:5px 5px 0 #10122A;animation:gsUp .6s steps(5) 1.5s both}
+.gs-pres{font:600 64px "PxDigits",'Pixelify Sans',sans-serif;color:#F2B33D;letter-spacing:.12em;text-shadow:5px 5px 0 #10122A;animation:gsUp .6s steps(5) 1.5s both}
 @keyframes gsUp{from{opacity:0;transform:translateY(30px)}}
 .gs-plaque{padding:40px 90px;background:#232848;border:8px solid #F2B33D;box-shadow:inset 0 0 0 6px #10122A,12px 12px 0 #10122A;text-align:center}
 .gs[data-s="2"] .gs-plaque{animation:gsPop .5s steps(5) both}
 @keyframes gsPop{from{transform:scale(.6);opacity:0}}
-.gs-p1{font:700 92px 'Pixelify Sans',sans-serif;color:#F2B33D;text-shadow:6px 6px 0 #10122A;line-height:1.1}
-.gs-p2{font:500 54px 'Pixelify Sans',sans-serif;color:#F4E6C8;margin-top:10px;letter-spacing:.08em}
+.gs-p1{font:700 92px "PxDigits",'Pixelify Sans',sans-serif;color:#F2B33D;text-shadow:6px 6px 0 #10122A;line-height:1.1}
+.gs-p2{font:500 54px "PxDigits",'Pixelify Sans',sans-serif;color:#F4E6C8;margin-top:10px;letter-spacing:.08em}
 .gs-pic{position:absolute;inset:0;overflow:hidden}
 .gs-pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;image-rendering:pixelated;transform-origin:var(--ox,50%) var(--oy,50%);animation:gsDrift 12s ease-in-out infinite alternate;transition:transform 2.4s cubic-bezier(.6,0,.4,1)}
 @keyframes gsDrift{from{transform:scale(1.02)}to{transform:scale(1.08)}}
@@ -751,19 +755,19 @@ body.pucas .kd-btitle{font-family:'Pixelify Sans',sans-serif;font-weight:700;col
 @keyframes gsRise{0%{transform:translateY(0);opacity:0}15%{opacity:1}100%{transform:translateY(-260px) translateX(18px);opacity:0}}
 .gs-say{position:absolute;left:4%;right:4%;bottom:4%;padding:22px 32px;background:rgba(16,22,48,.86);border:6px solid #F2B33D;box-shadow:inset 0 0 0 4px #10122A;font-size:40px;line-height:1.4;color:#F4E6C8;opacity:0;transition:opacity .6s .9s}
 .gs[data-s="3"] .gs-s3 .gs-say,.gs[data-s="4"] .gs-s4 .gs-say{opacity:1}
-.gs-say b{display:block;font:600 30px 'Pixelify Sans',sans-serif;color:#F2B33D;letter-spacing:.08em}
+.gs-say b{display:block;font:600 30px "PxDigits",'Pixelify Sans',sans-serif;color:#F2B33D;letter-spacing:.08em}
 .gs-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(16,18,42,.7) 0%,rgba(16,18,42,0) 38%,rgba(16,18,42,0) 55%,rgba(16,18,42,.6) 100%)}
-.gs-ttl{position:absolute;left:0;right:0;top:60px;text-align:center;font:700 190px/1 'Pixelify Sans',sans-serif;color:#F2B33D;text-shadow:10px 10px 0 #10122A}
+.gs-ttl{position:absolute;left:0;right:0;top:60px;text-align:center;font:700 190px/1 "PxDigits",'Pixelify Sans',sans-serif;color:#F2B33D;text-shadow:10px 10px 0 #10122A}
 .gs-ttl span{display:inline-block}
 .gs[data-s="5"] .gs-ttl span{animation:gsDrop .5s steps(6) both}
 @keyframes gsDrop{from{transform:translateY(-120px);opacity:0}}
-.gs-sub{position:absolute;left:0;right:0;top:270px;text-align:center;font:500 54px 'Pixelify Sans',sans-serif;color:#FFF6DE;text-shadow:5px 5px 0 #10122A}
-.gs-foot{position:absolute;left:0;right:0;top:350px;text-align:center;font:500 30px 'Pixelify Sans',sans-serif;color:#F2E28B;letter-spacing:.1em;opacity:.9}
+.gs-sub{position:absolute;left:0;right:0;top:270px;text-align:center;font:500 54px "PxDigits",'Pixelify Sans',sans-serif;color:#FFF6DE;text-shadow:5px 5px 0 #10122A}
+.gs-foot{position:absolute;left:0;right:0;top:350px;text-align:center;font:500 30px "PxDigits",'Pixelify Sans',sans-serif;color:#F2E28B;letter-spacing:.1em;opacity:.9}
 #sfilm.gsf.done .gs-star{animation:gsTw 2.8s steps(2) infinite!important}
 #sfilm.gsf.done .gs-pic img{animation:gsDrift 12s ease-in-out infinite alternate!important}
-#sfilm.gsf .gs-skip{font-family:'Pixelify Sans',sans-serif;border-radius:0;background:#F2B33D;color:#171A33;box-shadow:inset 0 -4px 0 #B5862A;padding:10px 18px}
-#sfilm.gsf .sf-mq{font:700 clamp(24px,4.6vw,36px) 'Pixelify Sans',sans-serif;color:#F2B33D;text-shadow:3px 3px 0 #10122A}
-#sfilm.gsf .sf-mbtn{font:600 clamp(17px,3.4vw,22px) 'Pixelify Sans',sans-serif;border-radius:0;border:3px solid #10122A;background:#F2B33D;color:#171A33;box-shadow:inset 0 -5px 0 #B5862A;display:inline-flex;align-items:center;gap:8px}
+#sfilm.gsf .gs-skip{font-family:"PxDigits",'Pixelify Sans',sans-serif;border-radius:0;background:#F2B33D;color:#171A33;box-shadow:inset 0 -4px 0 #B5862A;padding:10px 18px}
+#sfilm.gsf .sf-mq{font:700 clamp(24px,4.6vw,36px) "PxDigits",'Pixelify Sans',sans-serif;color:#F2B33D;text-shadow:3px 3px 0 #10122A}
+#sfilm.gsf .sf-mbtn{font:600 clamp(17px,3.4vw,22px) "PxDigits",'Pixelify Sans',sans-serif;border-radius:0;border:3px solid #10122A;background:#F2B33D;color:#171A33;box-shadow:inset 0 -5px 0 #B5862A;display:inline-flex;align-items:center;gap:8px}
 #sfilm.gsf .sf-mbtn .bi{width:1.1em;height:1.1em}
 #sfilm.gsf .sf-mbtn.ghost{background:rgba(23,26,51,.8);color:#F4E6C8;border:2px solid #4A5190;box-shadow:none}
 @media (prefers-reduced-motion:reduce){.gs *{animation:none!important;transition:none!important}}
@@ -826,7 +830,7 @@ body.pucas .kd-btitle{font-family:'Pixelify Sans',sans-serif;font-weight:700;col
 .pc-home{background-size:cover;background-position:center 82%}
 .pc-grow{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:rgba(16,18,42,.82);text-align:center;padding:12px}
 .pc-grow img{height:46%;image-rendering:pixelated;animation:pcHop .6s ease-out 3}
-.pc-gt{font-family:'Pixelify Sans',sans-serif;font-size:26px;color:#F2B33D;margin:0}.pc-gn{font-size:20px;margin:0;color:#FFF6DE}
+.pc-gt{font-family:"PxDigits",'Pixelify Sans',sans-serif;font-size:26px;color:#F2B33D;margin:0}.pc-gn{font-size:20px;margin:0;color:#FFF6DE}
 .pc-foods{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
 .pc-say{position:absolute;left:10px;right:10px;top:10px;z-index:2;background:rgba(16,18,42,.78);color:#FFF6DE;font-family:'Andika',sans-serif;font-size:18px;padding:8px 12px;border:2px solid #4A5190}
 .pc-spr{position:absolute;bottom:4%;height:52%;transform:translateX(-50%);z-index:1;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
@@ -848,7 +852,7 @@ body.pucas .kd-btitle{font-family:'Pixelify Sans',sans-serif;font-weight:700;col
 .pc-food i{position:absolute;right:2px;top:0;font-style:normal;font-size:14px;color:#F2B33D}
 .pc-food.off{opacity:.35}
 .pc-drag{position:fixed;z-index:9999;width:64px;height:64px;object-fit:contain;transform:translate(-50%,-60%);pointer-events:none;filter:drop-shadow(0 4px 4px rgba(0,0,0,.4))}
-.pc-z{position:absolute;left:62%;bottom:46%;font-family:'Pixelify Sans',monospace;font-size:34px;color:#F4E6C8;z-index:2}
+.pc-z{position:absolute;left:62%;bottom:46%;font-family:"PxDigits",'Pixelify Sans',monospace;font-size:34px;color:#F4E6C8;z-index:2}
 .pc-z span{display:inline-block;animation:pkBob 1.6s ease-in-out infinite}.pc-z span:last-child{animation-delay:.4s;font-size:24px}
 .pc-fx{position:absolute;inset:0;pointer-events:none;z-index:3}
 .pc-heart{position:absolute;font-size:26px;animation:pcUp 1.4s ease-out forwards}
@@ -869,7 +873,7 @@ img.gemi{object-fit:contain;image-rendering:auto}
 @keyframes pcPop{to{opacity:0;transform:scale(1.8)}}
 .pc-panel{margin-top:10px;display:flex;flex-direction:column;gap:8px}
 .pc-need{display:flex;align-items:center;gap:10px}.pc-nl{width:104px;flex:none;font-size:17px;font-weight:700}.pc-need .bar{flex:1}
-.pc-xp{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding-top:6px;border-top:2px solid #3B4070}.pc-xp .bar{flex:1;min-width:120px}.pc-xp b{font-family:'Pixelify Sans',sans-serif;font-size:18px;color:#F2B33D}.pc-xp .muted{width:100%;font-size:15px}
+.pc-xp{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding-top:6px;border-top:2px solid #3B4070}.pc-xp .bar{flex:1;min-width:120px}.pc-xp b{font-family:"PxDigits",'Pixelify Sans',sans-serif;font-size:18px;color:#F2B33D}.pc-xp .muted{width:100%;font-size:15px}
 .pc-acts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
 .pc-act{min-height:84px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:19px}
 .pc-act span{font-size:26px;line-height:1}.pc-act small{font-family:'Andika',sans-serif;font-weight:400;font-size:13px;opacity:.85}
@@ -884,7 +888,7 @@ img.gemi{object-fit:contain;image-rendering:auto}
 @media (prefers-reduced-motion:reduce){.pc-bob,.pc-bob.pc-hop,.pc-bob.pc-walk,.pc-bob.pc-wiggle,.pc-z span,.pc-mist,.pc-grow img{animation:none}}
 .pc-pick{display:flex;gap:12px;align-items:center;border-left:6px solid var(--pc)!important}
 .pc-pick img{width:110px;height:120px;object-fit:contain;image-rendering:pixelated;flex:none}
-.pc-pn{font-family:'Pixelify Sans',sans-serif;font-size:28px;color:#FFF6DE}.pc-type{color:var(--pc);font-weight:700;font-size:16px}
+.pc-pn{font-family:"PxDigits",'Pixelify Sans',sans-serif;font-size:28px;color:#FFF6DE}.pc-type{color:var(--pc);font-weight:700;font-size:16px}
 .pc-treats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .pc-treat{display:flex;flex-direction:column;align-items:center;gap:2px;min-height:96px;cursor:pointer;font-size:18px}.pc-treat span{font-size:38px}.pc-treat small{color:#B5862A;font-weight:700}
 @media (prefers-reduced-motion:reduce){.pc-spr,.pc-wisp,.pc-heart{animation:none}}
@@ -1183,12 +1187,12 @@ body.pucas{
   color:var(--ink)}
 body.pucas .kid,body.pucas .kd{color:var(--ink)}
 body.pucas .kid .card{border-radius:0;clip-path:var(--pxc);background:var(--card);border:3px solid #10122A;box-shadow:inset 0 0 0 2px #3B4070}
-body.pucas .kid h2{font-family:'Pixelify Sans','Bricolage Grotesque',sans-serif;font-weight:700;font-size:23px;letter-spacing:.02em;text-transform:none;color:#F2B33D;margin:26px 0 10px}
-body.pucas .kidhi{font-family:'Pixelify Sans','Bricolage Grotesque',sans-serif;font-weight:700}
+body.pucas .kid h2{font-family:"PxDigits",'Pixelify Sans','Bricolage Grotesque',sans-serif;font-weight:700;font-size:23px;letter-spacing:.02em;text-transform:none;color:#F2B33D;margin:26px 0 10px}
+body.pucas .kidhi{font-family:"PxDigits",'Pixelify Sans','Bricolage Grotesque',sans-serif;font-weight:700}
 body.pucas .muted{color:var(--muted)}
 body.pucas .saybtn{border-radius:0;clip-path:var(--pxc);background:#2E3460;border:2px solid #4A5190;color:var(--ink)}
 body.pucas .saybtn .bi{color:#5FD0C0}
-body.pucas .btn{border-radius:0;clip-path:var(--pxc);font-family:'Pixelify Sans',Inter,sans-serif;font-weight:700;background:#2E3460;color:var(--ink);border:2px solid #4A5190}
+body.pucas .btn{border-radius:0;clip-path:var(--pxc);font-family:"PxDigits",'Pixelify Sans',Inter,sans-serif;font-weight:700;background:#2E3460;color:var(--ink);border:2px solid #4A5190}
 body.pucas .btn.primary{background:#F2B33D;color:#171A33;border-color:#F2B33D;box-shadow:inset 0 -5px 0 #B5862A}
 body.pucas .pill{border-radius:0;clip-path:var(--pxc)}
 body.pucas .bar{height:16px;border-radius:0;background:#10122A;border:2px solid #3B4070}
@@ -1198,14 +1202,14 @@ body.pucas .gain{color:#7FD38A}
 .pk-hero{position:relative;height:210px;margin:-4px 0 0;border:3px solid #10122A;clip-path:var(--pxc,none);background-size:cover;background-position:center 62%;image-rendering:pixelated;display:flex;flex-direction:column;justify-content:space-between;padding:12px 14px}
 .pk-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(16,18,42,.55) 0%,rgba(16,18,42,0) 40%,rgba(16,18,42,0) 55%,rgba(16,18,42,.75) 100%);pointer-events:none}
 .pk-top{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:10px}
-.pk-date{font-family:'Pixelify Sans',Inter,sans-serif;font-weight:500;font-size:18px;color:#F4E6C8;background:rgba(16,18,42,.6);padding:4px 10px}
+.pk-date{font-family:"PxDigits",'Pixelify Sans',Inter,sans-serif;font-weight:500;font-size:18px;color:#F4E6C8;background:rgba(16,18,42,.6);padding:4px 10px}
 .pk-hi{position:relative;z-index:1;font-size:36px!important;line-height:1.05;color:#FFF6DE;text-shadow:3px 3px 0 #10122A}
 body.pucas .kexit{border-radius:0;border:2px dashed rgba(244,230,200,.5);background:rgba(16,18,42,.55);color:#F4E6C8}
 /* gems with Dabbit */
 .pk-stars{display:flex;align-items:center;gap:12px;margin-top:14px;text-align:left}
 .pk-buddy{width:92px;height:92px;object-fit:contain;flex:none;image-rendering:pixelated;animation:pkBob 2.4s ease-in-out infinite}
 .pk-buddy.pk-hop{animation:pkHop 1s ease-in-out infinite}
-.pk-stars .starbig{font-family:'Pixelify Sans','Bricolage Grotesque',sans-serif;font-size:48px}
+.pk-stars .starbig{font-family:"PxDigits",'Pixelify Sans','Bricolage Grotesque',sans-serif;font-size:48px}
 .pk-msg{font-size:19px}
 .pk-none{display:flex;align-items:center;gap:12px;font-size:21px}.pk-none img{width:72px;height:72px;image-rendering:pixelated;animation:pkHop 1s ease-in-out infinite}
 @keyframes pkBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
@@ -1214,9 +1218,9 @@ body.pucas .kcheck{border-radius:0;clip-path:var(--pxc);border:4px solid #F2B33D
 body.pucas .kcheck.on{background:#5FAE5B;border-color:#5FAE5B;color:#10122A}
 /* Story time in the same world: dark pixel panels; the reading card stays cream so the words are easy to read */
 body.pucas .kd-round,body.pucas .kd-ghost,body.pucas .kd-hear,body.pucas .kd-mode,body.pucas .kd-book,body.pucas .kd-card,body.pucas .kd-choice,body.pucas .kd-go,body.pucas .kd-win,body.pucas .kd-tab,body.pucas .kd-pic img,body.pucas .kd-cover,body.pucas .kd-bcover{border-radius:0;clip-path:var(--pxc)}
-body.pucas .kd-htitle b,body.pucas .kd h2.kd-h,body.pucas .kd-bmeta b,body.pucas .kd-mode b,body.pucas .kd-card h3,body.pucas .kd-wt{font-family:'Pixelify Sans','Bricolage Grotesque',sans-serif;font-weight:700}
+body.pucas .kd-htitle b,body.pucas .kd h2.kd-h,body.pucas .kd-bmeta b,body.pucas .kd-mode b,body.pucas .kd-card h3,body.pucas .kd-wt{font-family:"PxDigits",'Pixelify Sans','Bricolage Grotesque',sans-serif;font-weight:700}
 body.pucas .kd h2.kd-h{color:#F2B33D}
-body.pucas .kd-go{background:#F2B33D;color:#171A33;box-shadow:inset 0 -6px 0 #B5862A;font-family:'Pixelify Sans','Bricolage Grotesque',sans-serif}
+body.pucas .kd-go{background:#F2B33D;color:#171A33;box-shadow:inset 0 -6px 0 #B5862A;font-family:"PxDigits",'Pixelify Sans','Bricolage Grotesque',sans-serif}
 body.pucas .kd-go span{color:#171A33}
 body.pucas .kd-mcard,body.pucas .kd-mode{box-shadow:none;border:3px solid #4A5190;background:#232848;border-radius:0}
 body.pucas .kd-mnum{border-radius:0;background:#F2B33D;color:#171A33}
@@ -1235,7 +1239,7 @@ body.pucas .kd-prog i.now{background:#F4E6C8}
 /* Play: the cartridge console sits in the same sky */
 body.pucas .arc{background:linear-gradient(180deg,rgba(23,26,51,.25),rgba(23,26,51,.9) 46%),url(pucas/scene-dabbit.jpg) center top/cover;border:3px solid #10122A;border-radius:0;clip-path:var(--pxc)}
 .arc-buddy{position:absolute;right:10px;bottom:118px;width:84px;height:84px;image-rendering:pixelated;pointer-events:none;animation:pkBob 2.4s ease-in-out infinite;z-index:1}
-.arc-logo,.arc-title{font-family:'Pixelify Sans','Bricolage Grotesque',sans-serif!important}
+.arc-logo,.arc-title{font-family:"PxDigits",'Pixelify Sans','Bricolage Grotesque',sans-serif!important}
 .arc-logo{font-size:24px!important;font-weight:700}.arc-logo span{font-family:'Press Start 2P',monospace}
 /* ---------- end PÚCAS THEME ---------- */
 /* ---------- PÚCAS STARS: the grown-ups' gem pages in the same painted-pixel look ---------- */
@@ -1244,26 +1248,26 @@ body.pucas .arc{background:linear-gradient(180deg,rgba(23,26,51,.25),rgba(23,26,
   --pxc:polygon(0 6px,3px 6px,3px 3px,6px 3px,6px 0,calc(100% - 6px) 0,calc(100% - 6px) 3px,calc(100% - 3px) 3px,calc(100% - 3px) 6px,100% 6px,100% calc(100% - 6px),calc(100% - 3px) calc(100% - 6px),calc(100% - 3px) calc(100% - 3px),calc(100% - 6px) calc(100% - 3px),calc(100% - 6px) 100%,6px 100%,6px calc(100% - 3px),3px calc(100% - 3px),3px calc(100% - 6px),0 calc(100% - 6px));
   background:radial-gradient(1px 1px at 12% 8%,#F4E6C8 50%,transparent 51%) 0 0/220px 260px,radial-gradient(1.5px 1.5px at 68% 22%,#F2E28B 50%,transparent 51%) 0 0/300px 340px,linear-gradient(180deg,#1C2045 0%,#2A2552 60%,#3B2A4C 100%);
   color:var(--ink);border-top:4px solid #F2B33D;border-radius:0}
-.sheet.pz .head h3{font-family:'Pixelify Sans','Bricolage Grotesque',sans-serif;font-weight:700;color:#F2B33D;font-size:26px}
+.sheet.pz .head h3{font-family:"PxDigits",'Pixelify Sans','Bricolage Grotesque',sans-serif;font-weight:700;color:#F2B33D;font-size:26px}
 .sheet.pz .iconbtn{border-radius:0;clip-path:var(--pxc);background:#2E3460;border:2px solid #4A5190;color:var(--ink)}
 .sheet.pz .card{border-radius:0;clip-path:var(--pxc);background:var(--card);border:3px solid #10122A;box-shadow:inset 0 0 0 2px #3B4070;color:var(--ink)}
-.sheet.pz h2{font-family:'Pixelify Sans','Bricolage Grotesque',sans-serif;font-weight:700;font-size:21px;text-transform:none;letter-spacing:.02em;color:#F2B33D;margin:22px 0 8px}
+.sheet.pz h2{font-family:"PxDigits",'Pixelify Sans','Bricolage Grotesque',sans-serif;font-weight:700;font-size:21px;text-transform:none;letter-spacing:.02em;color:#F2B33D;margin:22px 0 8px}
 .sheet.pz .muted{color:var(--muted)}
 .sheet.pz .gain{color:#7FD38A}
-.sheet.pz .btn{border-radius:0;clip-path:var(--pxc);font-family:'Pixelify Sans',Inter,sans-serif;font-weight:700;background:#2E3460;color:var(--ink);border:2px solid #4A5190}
+.sheet.pz .btn{border-radius:0;clip-path:var(--pxc);font-family:"PxDigits",'Pixelify Sans',Inter,sans-serif;font-weight:700;background:#2E3460;color:var(--ink);border:2px solid #4A5190}
 .sheet.pz .btn.primary{background:#F2B33D;color:#171A33;border-color:#F2B33D;box-shadow:inset 0 -5px 0 #B5862A}
 .sheet.pz .btn.danger{background:#5A2232;border-color:#D9483B;color:#FFD9D2}
-.sheet.pz .pill{border-radius:0;clip-path:var(--pxc);font-family:'Pixelify Sans',Inter,sans-serif}
+.sheet.pz .pill{border-radius:0;clip-path:var(--pxc);font-family:"PxDigits",'Pixelify Sans',Inter,sans-serif}
 .sheet.pz .pill.ok{background:#2F6B3A;color:#DFF5D8}
 .sheet.pz .bar{height:16px;border-radius:0;background:#10122A;border:2px solid #3B4070}
 .sheet.pz .bar i{border-radius:0;background:repeating-linear-gradient(90deg,#F2B33D 0 10px,#D99A22 10px 12px)}
 .sheet.pz .item{border-bottom:2px dashed #3B4070}
 .sheet.pz .item:last-child{border-bottom:0}
 .sheet.pz .x{color:var(--muted)}
-.sheet.pz label.f{color:#F2B33D;font-family:'Pixelify Sans',Inter,sans-serif;font-weight:500;font-size:15px}
+.sheet.pz label.f{color:#F2B33D;font-family:"PxDigits",'Pixelify Sans',Inter,sans-serif;font-weight:500;font-size:15px}
 .sheet.pz input[type=text],.sheet.pz input[type=number],.sheet.pz select{border-radius:0;background:#10122A;border:2px solid #4A5190;color:var(--ink)}
 .sheet.pz input::placeholder{color:#7D7A99}
-.sheet.pz .starbig{font-family:'Pixelify Sans','Bricolage Grotesque',sans-serif;color:#FFF6DE}
+.sheet.pz .starbig{font-family:"PxDigits",'Pixelify Sans','Bricolage Grotesque',sans-serif;color:#FFF6DE}
 .sheet.pz .starbig .bi{color:#F2B33D}
 /* the gem total with Dabbit */
 .pz-hero{display:flex;align-items:center;gap:12px;text-align:left}
@@ -1279,11 +1283,11 @@ body.pucas .arc{background:linear-gradient(180deg,rgba(23,26,51,.25),rgba(23,26,
 .rpick button{position:relative;aspect-ratio:1;padding:8px;background:#10122A;border:3px solid #3B4070;clip-path:var(--pxc,none);cursor:pointer}
 .rpick button.on{border-color:#F2B33D;background:#2E2A1E;box-shadow:inset 0 0 0 2px #B5862A}
 .rpick button.on::after{content:"";position:absolute;right:3px;bottom:3px;width:10px;height:10px;background:#F2B33D}
-.rpick-name{margin-top:6px;font-family:'Pixelify Sans',Inter,sans-serif;color:var(--muted);font-size:15px}
+.rpick-name{margin-top:6px;font-family:"PxDigits",'Pixelify Sans',Inter,sans-serif;color:var(--muted);font-size:15px}
 /* the Gems tile on the grown-ups' home page */
 .starcard.pzt{background:linear-gradient(180deg,rgba(23,26,51,.35),rgba(23,26,51,.92) 70%),url(pucas/scene-dabbit.jpg) center 60%/cover;color:#F4E6C8;border:3px solid #10122A;border-radius:0;clip-path:var(--pxc-t);--pxc-t:polygon(0 6px,3px 6px,3px 3px,6px 3px,6px 0,calc(100% - 6px) 0,calc(100% - 6px) 3px,calc(100% - 3px) 3px,calc(100% - 3px) 6px,100% 6px,100% calc(100% - 6px),calc(100% - 3px) calc(100% - 6px),calc(100% - 3px) calc(100% - 3px),calc(100% - 6px) calc(100% - 3px),calc(100% - 6px) 100%,6px 100%,6px calc(100% - 3px),3px calc(100% - 3px),3px calc(100% - 6px),0 calc(100% - 6px))}
-.starcard.pzt .pzt-name{font-family:'Pixelify Sans',Inter,sans-serif;font-weight:700;font-size:20px;text-shadow:2px 2px 0 #10122A}
-.starcard.pzt .starbig{font-family:'Pixelify Sans','Bricolage Grotesque',sans-serif;color:#FFF6DE;text-shadow:3px 3px 0 #10122A}
+.starcard.pzt .pzt-name{font-family:"PxDigits",'Pixelify Sans',Inter,sans-serif;font-weight:700;font-size:20px;text-shadow:2px 2px 0 #10122A}
+.starcard.pzt .starbig{font-family:"PxDigits",'Pixelify Sans','Bricolage Grotesque',sans-serif;color:#FFF6DE;text-shadow:3px 3px 0 #10122A}
 .starcard.pzt .starbig .bi{color:#F2B33D}
 /* ---------- end PÚCAS GEMS ---------- */
 
@@ -4530,11 +4534,12 @@ function itemForm(id){
 
 // ---------- About this app (v22). Update RELEASE with each release: version, date and a few plain lines of what's new ----------
 const RELEASE = {
-  version: "v32", date: "2026-11-23",
+  version: "v33", date: "2026-11-23",
   news: [
-    "Púcas Cara is easier on small hands and eyes: bigger Back button, clearer labels, a tidier treats tray, and calmer motion if reduced motion is on."
+    "Numbers in the Púca screens are easier to read: 5, 8 and 2 no longer look like S or 8."
   ],
   earlier: [
+    {version:"v32", date:"2026-11-23", news:["Púcas Cara is easier on small hands and eyes: bigger Back button, clearer labels, a tidier treats tray, and calmer motion if reduced motion is on."]},
     {version:"v31", date:"2026-11-23", news:["The Waiting for your OK panel on Today is shorter: one line for each thing waiting. Tap it to say yes or not yet."]},
     {version:"v30", date:"2026-11-23", news:["The phone's Back button closes a pop-up first, then goes to the page before. It only leaves Donrí from Today.", "Tap anywhere on a Today panel to open it. \"Waiting for your OK\" opens all the yes/no questions together.", "Tapping a notification takes you to the right place, even when Donrí was closed (a card pack request goes to \"Waiting for your OK\").", "Donrí comes back straight away when you return to it, even on a weak signal. A new version shows the next time you open it, or at once with Check for updates."]},
     {version:"v29", date:"2026-11-23", news:["A calmer bottom bar: Today, Shop, Meals and Chores, with Families, Gifts and Health under More.", "Buttons give a small press when tapped, small buttons are easier to hit, and forms show a clear ring on the box you're typing in.", "Pop-up sheets slide up from the bottom, and Today opens straight away without the panels sliding in."]},
