@@ -1753,7 +1753,7 @@ function goLink(link, force){
   navPage(page); window.scrollTo(0,0); render();
   if(extra === "cal") calSheet(); else if(extra === "school") schoolSheet();
   else if(pg === "requests") reqSheet();
-  else if(extra === "pending") setTimeout(() => { const t = document.querySelector('[data-tile="pending"]'); if(t){ t.scrollIntoView({behavior:"smooth", block:"center"}); t.classList.remove("flash"); void t.offsetWidth; t.classList.add("flash"); } else toast("Nothing waiting for your OK now"); }, 80);
+  else if(extra === "pending" || (pg === "today" && !extra && pendingCard())) setTimeout(() => { const t = document.querySelector('[data-tile="pending"]'); if(!t && extra !== "pending") return; if(t){ t.scrollIntoView({behavior:"smooth", block:"center"}); t.classList.remove("flash"); void t.offsetWidth; t.classList.add("flash"); } else toast("Nothing waiting for your OK now"); }, 80);
 }
 // Group bursts (e.g. ticking five items) into one notification
 const batches = {};
@@ -1779,6 +1779,8 @@ const who = n => !n ? "Someone" : (n === myName() ? "You" : n);
 // Rendering
 // =====================================================================
 const startLink = (location.hash||"").replace("#","").split("/");
+// Opened from a notification or link (start_url has no #), not a reload of a page we already set up
+const startFromLink = !!startLink[0] && !(history.state && history.state.dn) && (PAGE_KEYS.includes(startLink[0]) || startLink[0] === "requests");
 let page = startLink[0];
 if(!PAGE_KEYS.includes(page)) page = ls.get("donri.page","today");
 let store = ls.get("donri.store","tesco");
@@ -6125,7 +6127,7 @@ document.addEventListener("change", e => {
       render(); }
     else render();
   }
-  if(tok && cfg.d && startLink[1]) goLink(startLink.join("/"));
+  if(tok && cfg.d && startFromLink) goLink(startLink.join("/"));
   window.addEventListener("hashchange", () => { const h = location.hash.replace("#",""); if(h && !h.startsWith("join=") && h !== page) goLink(h); });
   if(myName() && cfg.d && !ls.get("donri.introSeen", false)) setTimeout(introPlay, 600);
   if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
