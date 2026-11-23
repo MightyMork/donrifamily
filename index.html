@@ -1944,7 +1944,7 @@ function pToday(){
     ${big("dinner") ? `<div style="margin-top:10px;border-top:1px solid var(--line);padding-top:6px">${[1,2,3].map(i => { const d = ymd(addDays(now,i)); const m = (doc("meals", d)||{}).dinner; return `<div class="row fitrow" style="min-height:30px"><span class="muted small" style="width:74px">${i === 1 ? 'Tomorrow' : DOW[parse(d).getDay()]}</span><span class="grow small">${m ? esc(m) : '<span class="muted">Not planned</span>'}</span></div>`; }).join("")}</div>` : ''}</div>`;
   S.chores = `<div class="card tcard"><h3><span class="grow">${familyTab ? (famWho ? esc(famWho) + "'s chores" : "Everyone's chores") : "Your chores"}</span><button data-act="go" data-v="chores">All chores</button></h3>
     ${myChores.length ? myChores.map(c => `<div class="item"><button class="check" data-act="choreDone" data-id="${esc(c.id)}" aria-label="Mark done: ${esc(c.title)}"></button><div class="grow"><div class="name">${esc(c.title)}</div><div class="muted small">${esc(whoLine(c))}</div></div></div>`).join("") : '<div class="muted small">Nothing due. Nice one!</div>'}</div>`;
-  S.pending = `${pendingCard()}`;
+  S.pending = `${pendingCard(true)}`;
   S.stars = showStars ? gemsTile(ks, HS.stars) : "";
   S.health = `${meds.length || medLow.length || hDue.length ? `<div class="card tcard"><h3><span class="grow">Health</span><button data-act="go" data-v="meds">Open</button></h3>
     ${medDue.map(m => `<div class="item"><div class="grow"><b>${esc(m.name)}</b> <span class="muted small">${esc(m.strength||'')}</span><div class="muted small">Today's dose not logged</div></div><button class="btn sm primary" data-act="medLog" data-id="${esc(m.id)}">Log</button></div>`).join("")}
@@ -2571,9 +2571,15 @@ document.addEventListener("click", e => {
     patch("cards", v + "-pack", {req:null, answer:{ok:false, at:Date.now(), by:myName(), seen:false}});
     log(`said not yet to ${v}'s Púcas card pack`); toast(`OK. ${v} will see "not yet".`); }
 });
-function pendingCard(){
+function pendingCard(compact){
   const pend = docs("chores").filter(c => c.pendingBy && choreDue(c)); const swaps = pucaSwapLines() + cardPackLines();
   if(!pend.length && !swaps) return "";
+  if(compact){ // one short line for each thing waiting; the Yes / Not yet buttons are in the sheet it opens
+    const lines = [];
+    kids().forEach(k => { const p = puca(k.name); if(p && p.swapReq && PUCA_STARTERS[p.swapReq.to]) lines.push(`<b>${esc(k.name)}</b> wants to swap Púcas`); const r = doc("cards", k.name + "-pack"); if(r && r.req) lines.push(`<b>${esc(k.name)}</b> wants a Púcas card pack`); });
+    pend.forEach(c => lines.push(pendTeam(c).length > 1 ? `<b>${esc(pendTeam(c).join(" and "))}</b> did: ${esc(c.title)}` : `<b>${esc(c.pendingBy)}</b> did: ${esc(c.title)}`));
+    return `<div class="card tcard next"><h3><span class="grow">Waiting for your OK</span><span class="pill warn">${lines.length}</span></h3>${lines.map(l => `<div class="item fitrow"><div class="grow small">${l}</div></div>`).join("")}<div class="muted small fitrow" style="margin-top:4px">Tap to say yes or not yet</div></div>`;
+  }
   return `<div class="card tcard next"><h3><span class="grow">Waiting for your OK</span></h3>${swaps}${pend.map(c => `<div class="item"><div class="grow">${pendTeam(c).length > 1 ? `<b>${esc(pendTeam(c).join(" and "))}</b> say they did it together: ${esc(c.title)}` : `<b>${esc(c.pendingBy)}</b> says they did: ${esc(c.title)}`}${Number(c.points) ? ` <span class="pill warn">${I.gem} ${Number(c.points)}${pendTeam(c).length > 1 ? ' each' : ''}</span>` : ''}</div><button class="btn sm primary" data-act="kidApprove" data-id="${esc(c.id)}">Yes</button><button class="btn sm" data-act="kidReject" data-id="${esc(c.id)}">Not yet</button></div>`).join("")}</div>`;
 }
 
@@ -4516,14 +4522,12 @@ function itemForm(id){
 
 // ---------- About this app (v22). Update RELEASE with each release: version, date and a few plain lines of what's new ----------
 const RELEASE = {
-  version: "v30", date: "2026-11-23",
+  version: "v31", date: "2026-11-23",
   news: [
-    "The phone's Back button closes a pop-up first, then goes to the page before. It only leaves Donrí from Today.",
-    "Tap anywhere on a Today panel to open it. \"Waiting for your OK\" opens all the yes/no questions together.",
-    "Tapping a notification takes you to the right place, even when Donrí was closed (a card pack request goes to \"Waiting for your OK\").",
-    "Donrí comes back straight away when you return to it, even on a weak signal. A new version shows the next time you open it, or at once with Check for updates."
+    "The Waiting for your OK panel on Today is shorter: one line for each thing waiting. Tap it to say yes or not yet."
   ],
   earlier: [
+    {version:"v30", date:"2026-11-23", news:["The phone's Back button closes a pop-up first, then goes to the page before. It only leaves Donrí from Today.", "Tap anywhere on a Today panel to open it. \"Waiting for your OK\" opens all the yes/no questions together.", "Tapping a notification takes you to the right place, even when Donrí was closed (a card pack request goes to \"Waiting for your OK\").", "Donrí comes back straight away when you return to it, even on a weak signal. A new version shows the next time you open it, or at once with Check for updates."]},
     {version:"v29", date:"2026-11-23", news:["A calmer bottom bar: Today, Shop, Meals and Chores, with Families, Gifts and Health under More.", "Buttons give a small press when tapped, small buttons are easier to hit, and forms show a clear ring on the box you're typing in.", "Pop-up sheets slide up from the bottom, and Today opens straight away without the panels sliding in."]},
     {version:"v28", date:"2026-11-21", news:["Púcas card packs now have 5 cards: a new Púca, a matching gem and help cards. Still 10 gems with a grown-up's OK.", "Never the same Púca twice, a double pack (two new Púcas) every 4th pack when lots are waiting, and the packs page shows how many Púcas are still to find."]},
     {version:"v27", date:"2026-11-21", news:["Púcas Cards is now its own app: the Play cartridge opens it, or shows how to get it (Download game, then ⋮ and Install).", "The card packs have the Púcas logo."]},

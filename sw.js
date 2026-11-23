@@ -2,7 +2,7 @@
 // Donrí's page opens from the saved copy at once and is refreshed in the background
 // (a new version shows on the next open, or straight away with Check for updates). Only this site's own files
 // are cached: Microsoft sign-in, OneDrive, Outlook and ntfy are never touched.
-const CACHE = "donri-shell-v30";
+const CACHE = "donri-shell-v31";
 const SHELL = ["./", "index.html", "app.webmanifest",
   "icons/d2-favicon-64.png", "icons/d2-apple-180.png", "icons/d2-icon-192.png",
   "icons/d2-icon-512.png", "icons/d2-maskable-512.png"];
