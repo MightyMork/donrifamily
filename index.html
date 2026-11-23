@@ -1698,6 +1698,51 @@ function notify(kind, title, message, opts = {}){
 // Where tapping a notification takes you: "page" or "page/extra" (extra = a shop, or cal / school to open that panel)
 const NOTE_LINK = {shop:"shop", calendar:"today/cal", meals:"meals", chores:"chores", assigned:"chores", stars:"today", meds:"meds", renewals:"renew", school:"today/school", families:"families", sits:"families/sits"};
 const PAGE_KEYS = ["today","shop","meals","chores","families","gifts","meds","renew"];
+// ---------- Back button (v30): one history entry per page and per open sheet or More menu ----------
+// Back closes the sheet (or More) first, then goes to the previous page. Today is always the bottom entry,
+// so Back only leaves Donrí from Today. Our own history.back()/go() calls are counted so their popstate is ignored.
+let navIdx = 0, navOverlay = "", navOverlayPushed = false, navOvTok = 0, navBackPending = 0;
+const navAfterBack = [];
+function navSettled(f){ if(navBackPending) navAfterBack.push(f); else f(); }
+function navBack(n){ navBackPending++; history.go(-(n || 1)); }
+function navOpen(kind){ // a sheet or the More menu has just opened
+  if(navOverlay){ navOverlay = kind; return; }
+  navOverlay = kind; const t = ++navOvTok;
+  navSettled(() => { if(t !== navOvTok || !navOverlay) return; navIdx++; navOverlayPushed = true; history.pushState({dn:1, i:navIdx, p:page, o:kind}, "", "#" + page); });
+}
+function navDrop(kind){ // it was closed on screen (X, tap outside, a button): take its entry off again
+  if(!navOverlay || (kind && navOverlay !== kind)) return;
+  navOverlay = ""; navOvTok++;
+  if(navOverlayPushed){ navOverlayPushed = false; navBack(1); }
+}
+function navPage(p){ // call after changing page
+  if(navOverlay === "more") hideMore();
+  navDrop();
+  navSettled(() => {
+    if(p === "today"){ if(navIdx > 0) navBack(navIdx); return; }
+    const st = history.state;
+    if(st && st.dn && st.p === p && !st.o) return;
+    navIdx++; history.pushState({dn:1, i:navIdx, p}, "", "#" + p);
+  });
+}
+function navInit(){
+  const st = history.state;
+  if(st && st.dn){ navIdx = st.i || 0; if(st.o) navBack(1); return; } // a reload: keep the entries we already made
+  navIdx = 0; history.replaceState({dn:1, i:0, p:"today"}, "", "#today");
+  if(page !== "today"){ navIdx = 1; history.pushState({dn:1, i:1, p:page}, "", "#" + page); }
+}
+function hideMore(){ const m = document.getElementById("moreTabs"); if(m) m.hidden = true; const b = document.querySelector("[data-more]"); if(b) b.setAttribute("aria-expanded", "false"); }
+window.addEventListener("popstate", e => {
+  const st = e.state || {};
+  navIdx = st.i || 0;
+  if(navBackPending){ navBackPending--; if(!navBackPending) navAfterBack.splice(0).forEach(f => f()); return; }
+  if(navOverlay){ const k = navOverlay; navOverlay = ""; navOverlayPushed = false; navOvTok++; if(k === "more") hideMore(); else closeSheetUI(); return; }
+  if(document.getElementById("scrim").classList.contains("open")) closeSheetUI();
+  let p = PAGE_KEYS.includes(st.p) ? st.p : "today";
+  if(familyTab && LOCKED_PAGES.includes(p) && !grownOK()) p = "today";
+  if(p === page) return;
+  page = p; ls.set("donri.page", page); window.scrollTo(0,0); render();
+});
 function goLink(link, force){
   const [pg, extra] = String(link || "").replace(/^#/, "").split("/");
   if(force){ if(kidMode){ stopPlay(); kidView = "home"; kidMode = ""; ls.set("donri.kid", ""); resetZoom(); } if(kitchen){ kitchen = false; ls.set("donri.kitchen", false); resetZoom(); } }
@@ -1705,7 +1750,7 @@ function goLink(link, force){
   closeSheet(); page = PAGE_KEYS.includes(pg) ? pg : "today"; if(familyTab && LOCKED_PAGES.includes(page) && !grownOK()) page = "today"; ls.set("donri.page", page);
   if(extra && STORES[extra]){ store = extra; ls.set("donri.store", store); }
   if(page === "families" && extra && FAM_VIEWS.some(x => x[0] === extra)) famView = extra;
-  history.replaceState(null, "", "#" + page); window.scrollTo(0,0); render();
+  navPage(page); window.scrollTo(0,0); render();
   if(extra === "cal") calSheet(); else if(extra === "school") schoolSheet();
   else if(pg === "requests") reqSheet();
   else if(extra === "pending") setTimeout(() => { const t = document.querySelector('[data-tile="pending"]'); if(t){ t.scrollIntoView({behavior:"smooth", block:"center"}); t.classList.remove("flash"); void t.offsetWidth; t.classList.add("flash"); } else toast("Nothing waiting for your OK now"); }, 80);
@@ -1766,8 +1811,8 @@ function render(){
   if(!mt){
     mt = document.createElement("div"); mt.id = "moreTabs"; mt.className = "moretabs"; mt.hidden = true; document.body.appendChild(mt);
     const moreBtn = () => document.querySelector("[data-more]");
-    document.addEventListener("click", e => { const m = document.getElementById("moreTabs"), b = e.target.closest("[data-more]"); if(b){ m.hidden = !m.hidden; b.setAttribute("aria-expanded", String(!m.hidden)); } else if(!m.hidden){ m.hidden = true; const bb = moreBtn(); if(bb) bb.setAttribute("aria-expanded", "false"); } });
-    document.addEventListener("keydown", e => { const m = document.getElementById("moreTabs"); if(e.key === "Escape" && !m.hidden){ m.hidden = true; const bb = moreBtn(); if(bb){ bb.setAttribute("aria-expanded", "false"); bb.focus(); } } });
+    document.addEventListener("click", e => { const m = document.getElementById("moreTabs"), b = e.target.closest("[data-more]"); if(b){ m.hidden = !m.hidden; b.setAttribute("aria-expanded", String(!m.hidden)); if(m.hidden) navDrop("more"); else navOpen("more"); } else if(!m.hidden){ hideMore(); navDrop("more"); } });
+    document.addEventListener("keydown", e => { const m = document.getElementById("moreTabs"); if(e.key === "Escape" && !m.hidden){ hideMore(); navDrop("more"); const bb = moreBtn(); if(bb) bb.focus(); } });
   }
   mt.innerHTML = moreTabs.map(([k,l,i]) => `<button data-act="go" data-v="${k}" ${page===k?'aria-current="page"':''}>${i}<span>${l}${tabLock(k)}</span></button>`).join("");
   const moreOn = moreTabs.some(t => t[0] === page);
@@ -4670,7 +4715,7 @@ document.addEventListener("click", e => {
     case "storeNew": storeForm(); break;
     case "storeEdit": storeForm(v); break;
     case "storeDel": { if(docs("shop").some(i => i.store === id)){ toast("Clear that shop's list first"); break; } put("settings","stores",{list:customStores().filter(s => s.id !== id)}); if(store === id){ store = "tesco"; ls.set("donri.store", store); } closeSheet(); toast("Shop removed"); break; }
-    case "homeOpen": closeSheet(); homeEditing = true; if(page !== "today"){ page = "today"; ls.set("donri.page", "today"); history.replaceState(null, "", "#today"); } render(); window.scrollTo(0,0); break;
+    case "homeOpen": closeSheet(); homeEditing = true; if(page !== "today"){ page = "today"; ls.set("donri.page", "today"); navPage("today"); } render(); window.scrollTo(0,0); break;
     case "aboutCheck": aboutCheck(); break;
     case "homeDone": homeEditing = false; render(); toast("Home screen saved"); break;
     case "homeList": homeSheet(); break;
@@ -4928,8 +4973,8 @@ document.addEventListener("click", e => {
     case "fab": quickSheet(); break;
     case "qShop": quickShopForm(); break;
     case "qEvent": calSheet(); setTimeout(() => { const t = document.getElementById("evT"); if(t){ t.scrollIntoView({block:"center"}); t.focus(); } }, 80); break;
-    case "qDinner": closeSheet(); page = "meals"; mealView = "week"; ls.set("donri.page", "meals"); history.replaceState(null, "", "#meals"); render(); setTimeout(() => { const t = document.getElementById("din-" + today()); if(t){ t.scrollIntoView({block:"center"}); t.focus(); } }, 80); break;
-    case "famGo": closeSheet(); page = "families"; famView = v; photoAlbum = ""; ls.set("donri.page", "families"); history.replaceState(null, "", "#families"); render(); window.scrollTo(0,0); break;
+    case "qDinner": closeSheet(); page = "meals"; mealView = "week"; ls.set("donri.page", "meals"); navPage("meals"); render(); setTimeout(() => { const t = document.getElementById("din-" + today()); if(t){ t.scrollIntoView({block:"center"}); t.focus(); } }, 80); break;
+    case "famGo": closeSheet(); page = "families"; famView = v; photoAlbum = ""; ls.set("donri.page", "families"); navPage("families"); render(); window.scrollTo(0,0); break;
     case "photoAdd": if(!CIRCLE_READY && !photoSet().folder){ toast("Getting the Photos folder ready…", 3000); ensurePhotoFolder().then(() => { if(photoSet().folder){ photoFiles = []; photoAddForm(v || photoAlbum); } else toast(cfg.f ? "Couldn't make the Photos folder. Check your connection and try again." : "Photos will be ready once the person who set up Donrí opens it on one of their devices.", 6000); }); break; } photoFiles = []; photoAddForm(v || photoAlbum); break;
     case "photoDraftDel": photoDraft.splice(Number(v), 1); photoFiles.splice(Number(v), 1); drawDraft(); break;
     case "photoOpen": if(b.classList.contains("pnav")) photoGo(id, b.classList.contains("r") ? "r" : "l"); else photoSheet(id); break;
@@ -5264,9 +5309,10 @@ function openSheet(title, bodyFn, theme){
   sheetRender = () => { const html = `<div class="head"><h3 id="sheetTitle">${esc(title)}</h3><button class="iconbtn" data-act="close" aria-label="Close">${ICON.x}</button></div>${bodyFn()}`;
     if(html === last && $("#sheet").innerHTML) return; // v22: nothing changed, so leave the sheet alone (no flashing, scroll kept)
     const top = $("#sheet").scrollTop, same = last !== null; last = html; $("#sheet").innerHTML = html; if(same) $("#sheet").scrollTop = top; rtagDraw(); };
-  sheetRender(); $("#scrim").classList.add("open");
+  sheetRender(); $("#scrim").classList.add("open"); navOpen("sheet");
 }
-function closeSheet(){ $("#scrim").classList.remove("open"); $("#sheet").classList.remove("pz"); sheetRender = null; $("#sheet").innerHTML = ""; }
+function closeSheetUI(){ $("#scrim").classList.remove("open"); $("#sheet").classList.remove("pz"); sheetRender = null; $("#sheet").innerHTML = ""; }
+function closeSheet(){ closeSheetUI(); navDrop("sheet"); }
 $("#scrim").addEventListener("click", e => { if(e.target.id === "scrim") closeSheet(); });
 document.addEventListener("keydown", e => { if(e.key === "Escape" && sheetRender) closeSheet(); });
 
@@ -5736,8 +5782,8 @@ document.addEventListener("click", async e => {
     case "rtagAdd": { const inp = document.getElementById("reTagNew"); const t = (inp && inp.value || "").trim().replace(/,/g, " ").replace(/\s+/g, " "); if(!t) break;
       const existing = [...RTAG_DEFAULTS, ...recipeTags(), ...rtagExtra].find(x => x.toLowerCase() === t.toLowerCase()); const tag = existing || t.charAt(0).toUpperCase() + t.slice(1);
       if(!existing) rtagExtra.push(tag); inp.value = ""; document.getElementById("reTagNewRow").hidden = true; rtagSet([...rtagChosen(), tag]); break; }
-    case "home": closeSheet(); page = "today"; ls.set("donri.page", "today"); history.replaceState(null, "", "#today"); window.scrollTo(0,0); render(); break;
-    case "go": if(familyTab && LOCKED_PAGES.includes(v) && !grownOK()){ needGrown(() => { page = v; ls.set("donri.page", v); history.replaceState(null, "", "#" + v); window.scrollTo(0,0); render(); }); break; } closeSheet(); page = v; ls.set("donri.page", v); history.replaceState(null, "", "#" + v); window.scrollTo(0,0); render(); break;
+    case "home": closeSheet(); page = "today"; ls.set("donri.page", "today"); navPage("today"); window.scrollTo(0,0); render(); break;
+    case "go": if(familyTab && LOCKED_PAGES.includes(v) && !grownOK()){ needGrown(() => { page = v; ls.set("donri.page", v); navPage(v); window.scrollTo(0,0); render(); }); break; } closeSheet(); page = v; ls.set("donri.page", v); navPage(v); window.scrollTo(0,0); render(); break;
     case "theme": ls.set("donri.theme", document.documentElement.dataset.theme === "dark" ? "light" : "dark"); render(); break;
     case "cal": calSheet(); break;
     case "help": openSheet("How to use: " + ({today:"Today",shop:"Shopping",meals:"Meal plan",chores:"Chores",families:"Families",gifts:"Gifts",meds:"Health",renew:"Renewals"}[page]), () => `<button class="card row" style="width:100%;text-align:left;gap:12px" data-act="introPlay"><span class="iplaybadge" aria-hidden="true">▶</span><span class="grow"><b>Watch Donrí in 30 seconds</b><div class="muted small">A quick tour of the app</div></span></button><div class="card help">${HELP[page]}</div>`); break;
@@ -5765,7 +5811,7 @@ document.addEventListener("click", async e => {
     case "shareInvite": try{ if(navigator.share) await navigator.share({title:"Donrí invite", text:v}); else { await navigator.clipboard.writeText(v); toast("Copied. Paste it into a message."); } }catch(err){} break;
     case "testNotify": { const m = meMember(); if(m && m.topic){ await ntfy(m.topic, "Donrí", "Notifications are working 👍", ["tada"]); toast("Test sent. Check your notifications."); } break; }
     case "editBins": binsForm(); break;
-    case "goStore": store = v; ls.set("donri.store", v); page = "shop"; ls.set("donri.page", "shop"); history.replaceState(null, "", "#shop"); render(); window.scrollTo(0,0); break;
+    case "goStore": store = v; ls.set("donri.store", v); page = "shop"; ls.set("donri.page", "shop"); navPage("shop"); render(); window.scrollTo(0,0); break;
     case "store": store = v; ls.set("donri.store", v); render(); break;
     case "tick": { const i = doc("shop", id); if(!i) break; const done = !i.done;
       patch("shop", id, done ? {done:true, doneBy:myName(), doneAt:Date.now()} : {done:false, doneBy:"", doneAt:0});
@@ -6065,6 +6111,7 @@ document.addEventListener("change", e => {
     history.replaceState(null, "", REDIRECT);
   }
   await handleRedirect();
+  navInit();
   render();
   if(tok){
     if(!me) await loadMe();
