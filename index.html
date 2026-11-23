@@ -1328,6 +1328,9 @@ body.kiosk .moretabs,body.gamefull .moretabs{display:none!important}
 @keyframes moreIn{from{opacity:0;transform:scale(.95)}}
 @media (prefers-reduced-motion:reduce){.moretabs{animation:none}}
 /* ---------- end v29 polish ---------- */
+/* v30: Today panels open on a tap, with the same small press as buttons */
+.bento:not(.editing)>.bt:not(.photos)>.card{cursor:pointer;transition-property:transform,box-shadow,border-color;transition-duration:.16s;transition-timing-function:var(--ease-out)}
+.bento:not(.editing)>.bt:not(.photos)>.card:active{transform:scale(var(--press))}
 
 /* real app: no prototype bar */
 :root{--protoH:0px}
@@ -4561,11 +4564,29 @@ function fitTiles(){
     if(!n) return;
     const more = document.createElement("button"); more.className = "fitmore";
     if(link){ more.dataset.act = link.dataset.act; if(link.dataset.v) more.dataset.v = link.dataset.v; }
+    else { more.dataset.act = "tileOpen"; more.dataset.v = card.parentElement.dataset.tile || ""; } // v30: "+N more" always opens something
     card.appendChild(more); more.textContent = `+${n} more`;
     while(rows.length && over()){ hide(); more.textContent = `+${n} more`; }
   });
 }
 addEventListener("resize", () => { if(page === "today") fitTiles(); });
+// v30: a tap anywhere on a Today panel opens it, not just the small link in its corner.
+// Panels without a corner link open their own place; "Waiting for your OK" opens a sheet with all the yes/no buttons.
+function pendingSheet(){ openSheet("Waiting for your OK", () => pendingCard() || `<p class="empty">Nothing waiting for your OK now.</p>`); }
+const TILE_OPEN = {pending:pendingSheet, tomorrow:() => calSheet(), bins:() => { const b = document.querySelector('[data-tile="bins"] [data-act="editBins"]'); if(b) b.click(); },
+  stars:() => goLink("chores"), families:() => goLink("families")};
+function tileOpen(k){
+  const card = document.querySelector(`.bento>.bt[data-tile="${k}"]>.card`);
+  const link = card && card.querySelector("h3 [data-act]");
+  if(TILE_OPEN[k]) TILE_OPEN[k](); else if(link) link.click();
+}
+document.addEventListener("click", e => {
+  const t = e.target; if(!t.closest || page !== "today" || homeEditing || kidMode || kitchen) return;
+  const more = t.closest('.fitmore[data-act="tileOpen"]'); if(more){ tileOpen(more.dataset.v); return; }
+  const card = t.closest(".bento:not(.editing)>.bt:not(.photos)>.card"); if(!card) return;
+  if(t.closest("button,a,input,select,textarea,label,summary,details,[data-act],[contenteditable]")) return; // its own buttons still do their own thing
+  tileOpen(card.parentElement.dataset.tile);
+});
 if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if(page === "today") fitTiles(); });
 function homeSheet(){
   openSheet("Your home screen", () => { const {order, hidden} = homePrefs(); const label = k => (HOME_SECTIONS.find(s => s[0] === k)||[])[1];
