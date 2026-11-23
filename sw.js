@@ -1,8 +1,8 @@
 // Donrí service worker: keeps the app shell available offline.
-// Pages are fetched fresh when online (so updates arrive straight away),
-// falling back to the saved copy when offline. Only this site's own files
+// Donrí's page opens from the saved copy at once and is refreshed in the background
+// (a new version shows on the next open, or straight away with Check for updates). Only this site's own files
 // are cached: Microsoft sign-in, OneDrive, Outlook and ntfy are never touched.
-const CACHE = "donri-shell-v29";
+const CACHE = "donri-shell-v30";
 const SHELL = ["./", "index.html", "app.webmanifest",
   "icons/d2-favicon-64.png", "icons/d2-apple-180.png", "icons/d2-icon-192.png",
   "icons/d2-icon-512.png", "icons/d2-maskable-512.png"];
@@ -34,12 +34,16 @@ self.addEventListener("fetch", e => {
     return;
   }
   if (req.mode === "navigate") {
-    // Network first for the page itself; keep the query (sign-in code) intact.
-    e.respondWith(fetch(new Request(req.url, {cache:"no-cache", credentials:"same-origin"})).then(res => {
-      const copy = res.clone();
-      caches.open(CACHE).then(c => c.put("index.html", copy));
+    // v30: the saved page straight away, so Donrí comes back at once after Android has dropped it in the
+    // background (a weak signal used to keep it waiting). The newest page is fetched at the same time and
+    // saved for next time. "Check for updates" adds ?update and waits for the network. The query (sign-in code) stays intact.
+    const fresh = fetch(new Request(req.url, {cache:"no-cache", credentials:"same-origin"})).then(res => {
+      if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put("index.html", copy)); }
       return res;
-    }).catch(() => caches.match("index.html")));
+    });
+    if (url.searchParams.has("update")) { e.respondWith(fresh.catch(() => caches.match("index.html"))); return; }
+    e.waitUntil(fresh.catch(() => {}));
+    e.respondWith(caches.match("index.html").then(hit => hit || fresh.catch(() => caches.match("index.html"))));
     return;
   }
   if (/\.webmanifest$|\/icons\//.test(url.pathname) || (inCards && /\.js$/.test(url.pathname))) {

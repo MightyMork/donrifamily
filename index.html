@@ -1783,7 +1783,7 @@ const who = n => !n ? "Someone" : (n === myName() ? "You" : n);
 // =====================================================================
 const startLink = (location.hash||"").replace("#","").split("/");
 // Opened from a notification or link (start_url has no #), not a reload of a page we already set up
-const startFromLink = !!startLink[0] && !(history.state && history.state.dn) && (PAGE_KEYS.includes(startLink[0]) || startLink[0] === "requests");
+const startFromLink = !!startLink[0] && !(history.state && history.state.dn) && !/[?&]update=/.test(location.search) && (PAGE_KEYS.includes(startLink[0]) || startLink[0] === "requests");
 let page = startLink[0];
 if(!PAGE_KEYS.includes(page)) page = ls.get("donri.page","today");
 let store = ls.get("donri.store","tesco");
@@ -4516,13 +4516,15 @@ function itemForm(id){
 
 // ---------- About this app (v22). Update RELEASE with each release: version, date and a few plain lines of what's new ----------
 const RELEASE = {
-  version: "v29", date: "2026-11-23",
+  version: "v30", date: "2026-11-23",
   news: [
-    "A calmer bottom bar: Today, Shop, Meals and Chores, with Families, Gifts and Health under More.",
-    "Buttons give a small press when tapped, small buttons are easier to hit, and forms show a clear ring on the box you're typing in.",
-    "Pop-up sheets slide up from the bottom, and Today opens straight away without the panels sliding in."
+    "The phone's Back button closes a pop-up first, then goes to the page before. It only leaves Donrí from Today.",
+    "Tap anywhere on a Today panel to open it. \"Waiting for your OK\" opens all the yes/no questions together.",
+    "Tapping a notification takes you to the right place, even when Donrí was closed (a card pack request goes to \"Waiting for your OK\").",
+    "Donrí comes back straight away when you return to it, even on a weak signal. A new version shows the next time you open it, or at once with Check for updates."
   ],
   earlier: [
+    {version:"v29", date:"2026-11-23", news:["A calmer bottom bar: Today, Shop, Meals and Chores, with Families, Gifts and Health under More.", "Buttons give a small press when tapped, small buttons are easier to hit, and forms show a clear ring on the box you're typing in.", "Pop-up sheets slide up from the bottom, and Today opens straight away without the panels sliding in."]},
     {version:"v28", date:"2026-11-21", news:["Púcas card packs now have 5 cards: a new Púca, a matching gem and help cards. Still 10 gems with a grown-up's OK.", "Never the same Púca twice, a double pack (two new Púcas) every 4th pack when lots are waiting, and the packs page shows how many Púcas are still to find."]},
     {version:"v27", date:"2026-11-21", news:["Púcas Cards is now its own app: the Play cartridge opens it, or shows how to get it (Download game, then ⋮ and Install).", "The card packs have the Púcas logo."]},
     {version:"v26", date:"2026-11-21", news:["A Play button for each kid on the Gems panel: straight into their games (the grown-up PIN still gets you back).", "Sharper photos on the Photos panel, in the photo grid and when you open a photo."]},
@@ -4872,7 +4874,7 @@ function delPhotoFile(p){ if(p && p.file && cfg.d) graph(`/drives/${cfg.d}/items
 const shareScope = x => !x.sharedWith || x.sharedWith === "none" ? "Only our family" : x.sharedWith === "all" ? "All families" : "Shared with " + x.sharedWith.map(fname).join(", ");
 const canSee = x => x.fam === US || x.sharedWith === "all" || (Array.isArray(x.sharedWith) && x.sharedWith.includes(US));
 const photosAll = () => docs("c_photos").filter(canSee).sort((a,b) => (b.at||0) - (a.at||0));
-async function aboutCheck(){ toast("Checking for updates…"); try{ const r = navigator.serviceWorker && await navigator.serviceWorker.getRegistration(); if(r) await r.update(); }catch(e){} setTimeout(() => location.reload(), 700); }
+async function aboutCheck(){ toast("Checking for updates…"); try{ const r = navigator.serviceWorker && await navigator.serviceWorker.getRegistration(); if(r) await r.update(); }catch(e){} setTimeout(() => location.replace(REDIRECT + "?update=1" + location.hash), 700); } // v30: ?update makes the helper fetch the newest page
 const albumsAll = () => docs("c_albums").filter(canSee).sort((a,b) => (b.at||0) - (a.at||0));
 const reactKey = () => US + ":" + myName();
 const reactCount = (p, k) => Object.values(p.reacts||{}).filter(x => x === k).length;
@@ -6133,6 +6135,7 @@ document.addEventListener("change", e => {
     try{ const j = decJoin(h.slice(6)); if(j.c && j.d && j.i){ if(cfg.d && cfg.d !== j.d){ D = null; etag = null; dirty = false; persist(); } cfg = {...cfg, c:j.c, d:j.d, i:j.i}; ls.set("donri.cfg", cfg); cfg = {...cfg, s:j.s || "", p:j.p || "", viaShare:false}; ls.set("donri.cfg", cfg); const rl = [j.s, j.p].filter(Boolean); if(rl.length) ls.set("donri.redeem", rl); } }catch(e){ toast("That invite link looks incomplete."); }
     history.replaceState(null, "", REDIRECT);
   }
+  if(/[?&]update=/.test(location.search)) history.replaceState(history.state, "", REDIRECT + location.hash); // after Check for updates
   await handleRedirect();
   navInit();
   render();
